@@ -1,22 +1,53 @@
 import React, { useState } from 'react';
-import LeadModal from './LeadModal';
 import './lead.css';
+import LeadModal from './LeadModal';
+import FollowUpModal from './FollowUpModal';
+import { LeadsProvider, useLeads } from './LeadsContext';
+import LeadsGrid from './leadsGrid';
 
-const Leads = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const LeadsContent = () => {
+  const {
+    isModalOpen, 
+    setIsModalOpen,
+    isFollowUpModalOpen,
+    setIsFollowUpModalOpen,
+    selectedLeadId,
+    setSelectedLeadId
+  } = useLeads();
+  const [editingLead, setEditingLead] = useState(null);
 
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
+  const openModal = () =>{
+    setIsModalOpen(true)
+  }
+
+  const closeModal = () =>{
+    setIsModalOpen(false)
+  }
+
+  const closeFollowUpModal = () => {
+    setIsFollowUpModalOpen(false);
+    setSelectedLeadId(null);
+  }
 
   return (
     <div className="leads-container">
       <div className="leads-header">
-        <button className="add-lead-button" onClick={handleOpenModal}>
+        <button className="add-lead-button" onClick={openModal}>
           Add New Lead
         </button>
       </div>
-      {isModalOpen && <LeadModal onClose={handleCloseModal} />}
+      <LeadsGrid setEditingLead={setEditingLead}/>
+      {isModalOpen && <LeadModal onClose={closeModal} editingLead={editingLead} setEditingLead={setEditingLead} />}
+      {isFollowUpModalOpen && <FollowUpModal patientId={selectedLeadId} onClose={closeFollowUpModal} />}
     </div>
+  );
+};
+
+const Leads = () => {
+  return (
+    <LeadsProvider>
+      <LeadsContent />
+    </LeadsProvider>
   );
 };
 

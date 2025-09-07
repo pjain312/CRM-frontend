@@ -5,7 +5,7 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import Leads from "./pages/Leads/Leads";
 import PatientLists from "./pages/PatientLists/PatientLists";
 import PhysioOverview from "./pages/PhysioOverview/PhysioOverview";
-import Appointment from "./pages/Appointment/Appointment";
+import Appointments from "./pages/Appointment/Appointments";
 import { NavigationProvider } from "./Navigations/navigation.context";
 import Navbar from "./Navigations/Navbar/Navbar";
 import "./App.css";
@@ -25,7 +25,7 @@ function App() {
                 <Route path="/leads" element={<Leads />} />
                 <Route path="/patient-lists" element={<PatientLists />} />
                 <Route path="/physio-overview" element={<PhysioOverview />} />
-                <Route path="/appointment" element={<Appointment />} />
+                <Route path="/appointment" element={<Appointments />} />
               </Routes>
             </main>
           </div>
