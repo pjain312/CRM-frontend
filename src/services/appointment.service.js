@@ -42,3 +42,17 @@ export const getAllAppointments = async (params) => {
         console.warn('API data not available', error.message);
     }
 }
+
+export const updateAppointmentStatus = async (data) => {
+    try {
+        const response = await axios.request({
+            method:"POST",
+            url: `${API_URL}/updateAppointmentStatus`,
+            data: data
+        })
+        return response.data.data;
+    }
+    catch (error) {
+        console.warn('API data not available', error.message);
+    }
+}

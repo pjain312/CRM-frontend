@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import '../Leads/lead.css';
+import { updateAppointmentStatus } from '../../services/appointment.service';
 
 const AppointmentsGrid = ({ appointments = [], filterText, setFilterText, onRefresh }) => {
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -29,6 +30,16 @@ const AppointmentsGrid = ({ appointments = [], filterText, setFilterText, onRefr
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedAppointment(null);
+  };
+
+  const handleRescheduleAppointment = (appointment) => {
+    // TODO: Implement reschedule functionality
+    console.log('Reschedule appointment:', appointment);
+    // You can add a reschedule modal or redirect to a reschedule page here
+  };
+
+  const handleCancelAppointment = async (appointment) => {
+    await updateAppointmentStatus({appointmentId: appointment.appointmentId, status: 4})
   };
 
   return (
@@ -74,7 +85,7 @@ const AppointmentsGrid = ({ appointments = [], filterText, setFilterText, onRefr
                 </tr>
               ) : (
                 appointments.map((appointment, index) => (
-                  <tr key={appointment.id || index} className="lead-row">
+                  <tr key={index} className="lead-row">
                     <td className="patient-name-cell">
                       <div className="patient-info">
                         <span className="patient-name">{appointment.name || '-'}</span>
@@ -112,6 +123,21 @@ const AppointmentsGrid = ({ appointments = [], filterText, setFilterText, onRefr
                           title="View Details"
                         >
                           👁️
+                        </button>
+                        <button 
+                          className="action-btn reschedule-btn" 
+                          onClick={() => handleRescheduleAppointment(appointment)}
+                          title="Reschedule Appointment"
+                        >
+                          📅
+                        </button>
+                        <button 
+                          className="action-btn cancel-btn" 
+                          onClick={() => handleCancelAppointment(appointment)}
+                          title="Cancel Appointment"
+                          disabled={appointment.status?.toLowerCase() === "cancelled"}
+                        >
+                          ❌
                         </button>
                       </div>
                     </td>
