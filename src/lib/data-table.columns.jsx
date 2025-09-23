@@ -122,6 +122,11 @@ export const leadsColumns = [
     header: () => "Actions",
     enableHiding: false,
     cell: ({ row }) => {
+      const statusName = (row?.original?.LeadStatusName || "")
+        .toString()
+        .toLowerCase();
+      const isAssignedOrClosed =
+        statusName === "assigned" || statusName === "closed";
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -139,7 +144,9 @@ export const leadsColumns = [
             <DropdownMenuItem asChild>
               <PatientFollowup patient={row.original} />
             </DropdownMenuItem>
-            <DropdownMenuItem>Assigned Lead</DropdownMenuItem>
+            <DropdownMenuItem disabled={isAssignedOrClosed}>
+              Assigned Lead
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
