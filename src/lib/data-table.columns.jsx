@@ -18,6 +18,10 @@ import ScheduleAppointmentForm from "../components/schedule-appointment-form";
 import PatientInfo from "../components/patient-info";
 import AddLeadForm from "../components/add-lead-form";
 import PatientFollowup from "../components/patient-followup";
+import AddPackageForm from "../components/add-package-form";
+import { deletePackage } from "../services/packages-service";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const leadsColumns = [
   {
@@ -357,6 +361,108 @@ export const appointmentsColumns = [
             </DropdownMenuItem>
             <DropdownMenuItem>Reschedule Appointment</DropdownMenuItem>
             <DropdownMenuItem>Cancel Appointment</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
+];
+
+export const packagesColumns = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "Name",
+    header: "Package Name",
+    cell: ({ row }) => <div className="font-medium">{row.getValue("Name")}</div>,
+  },
+  {
+    accessorKey: "ChargePerSession",
+    header: "Charge Per Session",
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("ChargePerSession"));
+      const formatted = new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+      }).format(amount);
+      return <div>{formatted}</div>;
+    },
+  },
+  {
+    accessorKey: "TotalSessions",
+    header: "Total Sessions",
+    cell: ({ row }) => <div>{row.getValue("TotalSessions")}</div>,
+  },
+  {
+    accessorKey: "TotalCost",
+    header: "Total Cost",
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("TotalCost"));
+      const formatted = new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+      }).format(amount);
+      return <div className="font-medium">{formatted}</div>;
+    },
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const queryClient = useQueryClient();
+      
+      const { mutate: deletePackageMutation } = useMutation({
+        mutationFn: deletePackage,
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["packages"] });
+          toast.success("Package deleted successfully");
+        },
+        onError: () => {
+          toast.error("Failed to delete package");
+        },
+      });
+
+      const handleDelete = () => {
+        deletePackageMutation(row.original.Id);
+      };
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <AddPackageForm type="edit" packageData={row.original} />
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDelete}>
+              Delete Package
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

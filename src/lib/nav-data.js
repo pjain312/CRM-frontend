@@ -1,4 +1,4 @@
-import { FaHome, FaUser, FaUsers, FaCog, FaCalendar } from "react-icons/fa";
+import { FaHome, FaUser, FaUsers, FaCog, FaCalendar, FaFolder } from "react-icons/fa";
 
 const data = {
   navMain: [
@@ -26,6 +26,11 @@ const data = {
       title: "Appointment",
       url: "/appointment",
       icon: FaCalendar,
+    },
+    {
+      title: "Packages",
+      url: "/packages",
+      icon: FaFolder,
     },
   ],
 };

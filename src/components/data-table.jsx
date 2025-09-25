@@ -42,6 +42,7 @@ import {
   IconChevronsRight,
 } from "@tabler/icons-react";
 import AddLeadForm from "./add-lead-form";
+import AddPackageForm from "./add-package-form";
 
 export function DataTable({ data, columns, showAddButton = false, actions }) {
   const [sorting, setSorting] = React.useState([]);
@@ -109,7 +110,8 @@ export function DataTable({ data, columns, showAddButton = false, actions }) {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        {actions ?? (showAddButton && <AddLeadForm />)}
+        {actions === "leads" && (showAddButton && <AddLeadForm />)}
+        {actions === "packages" && (showAddButton && <AddPackageForm/>)}
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>

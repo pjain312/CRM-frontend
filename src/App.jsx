@@ -4,6 +4,7 @@ import Layout from "./layout";
 import Leads from "./pages/Leads/Leads";
 import PatientList from "./pages/PatientList/PatientList";
 import Appointment from "./pages/Appointment/Appointment";
+import Packages from "./pages/Packages/Packages";
 
 const Dashboard = () => <p>Dashboard</p>;
 const PhysioOverview = () => <p>Physio Overview</p>;
@@ -18,6 +19,7 @@ function App() {
         <Route path="/patient-list" element={<PatientList />} />
         <Route path="/physio-overview" element={<PhysioOverview />} />
         <Route path="/appointment" element={<Appointment />} />
+        <Route path="/packages" element={<Packages />} />
       </Route>
     </Routes>
   );

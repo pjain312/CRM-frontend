@@ -13,7 +13,7 @@ const Leads = () => {
   return (
     <div>
       {!isLoading && (
-        <DataTable columns={leadsColumns} data={leads} showAddButton={true} />
+        <DataTable columns={leadsColumns} data={leads} showAddButton={true} actions={"leads"} />
       )}
     </div>
   );
