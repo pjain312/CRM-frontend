@@ -95,11 +95,6 @@ const AddSessionTypeForm = ({ type, sessionTypeData }) => {
           <DialogTitle>
             {type === "edit" ? "Edit Session Type" : "Add New Session Type"}
           </DialogTitle>
-          <DialogDescription>
-            {type === "edit"
-              ? "Edit session type details."
-              : "Add a new session type to your database."}
-          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form

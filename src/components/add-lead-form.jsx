@@ -116,11 +116,6 @@ const AddLeadForm = ({ type, patient }) => {
           <DialogTitle>
             {type === "edit" ? "Edit Patient" : "Add New Lead"}
           </DialogTitle>
-          <DialogDescription>
-            {type === "edit"
-              ? "Edit patient details."
-              : "Add a new lead to your database."}
-          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form

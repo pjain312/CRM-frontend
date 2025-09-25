@@ -97,11 +97,6 @@ const AddPackageForm = ({ type, packageData }) => {
           <DialogTitle>
             {type === "edit" ? "Edit Package" : "Add New Package"}
           </DialogTitle>
-          <DialogDescription>
-            {type === "edit"
-              ? "Edit package details."
-              : "Add a new package to your database."}
-          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form
