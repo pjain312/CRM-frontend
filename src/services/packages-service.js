@@ -32,12 +32,56 @@ export const getPackages = async () => {
   }
 };
 
+export const getSessionTypes = async () => {
+  try {
+    const response = await axios.request({
+      method: "GET",
+      url: `${API_BASE_URL}/getSessionTypes`,
+    });
+    return response.data.data;
+  } catch (error) {
+    console.warn("API data not available", error.message);
+  }
+};
+
+
 export const deletePackage = async (packageId) => {
   try {
     const response = await axios.request({
       method: "DELETE",
       url: `${API_BASE_URL}/deletePackage`,
       data: {packageId}
+    });
+    return response.data.x;
+  } catch (error) {
+    console.warn("API data not available", error.message);
+  }
+};
+
+export const addSessionType = async (sessionTypeData) => {
+  const response = await axios.request({
+    method: "POST",
+    url: `${API_BASE_URL}/addSessionTypes`,
+    data: sessionTypeData,
+  });
+  return response.data;
+};
+
+export const updateSessionType = async (sessionTypeData) => {
+  const response = await axios.request({
+    method: "PUT",
+    url: `${API_BASE_URL}/updateSessionType`,
+    data: sessionTypeData,
+  });
+  return response.data;
+};
+
+export const deleteSessionType = async (sessionId) => {
+  try {
+    const response = await axios.request({
+      method: "DELETE",
+      url: `${API_BASE_URL}/deleteSessionType`,
+      data: {sessionId}
     });
     return response.data.x;
   } catch (error) {

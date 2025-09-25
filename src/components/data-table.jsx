@@ -43,6 +43,7 @@ import {
 } from "@tabler/icons-react";
 import AddLeadForm from "./add-lead-form";
 import AddPackageForm from "./add-package-form";
+import AddSessionTypeForm from "./add-session-type-form";
 
 export function DataTable({ data, columns, showAddButton = false, actions }) {
   const [sorting, setSorting] = React.useState([]);
@@ -112,6 +113,7 @@ export function DataTable({ data, columns, showAddButton = false, actions }) {
         </DropdownMenu>
         {actions === "leads" && (showAddButton && <AddLeadForm />)}
         {actions === "packages" && (showAddButton && <AddPackageForm/>)}
+        {actions === "sessionTypes" && (showAddButton && <AddSessionTypeForm/>)}
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>

@@ -22,55 +22,53 @@ import { IconPlus } from "@tabler/icons-react";
 import { Input } from "./ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { packageFormSchema } from "../lib/form-validation";
-import { addPackage, updatePackage } from "../services/packages-service";
+import { sessionTypeFormSchema } from "../lib/form-validation";
+import { addSessionType, updateSessionType } from "../services/packages-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-const AddPackageForm = ({ type, packageData }) => {
+const AddSessionTypeForm = ({ type, sessionTypeData }) => {
   const [open, setOpen] = useState(false);
 
   const form = useForm({
-    resolver: zodResolver(packageFormSchema),
+    resolver: zodResolver(sessionTypeFormSchema),
     defaultValues: {
-      packageName: packageData?.Name || "",
-      chargePerSession: packageData?.ChargePerSession || "",
-      totalSession: packageData?.TotalSessions || "",
-      totalCost: packageData?.TotalCost || "",
+      sessionName: sessionTypeData?.SessionName || "",
+      chargePerSession: sessionTypeData?.ChargePerSession || "",
     },
   });
 
   const queryClient = useQueryClient();
-  const { mutate: addPackageMutation } = useMutation({
-    mutationFn: addPackage,
+  const { mutate: addSessionTypeMutation } = useMutation({
+    mutationFn: addSessionType,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["packages"] });
-      toast.success("Package Added Successfully");
+      queryClient.invalidateQueries({ queryKey: ["sessionTypes"] });
+      toast.success("Session Type Added Successfully");
       setOpen(false);
       form.reset();
     },
     onError: () => {
-      toast.error("Package Failed to Add");
+      toast.error("Session Type Failed to Add");
     },
   });
 
-  const { mutate: editPackageMutation } = useMutation({
-    mutationFn: ({ id, ...data }) => updatePackage({ packageId: id, ...data }),
+  const { mutate: editSessionTypeMutation } = useMutation({
+    mutationFn: ({ id, ...data }) => updateSessionType({ sessionId: id, ...data }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["packages"] });
-      toast.success("Package Edited Successfully");
+      queryClient.invalidateQueries({ queryKey: ["sessionTypes"] });
+      toast.success("Session Type Edited Successfully");
       setOpen(false);
     },
     onError: () => {
-      toast.error("Package Failed to Edit");
+      toast.error("Session Type Failed to Edit");
     },
   });
 
   function onSubmit(values) {
     if (type === "edit") {
-      editPackageMutation({ id: packageData.Id, ...values });
+      editSessionTypeMutation({ id: sessionTypeData.Id, ...values });
     } else {
-      addPackageMutation(values);
+      addSessionTypeMutation(values);
     }
   }
 
@@ -84,23 +82,23 @@ const AddPackageForm = ({ type, packageData }) => {
         }`}
       >
         {type === "edit" ? (
-          "Edit Package"
+          "Edit Session Type"
         ) : (
           <div className="flex items-center hover:bg-accent text-sm border px-2 py-2 lg:py-1.5 rounded-sm gap-1">
             <IconPlus size={16} />
-            <span className="hidden lg:inline">Add Package</span>
+            <span className="hidden lg:inline">Add Session Type</span>
           </div>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] md:max-w-[525px] lg:max-w-[625px]">
         <DialogHeader>
           <DialogTitle>
-            {type === "edit" ? "Edit Package" : "Add New Package"}
+            {type === "edit" ? "Edit Session Type" : "Add New Session Type"}
           </DialogTitle>
           <DialogDescription>
             {type === "edit"
-              ? "Edit package details."
-              : "Add a new package to your database."}
+              ? "Edit session type details."
+              : "Add a new session type to your database."}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -112,12 +110,12 @@ const AddPackageForm = ({ type, packageData }) => {
           >
             <FormField
               control={form.control}
-              name="packageName"
+              name="sessionName"
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel>Package Name</FormLabel>
+                  <FormLabel>Session Type Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter package name" {...field} />
+                    <Input placeholder="Enter session type name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -127,46 +125,12 @@ const AddPackageForm = ({ type, packageData }) => {
               control={form.control}
               name="chargePerSession"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="col-span-2">
                   <FormLabel>Charge Per Session</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
                       placeholder="Enter charge per session" 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="totalSession"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Total Sessions</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      placeholder="Enter total sessions" 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="totalCost"
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>Total Cost</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      placeholder="Enter total cost" 
                       {...field} 
                     />
                   </FormControl>
@@ -181,7 +145,7 @@ const AddPackageForm = ({ type, packageData }) => {
                 </Button>
               </DialogClose>
               <Button type="submit">
-                {type === "edit" ? "Update" : "Add"} Package
+                {type === "edit" ? "Update" : "Add"} Session Type
               </Button>
             </DialogFooter>
           </form>
@@ -191,4 +155,4 @@ const AddPackageForm = ({ type, packageData }) => {
   );
 };
 
-export default AddPackageForm;
+export default AddSessionTypeForm;
