@@ -43,7 +43,7 @@ const AddLeadForm = ({ type, patient }) => {
     defaultValues: {
       name: patient?.Name || "",
       age: patient?.Age || "",
-      gender: patient?.GenderId || "",
+      gender: patient?.GenderId?.toString() || "",
       email: patient?.Email || "",
       phoneNumber: patient?.PhoneNumber || "",
       address: patient?.Address || "",
@@ -51,13 +51,13 @@ const AddLeadForm = ({ type, patient }) => {
       state: patient?.State || "",
       pincode: patient?.Pincode || "",
       country: patient?.Country || "",
-      leadType: patient?.LeadType || "",
-      physioPreference: patient?.PhysioPreferenceName || "",
-      leadSource: patient?.LeadSource || "",
-      leadStatus: patient?.LeadStatus || "",
+      leadType: patient?.LeadType?.toString() || "",
+      physioPreference: patient?.PhysioPreference?.toString() || "",
+      leadSource: patient?.Source?.toString() || "",
+      leadStatus: patient?.LeadStatus?.toString() || "",
       condition: patient?.Condition || "",
-      treatment: patient?.Treatment || "",
-      assignedTo: "",
+      treatment: patient?.TreatmentTypeId?.toString() || "",
+      assignedTo: patient?.AssignedTo?.toString() || "",
     },
   });
 
