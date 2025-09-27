@@ -89,6 +89,9 @@ export const getPatientPrescription = (patientData) => {
             .field-group {
               margin-bottom: 24px;
             }
+            .right-field-group {
+              margin-bottom: 220px;
+            }
             .field-label {
               font-size: 14px;
               font-weight: bold;
@@ -171,11 +174,11 @@ export const getPatientPrescription = (patientData) => {
 
               <!-- Right Section -->
               <div class="right-section">
-                <div class="field-group">
+                <div class="right-field-group">
                   <div class="field-label">Treatment:</div>
                   <div class="field-content"></div>
                 </div>
-                <div class="field-group">
+                <div class="right-field-group">
                   <div class="field-label">Home Advice:</div>
                   <div class="field-content"></div>
                 </div>
