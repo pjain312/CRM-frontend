@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { checkinPatient, endSession, startSession } from "../services/session-service";
 import CancelAppointmentForm from "../components/cancel-appointment-form";
 import CheckoutPatientForm from "../components/checkout-patient-form";
+import { getPatientPrescription } from "../components/prescription";
 
 export const leadsColumns = [
   {
@@ -421,6 +422,10 @@ export const appointmentsColumns = [
                   <CancelAppointmentForm appointment={row.original} />
                 </DropdownMenuItem>}
               {row.original.Status === "Confirmed" && !row.original.IsPatientCheckedIn ? <DropdownMenuItem onClick = {handlePatientCheckin}>Checkin Patient</DropdownMenuItem>: null}
+              {(row.original.Status === "Confirmed" && row.original.IsPatientCheckedIn && !row.original.StartTime) ?              <DropdownMenuItem onClick={() => {getPatientPrescription(row.original)}}>
+                Generate Prescription
+              </DropdownMenuItem>: null
+              }
               {(row.original.Status === "Confirmed" && row.original.IsPatientCheckedIn && !row.original.StartTime) ? <DropdownMenuItem onClick ={handleStartSession} >Start Session</DropdownMenuItem>: null}
               {(row.original.Status === "Confirmed" && row.original.StartTime && !row.original.EndTime) ? <DropdownMenuItem onClick = {handleEndSession} >End Session</DropdownMenuItem>: null}
               {(row.original.Status === "Confirmed" && row.original.EndTime && !row.original.IsInvoiceGenerated) ? 
@@ -428,6 +433,7 @@ export const appointmentsColumns = [
                 <CheckoutPatientForm session={row.original} open={checkoutOpen} onOpenChange={setCheckoutOpen} />
               </DropdownMenuItem>: null}
               {(row.original.IsInvoiceGenerated) ? <DropdownMenuItem > View invoice </DropdownMenuItem>: null}
+            
             </DropdownMenuContent>
           </DropdownMenu>
           {checkoutOpen && <CheckoutPatientForm session={row.original} open={checkoutOpen} onOpenChange={setCheckoutOpen} />}
