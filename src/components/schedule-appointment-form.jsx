@@ -33,14 +33,20 @@ import { Calendar } from "./ui/calendar";
 import { Textarea } from "./ui/textarea";
 import DatePicker from "./date-picker";
 import { TimePicker } from "./time-picker";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addAppointment } from "../services/appointment-service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { addAppointment, getAppointmentDefaultOptions } from "../services/appointment-service";
 
 import { toast } from "sonner";
 
 const ScheduleAppointmentForm = ({ patient }) => {
   const [open, setOpen] = useState(false);
-  // 1. Define your form.
+
+  const { data: appointmentDefaultOptions } = useQuery({
+    queryKey: ["appointment-default-options"],
+    queryFn: getAppointmentDefaultOptions,
+  });
+
+  console.log(appointmentDefaultOptions)
   const form = useForm({
     resolver: zodResolver(appointmentFormSchema),
     defaultValues: {
@@ -174,10 +180,9 @@ const ScheduleAppointmentForm = ({ patient }) => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="1">Scheduled</SelectItem>
-                      <SelectItem value="2">Confirmed</SelectItem>
-                      <SelectItem value="3">Reschedule</SelectItem>
-                      <SelectItem value="4">Cancelled</SelectItem>
+                      {appointmentDefaultOptions?.appointmentStatusList?.map(a=>{
+                        return <SelectItem value={a.Id?.toString()}>{a.Name}</SelectItem>
+                      })}
                     </SelectContent>
                   </Select>
                   <FormMessage />

@@ -37,6 +37,17 @@ export const appointmentFormSchema = z.object({
   comments: optionalString,
 });
 
+export const recheduleConfirmAppointmentFormSchema = z.object({
+  appointmentTime: requiredString,
+  status: requiredString,
+  comments: optionalString,
+});
+
+export const cancelAppointmentFormSchema = z.object({
+  status: requiredString,
+  comments: optionalString,
+});
+
 export const packageFormSchema = z.object({
   packageName: requiredString,
   chargePerSession: z
@@ -87,4 +98,28 @@ export const sessionTypeFormSchema = z.object({
           message: "Must be a valid positive number",
         })
     ),
+});
+
+export const checkoutPatientFormSchema = z.object({
+  packageId: optionalString,
+  sessionTypes: z.array(z.string()).optional(),
+  sessionCharges: z.union([z.string(), z.number()]).optional().transform((val) => {
+    if (val === undefined || val === "") return "";
+    return String(val);
+  }).refine((val) => {
+    if (!val || val === "") return true; // Optional field
+    return !isNaN(Number(val)) && Number(val) >= 0;
+  }, {
+    message: "Must be a valid positive number"
+  }),
+  paymentMode: optionalString,
+}).refine((data) => {
+  // If packageId is selected or sessionTypes has items, sessionCharges and paymentMode are required
+  if ((data.packageId && data.packageId !== "") || (data.sessionTypes && data.sessionTypes.length > 0)) {
+    return data.sessionCharges && data.sessionCharges !== "" && data.paymentMode && data.paymentMode !== "";
+  }
+  return true;
+}, {
+  message: "Session charges and payment mode are required when a package is selected or session types are chosen",
+  path: ["sessionCharges"], // This will show the error on the sessionCharges field
 });
