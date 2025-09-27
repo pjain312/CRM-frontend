@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import { addPatientLead } from "../services/leads-service";
+import { addPatientLead, updatePatientLeads } from "../services/leads-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -75,21 +75,30 @@ const AddLeadForm = ({ type, patient }) => {
   });
 
   const { mutate: editLead } = useMutation({
-    mutationFn: addPatientLead,
+    mutationFn: updatePatientLeads,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-leads"] });
       toast.success("Lead Edited Successfully");
+      form.reset(); // Reset form to show updated values
       setOpen(false);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Update error:", error);
       toast.error("Lead Failed to Edit");
     },
   });
 
   function onSubmit(values) {
     if (type === "edit") {
-      editLead(values);
+      // Include patient ID for update
+      const updatePayload = {
+        ...values,
+        id: patient.Id || patient.PatientId,
+      };
+      console.log("Updating patient lead with payload:", updatePayload);
+      editLead(updatePayload);
     } else {
+      console.log("Adding new patient lead with payload:", values);
       addLead(values);
     }
   }

@@ -16,13 +16,25 @@ import { getAllAppointments } from "../services/appointment-service";
 function PatientInfo({ title, patient }) {
   const [open, setOpen] = useState(false);
 
-  const { data: appointments } = useQuery({
+  const { data: appointmentsData } = useQuery({
     queryKey: ["patient-appointments"],
     queryFn: () =>
       getAllAppointments({ patientId: patient.Id || patient.PatientId }),
   });
 
-  console.log("Appointments", appointments);
+  // Handle different possible data structures from API
+  const appointments = Array.isArray(appointmentsData)
+    ? appointmentsData
+    : appointmentsData?.appointments || appointmentsData?.data || [];
+
+  console.log("Appointments Data", appointmentsData);
+  console.log("Data type:", typeof appointmentsData);
+  console.log("Is Array:", Array.isArray(appointmentsData));
+  console.log(
+    "Data keys:",
+    appointmentsData ? Object.keys(appointmentsData) : "null/undefined"
+  );
+  console.log("Processed Appointments", appointments);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -113,13 +125,15 @@ function PatientInfo({ title, patient }) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {appointments?.length === 0 ? (
+              {!appointments ||
+              !Array.isArray(appointments) ||
+              appointments.length === 0 ? (
                 <p className="text-muted-foreground text-center py-8">
                   No appointments found for this patient.
                 </p>
               ) : (
                 <div className="space-y-4">
-                  {appointments?.map((appointment) => (
+                  {appointments.map((appointment) => (
                     <div
                       key={appointment.AppointmentId}
                       className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"

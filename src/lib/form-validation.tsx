@@ -36,28 +36,52 @@ export const appointmentFormSchema = z.object({
 
 export const packageFormSchema = z.object({
   packageName: requiredString,
-  chargePerSession: z.union([z.string(), z.number()]).transform((val) => String(val)).pipe(
-    z.string().min(1, { message: "This field is required" }).refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-      message: "Must be a valid positive number"
-    })
-  ),
-  totalSession: z.union([z.string(), z.number()]).transform((val) => String(val)).pipe(
-    z.string().min(1, { message: "This field is required" }).refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-      message: "Must be a valid positive number"
-    })
-  ),
-  totalCost: z.union([z.string(), z.number()]).transform((val) => String(val)).pipe(
-    z.string().min(1, { message: "This field is required" }).refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-      message: "Must be a valid positive number"
-    })
-  ),
+  chargePerSession: z
+    .union([z.string(), z.number()])
+    .transform((val) => String(val))
+    .pipe(
+      z
+        .string()
+        .min(1, { message: "This field is required" })
+        .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+          message: "Must be a valid positive number",
+        })
+    ),
+  totalSession: z
+    .union([z.string(), z.number()])
+    .transform((val) => String(val))
+    .pipe(
+      z
+        .string()
+        .min(1, { message: "This field is required" })
+        .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+          message: "Must be a valid positive number",
+        })
+    ),
+  totalCost: z
+    .union([z.string(), z.number()])
+    .transform((val) => String(val))
+    .pipe(
+      z
+        .string()
+        .min(1, { message: "This field is required" })
+        .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+          message: "Must be a valid positive number",
+        })
+    ),
 });
 
 export const sessionTypeFormSchema = z.object({
   sessionName: requiredString,
-  chargePerSession: z.union([z.string(), z.number()]).transform((val) => String(val)).pipe(
-    z.string().min(1, { message: "This field is required" }).refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-      message: "Must be a valid positive number"
-    })
-  ),
+  chargePerSession: z
+    .union([z.string(), z.number()])
+    .transform((val) => String(val))
+    .pipe(
+      z
+        .string()
+        .min(1, { message: "This field is required" })
+        .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+          message: "Must be a valid positive number",
+        })
+    ),
 });
