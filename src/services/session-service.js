@@ -1,10 +1,8 @@
-import axios from "axios";
-
-const API_BASE_URL = "http://localhost:9005/sessions";
+import api from "../api/axiosUtil";
 
 export const checkinPatient = async (sessionData) => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "POST",
       url: `${API_BASE_URL}/checkInPatient`,
       data: sessionData,
@@ -18,7 +16,7 @@ export const checkinPatient = async (sessionData) => {
 
 export const startSession = async (sessionId) => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "PUT",
       url: `${API_BASE_URL}/startSession`,
       data: {sessionId},
@@ -32,7 +30,7 @@ export const startSession = async (sessionId) => {
 
 export const endSession = async (sessionId) => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "PUT",
       url: `${API_BASE_URL}/endSession`,
       data: {sessionId},
@@ -46,7 +44,7 @@ export const endSession = async (sessionId) => {
 
 export const getPatientDetailsForCheckout = async (sessionId) => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "GET",
       url: `${API_BASE_URL}/getPatientDetailsForCheckout`,
       params: sessionId,
@@ -61,7 +59,7 @@ export const getPatientDetailsForCheckout = async (sessionId) => {
 
 export const getAllPackagesAndSessionTypes = async () => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "GET",
       url: `${API_BASE_URL}/getAllPackagesAndSessionTypes`,
     });
@@ -74,7 +72,7 @@ export const getAllPackagesAndSessionTypes = async () => {
 
 export const checkoutPatient = async (checkoutData) => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "PUT",
       url: `${API_BASE_URL}/checkoutPatient`,
       data: checkoutData,

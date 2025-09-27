@@ -1,9 +1,9 @@
-import axios from "axios";
+import api from "../api/axiosUtil";
 
 const API_BASE_URL = "http://localhost:9005/packages";
 
 export const addPackage = async (packageData) => {
-  const response = await axios.request({
+  const response = await api.request({
     method: "POST",
     url: `${API_BASE_URL}/addPackage`,
     data: packageData,
@@ -12,7 +12,7 @@ export const addPackage = async (packageData) => {
 };
 
 export const updatePackage = async (packageData) => {
-  const response = await axios.request({
+  const response = await api.request({
     method: "PUT",
     url: `${API_BASE_URL}/updatePackage`,
     data: packageData,
@@ -22,7 +22,7 @@ export const updatePackage = async (packageData) => {
 
 export const getPackages = async () => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "GET",
       url: `${API_BASE_URL}/getPackages`,
     });
@@ -34,7 +34,7 @@ export const getPackages = async () => {
 
 export const getSessionTypes = async () => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "GET",
       url: `${API_BASE_URL}/getSessionTypes`,
     });
@@ -47,7 +47,7 @@ export const getSessionTypes = async () => {
 
 export const deletePackage = async (packageId) => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "DELETE",
       url: `${API_BASE_URL}/deletePackage`,
       data: {packageId}
@@ -59,7 +59,7 @@ export const deletePackage = async (packageId) => {
 };
 
 export const addSessionType = async (sessionTypeData) => {
-  const response = await axios.request({
+  const response = await api.request({
     method: "POST",
     url: `${API_BASE_URL}/addSessionTypes`,
     data: sessionTypeData,
@@ -68,7 +68,7 @@ export const addSessionType = async (sessionTypeData) => {
 };
 
 export const updateSessionType = async (sessionTypeData) => {
-  const response = await axios.request({
+  const response = await api.request({
     method: "PUT",
     url: `${API_BASE_URL}/updateSessionType`,
     data: sessionTypeData,
@@ -78,7 +78,7 @@ export const updateSessionType = async (sessionTypeData) => {
 
 export const deleteSessionType = async (sessionId) => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "DELETE",
       url: `${API_BASE_URL}/deleteSessionType`,
       data: {sessionId}

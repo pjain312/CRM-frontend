@@ -1,9 +1,9 @@
-import axios from "axios";
+import api from "../api/axiosUtil";
 
 const API_URL = "http://localhost:9005/patientLeads";
 
 export const addPatientLead = async (leadData) => {
-  const response = await axios.request({
+  const response = await api.request({
     method: "POST",
     url: `${API_URL}/addPatientLeads`,
     data: leadData,
@@ -12,7 +12,7 @@ export const addPatientLead = async (leadData) => {
 };
 
 export const updatePatientLeads = async (leadData) => {
-  const response = await axios.request({
+  const response = await api.request({
     method: "POST",
     url: `${API_URL}/updatePatientLeads`,
     data: leadData,
@@ -22,7 +22,7 @@ export const updatePatientLeads = async (leadData) => {
 
 export const getPatientLeads = async () => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "GET",
       url: `${API_URL}/getPatientLeads`,
     });
@@ -34,7 +34,7 @@ export const getPatientLeads = async () => {
 
 export const getRegisteredPatients = async () => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "GET",
       url: `${API_URL}/getRegisteredPatients`,
     });
@@ -46,7 +46,7 @@ export const getRegisteredPatients = async () => {
 
 export const getLeadDefaultOptions = async () => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "GET",
       url: `${API_URL}/getLeadsDetailsOptions`,
     });
@@ -58,7 +58,7 @@ export const getLeadDefaultOptions = async () => {
 
 export const getLeadDetailsForFollowUp = async (params) => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "GET",
       url: `${API_URL}/getLeadDetailsForFollowUp`,
       params: params,
@@ -71,7 +71,7 @@ export const getLeadDetailsForFollowUp = async (params) => {
 
 export const saveFollowUpData = async (data) => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "POST",
       url: `${API_URL}/addLeadsFollowUp`,
       data: data,
