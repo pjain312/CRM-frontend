@@ -97,21 +97,29 @@ const AddLeadForm = ({ type, patient, disabled = false }) => {
   });
 
   function onSubmit(values) {
+    const sanitizedValues = {
+      ...values,
+      assignedTo: values.assignedTo === "" ? null : values.assignedTo,
+    };
     if (type === "edit") {
       const updatePayload = {
-        ...values,
+        ...sanitizedValues,
         id: patient.Id || patient.PatientId,
       };
       editLead(updatePayload);
     } else if (type === "assign") {
-      const assignPayload = {
-        ...values,
-        id: patient.Id || patient.PatientId,
-        leadStatus: "2", // Automatically set status to Assigned
-      };
-      editLead(assignPayload);
+      if (values.assignedTo !== null) {
+        const assignPayload = {
+          ...sanitizedValues,
+          id: patient.Id || patient.PatientId,
+          leadStatus: "2",
+        };
+        editLead(assignPayload);
+      } else {
+        toast.warning("Please assign the lead to a clinic first");
+      }
     } else {
-      addLead(values);
+      addLead(sanitizedValues);
     }
   }
   return (

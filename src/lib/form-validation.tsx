@@ -26,7 +26,7 @@ export const leadFormSchema = z.object({
   leadStatus: optionalString,
   condition: optionalString,
   treatment: optionalString,
-  assignedTo: optionalString,
+  assignedTo: optionalString.transform((val) => (val === "" ? null : val)),
 });
 
 export const appointmentFormSchema = z.object({
