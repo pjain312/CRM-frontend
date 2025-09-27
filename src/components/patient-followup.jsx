@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -66,6 +67,9 @@ function PatientFollowup({ patient }) {
           <DialogTitle className="text-2xl font-semibold text-balance">
             Patient Follow-up
           </DialogTitle>
+          <DialogDescription>
+            Add follow-up notes and schedule next appointment for this patient.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -162,20 +166,33 @@ function PatientFollowup({ patient }) {
                   value={followupComment}
                   onChange={(e) => setFollowupComment(e.target.value)}
                   rows={4}
+                  disabled={followUpData?.FollowUpCount >= 3}
                   className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
                 />
+                {followUpData?.FollowUpCount === 3 && (
+                  <p className="text-sm text-muted-foreground">
+                    You have reached the maximum number of follow-ups. Comments
+                    are disabled.
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <label className="text-base font-medium">
                   Next Follow-up Date
                 </label>
-                <DatePicker
-                  date={nextFollowupDate}
-                  onDateChange={setNextFollowupDate}
-                  placeholder="Select next follow-up date"
-                  className="w-full"
-                />
+                {followUpData?.FollowUpCount >= 2 ? (
+                  <p className="text-sm text-muted-foreground">
+                    Date selection is disabled after two follow-ups.
+                  </p>
+                ) : (
+                  <DatePicker
+                    date={nextFollowupDate}
+                    onDateChange={setNextFollowupDate}
+                    placeholder="Select next follow-up date"
+                    className="w-full"
+                  />
+                )}
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 pt-4">
