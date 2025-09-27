@@ -35,7 +35,7 @@ import { addPatientLead, updatePatientLeads } from "../services/leads-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-const AddLeadForm = ({ type, patient }) => {
+const AddLeadForm = ({ type, patient, disabled = false }) => {
   const [open, setOpen] = useState(false);
 
   const form = useForm({
@@ -78,13 +78,21 @@ const AddLeadForm = ({ type, patient }) => {
     mutationFn: updatePatientLeads,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-leads"] });
-      toast.success("Lead Edited Successfully");
+      if (type === "assign") {
+        toast.success("Lead Assigned Successfully");
+      } else {
+        toast.success("Lead Edited Successfully");
+      }
       form.reset(); // Reset form to show updated values
       setOpen(false);
     },
     onError: (error) => {
       console.error("Update error:", error);
-      toast.error("Lead Failed to Edit");
+      if (type === "assign") {
+        toast.error("Lead Failed to Assign");
+      } else {
+        toast.error("Lead Failed to Edit");
+      }
     },
   });
 
@@ -95,6 +103,13 @@ const AddLeadForm = ({ type, patient }) => {
         id: patient.Id || patient.PatientId,
       };
       editLead(updatePayload);
+    } else if (type === "assign") {
+      const assignPayload = {
+        ...values,
+        id: patient.Id || patient.PatientId,
+        leadStatus: "2", // Automatically set status to Assigned
+      };
+      editLead(assignPayload);
     } else {
       addLead(values);
     }
@@ -102,14 +117,17 @@ const AddLeadForm = ({ type, patient }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
+        disabled={disabled}
         className={` ${
-          type === "edit"
-            ? "w-full py-1.5 px-2 flex hover:bg-accent font-normal  text-sm rounded-sm "
+          type === "edit" || type === "assign"
+            ? "w-full py-1.5 px-2 flex hover:bg-accent font-normal  text-sm rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
             : ""
         }`}
       >
         {type === "edit" ? (
           "Edit Patient"
+        ) : type === "assign" ? (
+          "Assign Lead"
         ) : (
           <div className="flex items-center hover:bg-accent text-sm border px-2 py-2 lg:py-1.5 rounded-sm gap-1">
             <IconPlus size={16} />
@@ -120,7 +138,11 @@ const AddLeadForm = ({ type, patient }) => {
       <DialogContent className="sm:max-w-[425px] md:max-w-[525px] lg:max-w-[625px]">
         <DialogHeader>
           <DialogTitle>
-            {type === "edit" ? "Edit Patient" : "Add New Lead"}
+            {type === "edit"
+              ? "Edit Patient"
+              : type === "assign"
+              ? "Assign Lead"
+              : "Add New Lead"}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>

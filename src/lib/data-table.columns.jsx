@@ -127,7 +127,9 @@ export const leadsColumns = [
         .toString()
         .toLowerCase();
       const isAssignedOrClosed =
-        statusName === "assigned" || statusName === "closed";
+        statusName === "assigned" ||
+        statusName === "closed" ||
+        statusName === "2";
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -145,8 +147,12 @@ export const leadsColumns = [
             <DropdownMenuItem asChild>
               <PatientFollowup patient={row.original} />
             </DropdownMenuItem>
-            <DropdownMenuItem disabled={isAssignedOrClosed}>
-              Assigned Lead
+            <DropdownMenuItem asChild disabled={isAssignedOrClosed}>
+              <AddLeadForm
+                type="assign"
+                patient={row.original}
+                disabled={isAssignedOrClosed}
+              />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -259,7 +265,9 @@ export const patientListsColumns = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit Patient</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <AddLeadForm type="edit" patient={row.original} />
+            </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <ScheduleAppointmentForm patient={row.original} />
             </DropdownMenuItem>

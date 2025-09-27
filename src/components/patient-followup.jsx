@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -66,6 +67,9 @@ function PatientFollowup({ patient }) {
           <DialogTitle className="text-2xl font-semibold text-balance">
             Patient Follow-up
           </DialogTitle>
+          <DialogDescription>
+            Add follow-up notes and schedule next appointment for this patient.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">

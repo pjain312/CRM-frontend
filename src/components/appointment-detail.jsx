@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -57,6 +58,9 @@ function AppointmentDetail({ appointment, patient, open, onOpenChange }) {
           <DialogTitle className="text-2xl font-semibold text-balance">
             Appointment Details
           </DialogTitle>
+          <DialogDescription>
+            View detailed information about this appointment and patient.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
