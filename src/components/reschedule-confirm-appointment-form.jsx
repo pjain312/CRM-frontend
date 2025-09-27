@@ -34,7 +34,7 @@ import { Textarea } from "./ui/textarea";
 
 import { toast } from "sonner";
 
-const RescheduleConfirmAppointmentForm = ({ appointment }) => {
+const RescheduleConfirmAppointmentForm = ({ appointment, openIcon, onOpenIconChange, notDialogTrigger}) => {
   const [open, setOpen] = useState(false);
 
   const { data: appointmentDefaultOptions } = useQuery({
@@ -56,8 +56,12 @@ const RescheduleConfirmAppointmentForm = ({ appointment }) => {
     mutationFn: updateAppointment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["all-appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["appointment-today"] });
       toast.success(`Appointment ${appointment?.Status === "Pending" ? "Confirmed" : "Rescheduled"} Successfully`);
       setOpen(false);
+      if (openIcon && onOpenIconChange) {
+        onOpenIconChange(false);
+      }
     },
     onError: () => {
       toast.error(`Appointment Failed to ${appointment?.Status === "Pending" ? "Confirm" : "Reschedule"}`);
@@ -67,12 +71,16 @@ const RescheduleConfirmAppointmentForm = ({ appointment }) => {
   function onSubmit(values) {
     mutate({ ...values, appointmentId: appointment.AppointmentId });
   }
+  const onOpenChange = ()=>{
+    setOpen(false);
+    openIcon && onOpenIconChange(false)
+  }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="flex px-2 hover:bg-accent font-normal py-1.5 text-sm rounded-sm">
+    <Dialog open={open || openIcon} onOpenChange={onOpenChange}>
+      {!notDialogTrigger && <DialogTrigger className="flex px-2 hover:bg-accent font-normal py-1.5 text-sm rounded-sm">
         {appointment?.Status === "Pending" ? "Confirm Appointment" : "Reschedule Appointment"}
-      </DialogTrigger>
+      </DialogTrigger>}
       <DialogContent className="sm:max-w-[425px] md:max-w-[525px] lg:max-w-[625px]">
         <DialogHeader>
           <DialogTitle>{appointment?.Status === "Pending" ? "Confirm Appointment" : "Reschedule Appointment"}          </DialogTitle>

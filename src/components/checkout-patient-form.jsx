@@ -134,7 +134,7 @@ const CheckoutPatientForm = ({ session, open, onOpenChange }) => {
               </div>
               <div>
                 <span className="text-sm font-medium text-gray-600">Session Duration</span>
-                <p className="text-sm">{ `${patientCheckoutDetails.SessionDuration} minutes`|| 'N/A'}</p>
+                <p className="text-sm">{ `${patientCheckoutDetails.SessionStartTime} - ${patientCheckoutDetails.SessionEndTime} (${patientCheckoutDetails.SessionDuration} minutes)`|| 'N/A'}</p>
               </div>
               {patientCheckoutDetails?.PackageId ? <>
               

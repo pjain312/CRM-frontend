@@ -6,8 +6,8 @@ import PatientList from "./pages/PatientList/PatientList";
 import Appointment from "./pages/Appointment/Appointment";
 import Packages from "./pages/Packages/Packages";
 import SessionTypes from "./pages/SessionTypes/SessionTypes";
+import Dashboard from "./pages/Dashboard/Dashboard";
 
-const Dashboard = () => <p>Dashboard</p>;
 const PhysioOverview = () => <p>Physio Overview</p>;
 
 function App() {
