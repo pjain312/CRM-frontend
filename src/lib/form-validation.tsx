@@ -34,6 +34,17 @@ export const appointmentFormSchema = z.object({
   comments: optionalString,
 });
 
+export const recheduleConfirmAppointmentFormSchema = z.object({
+  appointmentTime: requiredString,
+  status: requiredString,
+  comments: optionalString,
+});
+
+export const cancelAppointmentFormSchema = z.object({
+  status: requiredString,
+  comments: optionalString,
+});
+
 export const packageFormSchema = z.object({
   packageName: requiredString,
   chargePerSession: z.union([z.string(), z.number()]).transform((val) => String(val)).pipe(

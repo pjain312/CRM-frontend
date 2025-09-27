@@ -4,9 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllAppointments } from "../../services/appointment-service";
 import { appointmentsColumns } from "../../lib/data-table.columns";
 
-const Leads = () => {
+const Appointment = () => {
   const { data: appointments, isLoading } = useQuery({
-    queryKey: ["patient-leads"],
+    queryKey: ["all-appointments"],
     queryFn: getAllAppointments,
   });
   console.log(appointments);
@@ -19,4 +19,4 @@ const Leads = () => {
   );
 };
 
-export default Leads;
+export default Appointment;

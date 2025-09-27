@@ -26,11 +26,9 @@ function PatientInfo({ title, patient }) {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Scheduled":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400";
       case "Confirmed":
         return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400";
-      case "Rescheduled":
+      case "Pending":
         return "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:orange-blue-400";
       case "Cancelled":
         return "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400";

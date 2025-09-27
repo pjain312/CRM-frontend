@@ -19,10 +19,13 @@ import PatientInfo from "../components/patient-info";
 import AddLeadForm from "../components/add-lead-form";
 import PatientFollowup from "../components/patient-followup";
 import AddPackageForm from "../components/add-package-form";
+import RescheduleConfirmAppointmentForm from "../components/reschedule-confirm-appointment-form";
 import AddSessionTypeForm from "../components/add-session-type-form";
 import { deletePackage, deleteSessionType } from "../services/packages-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { checkinPatient, endSession, startSession } from "../services/session-service";
+import CancelAppointmentForm from "../components/cancel-appointment-form";
 
 export const leadsColumns = [
   {
@@ -343,6 +346,52 @@ export const appointmentsColumns = [
     header: () => "Actions",
     enableHiding: false,
     cell: ({ row }) => {
+      const queryClient = useQueryClient();
+      
+      const { mutate: checkinPatientMutation } = useMutation({
+        mutationFn: checkinPatient,
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["all-appointments"] });
+          toast.success("Patient checked in successfully");
+        },
+        onError: () => {
+          toast.error("Failed to check in patient");
+        },
+      });
+
+      const { mutate: startSessionMutation } = useMutation({
+        mutationFn: startSession,
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["all-appointments"] });
+          toast.success("Session started successfully");
+        },
+        onError: () => {
+          toast.error("Failed to start session");
+        },
+      });
+
+      const { mutate: endSessionMutation } = useMutation({
+        mutationFn: endSession,
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["all-appointments"] });
+          toast.success("Session ended successfully");
+        },
+        onError: () => {
+          toast.error("Failed to end session");
+        },
+      });
+
+      const handlePatientCheckin = () => {
+        checkinPatientMutation({patientId: row.original.PatientId, appointmentId: row.original.AppointmentId});
+      }
+
+      const handleStartSession = () =>{
+        startSessionMutation(row.original.SessionId)
+      }
+
+      const handleEndSession = () =>{
+        endSessionMutation(row.original.SessionId)
+      }
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -360,8 +409,16 @@ export const appointmentsColumns = [
                 patient={row.original}
               />
             </DropdownMenuItem>
-            <DropdownMenuItem>Reschedule Appointment</DropdownMenuItem>
-            <DropdownMenuItem>Cancel Appointment</DropdownMenuItem>
+            {row.original.Status !== "Cancelled" && !row.original.IsPatientCheckedIn && <DropdownMenuItem asChild> 
+              <RescheduleConfirmAppointmentForm appointment={row.original} />
+            </DropdownMenuItem>}
+            {row.original.Status !== "Cancelled" && !row.original.IsPatientCheckedIn &&
+              <DropdownMenuItem asChild>
+                <CancelAppointmentForm appointment={row.original} />
+              </DropdownMenuItem>}
+            {row.original.Status === "Confirmed" && !row.original.IsPatientCheckedIn ? <DropdownMenuItem onClick = {handlePatientCheckin}>Checkin Patient</DropdownMenuItem>: null}
+            {(row.original.Status === "Confirmed" && row.original.IsPatientCheckedIn && !row.original.StartTime) ? <DropdownMenuItem onClick ={handleStartSession} >Start Session</DropdownMenuItem>: null}
+            {(row.original.Status === "Confirmed" && row.original.StartTime) ? <DropdownMenuItem onClick = {handleEndSession} >End Session</DropdownMenuItem>: null}
           </DropdownMenuContent>
         </DropdownMenu>
       );
