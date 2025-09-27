@@ -23,6 +23,7 @@ import AddSessionTypeForm from "../components/add-session-type-form";
 import { deletePackage, deleteSessionType } from "../services/packages-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import AppointmentDetail from "../components/appointment-detail";
 
 export const leadsColumns = [
   {
@@ -362,8 +363,8 @@ export const appointmentsColumns = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <PatientInfo
-                title="Appointment Information"
+              <AppointmentDetail
+                appointment={row.original}
                 patient={row.original}
               />
             </DropdownMenuItem>
@@ -402,7 +403,9 @@ export const packagesColumns = [
   {
     accessorKey: "Name",
     header: "Package Name",
-    cell: ({ row }) => <div className="font-medium">{row.getValue("Name")}</div>,
+    cell: ({ row }) => (
+      <div className="font-medium">{row.getValue("Name")}</div>
+    ),
   },
   {
     accessorKey: "ChargePerSession",
@@ -438,7 +441,7 @@ export const packagesColumns = [
     enableHiding: false,
     cell: ({ row }) => {
       const queryClient = useQueryClient();
-      
+
       const { mutate: deletePackageMutation } = useMutation({
         mutationFn: deletePackage,
         onSuccess: () => {
@@ -504,7 +507,9 @@ export const sessionTypesColumns = [
   {
     accessorKey: "SessionName",
     header: "Session Type Name",
-    cell: ({ row }) => <div className="font-medium">{row.getValue("SessionName")}</div>,
+    cell: ({ row }) => (
+      <div className="font-medium">{row.getValue("SessionName")}</div>
+    ),
   },
   {
     accessorKey: "ChargePerSession",
@@ -523,7 +528,7 @@ export const sessionTypesColumns = [
     enableHiding: false,
     cell: ({ row }) => {
       const queryClient = useQueryClient();
-      
+
       const { mutate: deleteSessionTypeMutation } = useMutation({
         mutationFn: deleteSessionType,
         onSuccess: () => {

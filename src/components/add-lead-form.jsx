@@ -90,15 +90,12 @@ const AddLeadForm = ({ type, patient }) => {
 
   function onSubmit(values) {
     if (type === "edit") {
-      // Include patient ID for update
       const updatePayload = {
         ...values,
         id: patient.Id || patient.PatientId,
       };
-      console.log("Updating patient lead with payload:", updatePayload);
       editLead(updatePayload);
     } else {
-      console.log("Adding new patient lead with payload:", values);
       addLead(values);
     }
   }
@@ -153,7 +150,7 @@ const AddLeadForm = ({ type, patient }) => {
                 <FormItem>
                   <FormLabel>Age</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter age" {...field} />
+                    <Input type="number" placeholder="Enter age" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

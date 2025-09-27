@@ -8,7 +8,10 @@ export const requiredString = z
 
 export const leadFormSchema = z.object({
   name: requiredString,
-  age: requiredString,
+  age: z
+    .union([z.string(), z.number()])
+    .transform((val) => Number(val))
+    .pipe(z.number().min(1, { message: "This field is required" })),
   gender: requiredString,
   email: requiredString,
   phoneNumber: optionalString,
