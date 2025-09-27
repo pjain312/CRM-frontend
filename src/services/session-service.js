@@ -43,3 +43,45 @@ export const endSession = async (sessionId) => {
     throw error; 
   }
 };
+
+export const getPatientDetailsForCheckout = async (sessionId) => {
+  try {
+    const response = await axios.request({
+      method: "GET",
+      url: `${API_BASE_URL}/getPatientDetailsForCheckout`,
+      params: sessionId,
+    });
+    return response.data.data;
+  } catch (error) {
+    console.warn("API data not available", error.message);
+    throw error; 
+  }
+};
+
+
+export const getAllPackagesAndSessionTypes = async () => {
+  try {
+    const response = await axios.request({
+      method: "GET",
+      url: `${API_BASE_URL}/getAllPackagesAndSessionTypes`,
+    });
+    return response.data.data;
+  } catch (error) {
+    console.warn("API data not available", error.message);
+    throw error; 
+  }
+};
+
+export const checkoutPatient = async (checkoutData) => {
+  try {
+    const response = await axios.request({
+      method: "PUT",
+      url: `${API_BASE_URL}/checkoutPatient`,
+      data: checkoutData,
+    });
+    return response.data.data;
+  } catch (error) {
+    console.warn("API data not available", error.message);
+    throw error; 
+  }
+};

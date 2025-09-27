@@ -26,6 +26,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { checkinPatient, endSession, startSession } from "../services/session-service";
 import CancelAppointmentForm from "../components/cancel-appointment-form";
+import CheckoutPatientForm from "../components/checkout-patient-form";
 
 export const leadsColumns = [
   {
@@ -346,6 +347,7 @@ export const appointmentsColumns = [
     header: () => "Actions",
     enableHiding: false,
     cell: ({ row }) => {
+      const [checkoutOpen, setCheckoutOpen] = React.useState(false);
       const queryClient = useQueryClient();
       
       const { mutate: checkinPatientMutation } = useMutation({
@@ -391,36 +393,45 @@ export const appointmentsColumns = [
 
       const handleEndSession = () =>{
         endSessionMutation(row.original.SessionId)
+        setCheckoutOpen(true);
       }
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <PatientInfo
-                title="Appointment Information"
-                patient={row.original}
-              />
-            </DropdownMenuItem>
-            {row.original.Status !== "Cancelled" && !row.original.IsPatientCheckedIn && <DropdownMenuItem asChild> 
-              <RescheduleConfirmAppointmentForm appointment={row.original} />
-            </DropdownMenuItem>}
-            {row.original.Status !== "Cancelled" && !row.original.IsPatientCheckedIn &&
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <CancelAppointmentForm appointment={row.original} />
+                <PatientInfo
+                  title="Appointment Information"
+                  patient={row.original}
+                />
+              </DropdownMenuItem>
+              {row.original.Status !== "Cancelled" && !row.original.IsPatientCheckedIn && <DropdownMenuItem asChild> 
+                <RescheduleConfirmAppointmentForm appointment={row.original} />
               </DropdownMenuItem>}
-            {row.original.Status === "Confirmed" && !row.original.IsPatientCheckedIn ? <DropdownMenuItem onClick = {handlePatientCheckin}>Checkin Patient</DropdownMenuItem>: null}
-            {(row.original.Status === "Confirmed" && row.original.IsPatientCheckedIn && !row.original.StartTime) ? <DropdownMenuItem onClick ={handleStartSession} >Start Session</DropdownMenuItem>: null}
-            {(row.original.Status === "Confirmed" && row.original.StartTime) ? <DropdownMenuItem onClick = {handleEndSession} >End Session</DropdownMenuItem>: null}
-          </DropdownMenuContent>
-        </DropdownMenu>
+              {row.original.Status !== "Cancelled" && !row.original.IsPatientCheckedIn &&
+                <DropdownMenuItem asChild>
+                  <CancelAppointmentForm appointment={row.original} />
+                </DropdownMenuItem>}
+              {row.original.Status === "Confirmed" && !row.original.IsPatientCheckedIn ? <DropdownMenuItem onClick = {handlePatientCheckin}>Checkin Patient</DropdownMenuItem>: null}
+              {(row.original.Status === "Confirmed" && row.original.IsPatientCheckedIn && !row.original.StartTime) ? <DropdownMenuItem onClick ={handleStartSession} >Start Session</DropdownMenuItem>: null}
+              {(row.original.Status === "Confirmed" && row.original.StartTime && !row.original.EndTime) ? <DropdownMenuItem onClick = {handleEndSession} >End Session</DropdownMenuItem>: null}
+              {(row.original.Status === "Confirmed" && row.original.EndTime && !row.original.IsInvoiceGenerated) ? 
+              <DropdownMenuItem asChild >
+                <CheckoutPatientForm session={row.original} open={checkoutOpen} onOpenChange={setCheckoutOpen} />
+              </DropdownMenuItem>: null}
+              {(row.original.IsInvoiceGenerated) ? <DropdownMenuItem > View invoice </DropdownMenuItem>: null}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {checkoutOpen && <CheckoutPatientForm session={row.original} open={checkoutOpen} onOpenChange={setCheckoutOpen} />}
+        </>
       );
     },
   },
@@ -609,6 +620,7 @@ export const sessionTypesColumns = [
           </DropdownMenuContent>
         </DropdownMenu>
       );
+      
     },
   },
 ];
