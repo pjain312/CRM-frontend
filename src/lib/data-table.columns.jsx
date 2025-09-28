@@ -31,6 +31,7 @@ import CheckoutPatientForm from "../components/checkout-patient-form";
 import { getPatientPrescription } from "../components/prescription";
 import PackageInvoice from "../components/package-invoice";
 import DailyInvoice from "../components/daily-invoice";
+import ClosePatientForm from "../components/close-patient-form";
 
 export const leadsColumns = [
   {
@@ -263,6 +264,9 @@ export const patientListsColumns = [
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <PatientInfo title="Patient Information" patient={row.original} />
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <ClosePatientForm  leadData={row.original}/>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

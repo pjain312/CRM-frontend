@@ -49,6 +49,10 @@ export const cancelAppointmentFormSchema = z.object({
   comments: optionalString,
 });
 
+export const closePatientFormSchema = z.object({
+  closeReason: requiredString
+});
+
 export const packageFormSchema = z.object({
   packageName: requiredString,
   chargePerSession: z

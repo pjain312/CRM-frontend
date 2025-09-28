@@ -81,3 +81,17 @@ export const saveFollowUpData = async (data) => {
     console.warn("API data not available", error.message);
   }
 };
+
+export const closePatient = async (data) => {
+  try {
+    const response = await axios.request({
+      method: "POST",
+      url: `${API_URL}/closePatient`,
+      data: data,
+    });
+    return response.data.data;
+  } catch (error) {
+    console.warn("API data not available", error.message);
+  }
+};
+
