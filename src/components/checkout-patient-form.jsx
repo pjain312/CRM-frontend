@@ -64,7 +64,7 @@ const CheckoutPatientForm = ({ session, open, onOpenChange }) => {
   const { mutate } = useMutation({
     mutationFn: checkoutPatient,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["patient-checkout-details", "all-appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["patient-checkout-details"], queryKey: ["all-appointments"], queryKey: ["appointment-today"] });
       toast.success("Patient CheckedOut Successfully");
       setIsOpen(false);
     },

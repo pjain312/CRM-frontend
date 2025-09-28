@@ -2,13 +2,17 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CalendarCheck2, CalendarSync, CalendarX, CalendarX2, CheckCircle, Clock, Hourglass, Timer, TimerOff, UserRoundPlus } from "lucide-react";
 import { useState } from "react";
 import RescheduleConfirmAppointmentForm from "../../components/reschedule-confirm-appointment-form";
+import CancelAppointmentForm from "../../components/cancel-appointment-form";
 import { Avatar, AvatarFallback } from "../../components/ui/avatar";
 import { Card, CardContent } from "../../components/ui/card";
-import { checkinPatient, startSession } from "../../services/session-service";
+import { checkinPatient, endSession, startSession } from "../../services/session-service";
 import { toast } from "sonner";
+import CheckoutPatientForm from "../../components/checkout-patient-form";
 
 const AppointmentCard = ({appointmentData, value}) =>{
     const [rescheduleOpen, setRescheduleOpen] = useState(false);
+    const [checkoutOpen, setCheckoutOpen] = useState(false);
+    const [cancelFormOpen, setCancelFormOpen] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const queryClient = useQueryClient();
 
@@ -31,6 +35,17 @@ const AppointmentCard = ({appointmentData, value}) =>{
         },
         onError: () => {
           toast.error("Failed to start session");
+        },
+      });
+
+      const { mutate: endSessionMutation } = useMutation({
+        mutationFn: endSession,
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["appointment-today"] });
+          toast.success("Session ended successfully");
+        },
+        onError: () => {
+          toast.error("Failed to end session");
         },
       });
 
@@ -62,18 +77,18 @@ const AppointmentCard = ({appointmentData, value}) =>{
         startSessionMutation(appt.SessionId)
       }
 
+      const handleEndSession = (appt) =>{
+        setSelectedAppointment(appt)
+        endSessionMutation(appt.SessionId)
+        setCheckoutOpen(true);
+      }
+
     return(
         <>
-        <div className="space-y-4 max-h-96 overflow-y-auto">
+        <div className="space-y-4 max-h-150 overflow-y-auto">
             {appointmentData?.map((appointment) => {
                 return (
                     <Card key={appointment.AppointmentId} className="p-4 shadow-sm w-full max-w-2xl relative">
-                        <div 
-                            title="Cancel Appointment" 
-                            className="absolute top-2 right-2 cursor-pointer"
-                        >
-                            <CalendarX2 className="h-3 w-3" color="red"/>
-                        </div>
 
                         <CardContent className="flex items-center gap-4 p-0">
                             {/* Avatar Section */}
@@ -86,7 +101,12 @@ const AppointmentCard = ({appointmentData, value}) =>{
                             <div className="flex-1 space-y-1">
                                 <div className="flex items-center gap-2">
                                     <span className="font-semibold text-gray-900">
-                                        {appointment.Gender === "Male" ? "Mr.": "Ms."}{appointment.Name}
+                                        {appointment.Gender === "Male" ? "Mr.": "Ms."} {appointment.Name}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-gray-500">
+                                        {"Dr."} {appointment.PhysioName}
                                     </span>
                                 </div>
 
@@ -114,6 +134,14 @@ const AppointmentCard = ({appointmentData, value}) =>{
                                             {appointment.Status}
                                         </span>
                                     </div>
+                                    <div className="flex items-center gap-2 text-sm">
+                                        <span className="px-2 py-1 rounded-full cursor-pointer text-xs font-medium bg-red-100 text-red-600" onClick={() => {
+                                            setSelectedAppointment(appointment);
+                                            setCancelFormOpen(true);
+                                        }}>
+                                            Cancel Appointment
+                                        </span>
+                                    </div>
                                     </>
                                 }
 
@@ -127,7 +155,6 @@ const AppointmentCard = ({appointmentData, value}) =>{
                                 </div>}
                             </div>
 
-                            {/* Action Icon */}
                             <div className="flex-shrink-0 flex">
                                 {!!(appointment.StatusId == 1 && !appointment.IsPatientCheckedIn) && <div 
                                     title = "Reschedule Appointment" 
@@ -139,9 +166,17 @@ const AppointmentCard = ({appointmentData, value}) =>{
                                 >
                                     <CalendarSync className="h-5 w-5 text-white" />
                                 </div>}
-                                {!!(appointment.StatusId == 2 && !appointment.IsPatientCheckedIn) && <div title = "Confirm Appointment" className="h-8 w-8 bg-green-300 rounded-full flex items-center justify-center mr-2">
-                                    <CalendarCheck2 className="h-5 w-5 text-white" />
-                                </div>}
+                                {!!(appointment.StatusId == 2 && !appointment.IsPatientCheckedIn) && 
+                                    <div title = "Confirm Appointment" 
+                                        onClick={() => {
+                                        setSelectedAppointment(appointment);
+                                        setRescheduleOpen(true);
+                                         }}
+                                        className="h-8 w-8 cursor-pointner bg-green-300 rounded-full flex items-center hover:bg-green-400 justify-center mr-2 cursor-pointer hover:bg-green-400 transition-colors"
+                                    >
+                                        <CalendarCheck2 className="h-5 w-5 text-white" />
+                                    </div>
+                                }
                                 {!!(appointment.StatusId == 1 && !appointment.IsPatientCheckedIn) && <div title = "Checkin Patient" className="h-8 w-8 bg-green-300 cursor-pointer rounded-full flex items-center hover:bg-green-400 justify-center mr-2" onClick={() => handlePatientCheckin(appointment)}>
                                     <UserRoundPlus className="h-5 w-5 text-white" />
                                 </div>}
@@ -150,9 +185,11 @@ const AppointmentCard = ({appointmentData, value}) =>{
                                         <Timer className="h-5 w-5 text-white" />
                                     </div>
                                 }
-                                {!!(appointment.StartTime && !appointment.EndTime) &&<div title = "End Session" className="h-8 w-8 bg-green-300 rounded-full flex items-center justify-center mr-2">
-                                    <TimerOff className="h-5 w-5 text-white" />
-                                </div>}
+                                {!!(appointment.StartTime && !appointment.EndTime) &&
+                                    <div title = "End Session" onClick={()=>handleEndSession(appointment)} className="h-8 w-8 bg-green-300 cursor-pointer hover:bg-green-400 rounded-full flex items-center justify-center mr-2">
+                                        <TimerOff className="h-5 w-5 text-white" />
+                                    </div>
+                                }
                                 {/* {!!(appointment.EndTime && !appointment.IsInvoiceGenerated) && <div title = "Checkout Patient" className="h-8 w-8 bg-green-300 rounded-full flex items-center justify-center mr-2">
                                     <UserCheck className="h-5 w-5 text-white" />
                                 </div>} */}
@@ -171,6 +208,9 @@ const AppointmentCard = ({appointmentData, value}) =>{
                 notDialogTrigger={true}
             />
         )}
+        {cancelFormOpen && selectedAppointment && <CancelAppointmentForm notDialogTrigger = {true} openIcon = {cancelFormOpen} onOpenIconChange={setCancelFormOpen} appointment={selectedAppointment} />}
+
+        {checkoutOpen && <CheckoutPatientForm session={selectedAppointment} open={checkoutOpen} onOpenChange={setCheckoutOpen} />}
     </>
     )
 }

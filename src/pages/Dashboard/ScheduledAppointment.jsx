@@ -15,7 +15,7 @@ import AppointmentCard from "./AppointmentCard"
 
 const ScheduledAppointment = ({appointmentDetails}) => {
   return (
-    <Card className="w-full max-w-sm mt-6">
+    <Card className="w-full max-w-md mt-6">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Calendar className="h-5 w-5" />

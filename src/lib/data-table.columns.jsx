@@ -84,16 +84,6 @@ export const leadsColumns = [
     cell: ({ row }) => <div>{row.getValue("City")}</div>,
   },
   {
-    accessorKey: "Condition",
-    header: () => "Condition",
-    cell: ({ row }) => <div>{row.getValue("Condition")}</div>,
-  },
-  {
-    accessorKey: "Treatment",
-    header: () => "Treatment",
-    cell: ({ row }) => <div>{row.getValue("Treatment")}</div>,
-  },
-  {
     accessorKey: "LeadStatusName",
     header: () => "Status",
     cell: ({ row }) => (
@@ -107,11 +97,6 @@ export const leadsColumns = [
         {row.getValue("LeadStatusName")}
       </Badge>
     ),
-  },
-  {
-    accessorKey: "SourceName",
-    header: () => "Source",
-    cell: ({ row }) => <div>{row.getValue("SourceName")}</div>,
   },
   {
     accessorKey: "PhysioPreferenceName",
@@ -250,11 +235,6 @@ export const patientListsColumns = [
     cell: ({ row }) => <div>{row.getValue("AssignedToName")}</div>,
   },
   {
-    accessorKey: "LastVisit",
-    header: () => "Last Visit",
-    cell: ({ row }) => <div>{row.getValue("LastVisit")}</div>,
-  },
-  {
     id: "actions",
     header: () => "Actions",
     enableHiding: false,
@@ -272,6 +252,9 @@ export const patientListsColumns = [
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <AddLeadForm type="edit" patient={row.original} />
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {getPatientPrescription(row.original)}}>
+                Generate Prescription
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <ScheduleAppointmentForm patient={row.original} />
@@ -438,10 +421,6 @@ export const appointmentsColumns = [
                   <CancelAppointmentForm appointment={row.original} />
                 </DropdownMenuItem>}
               {row.original.Status === "Confirmed" && !row.original.IsPatientCheckedIn ? <DropdownMenuItem onClick = {handlePatientCheckin}>Checkin Patient</DropdownMenuItem>: null}
-              {(row.original.Status === "Confirmed" && row.original.IsPatientCheckedIn && !row.original.StartTime) ?              <DropdownMenuItem onClick={() => {getPatientPrescription(row.original)}}>
-                Generate Prescription
-              </DropdownMenuItem>: null
-              }
               {(row.original.Status === "Confirmed" && row.original.IsPatientCheckedIn && !row.original.StartTime) ? <DropdownMenuItem onClick ={handleStartSession} >Start Session</DropdownMenuItem>: null}
               {(row.original.Status === "Confirmed" && row.original.StartTime && !row.original.EndTime) ? <DropdownMenuItem onClick = {handleEndSession} >End Session</DropdownMenuItem>: null}
               {(row.original.Status === "Confirmed" && row.original.EndTime && !row.original.IsInvoiceGenerated) ? 

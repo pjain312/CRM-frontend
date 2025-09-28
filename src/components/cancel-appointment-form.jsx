@@ -26,7 +26,7 @@ import { Textarea } from "./ui/textarea";
 
 import { toast } from "sonner";
 
-const CancelAppointmentForm = ({ appointment }) => {
+const CancelAppointmentForm = ({ appointment, notDialogTrigger, openIcon, onOpenIconChange}) => {
   const [open, setOpen] = useState(false);
   const form = useForm({
     resolver: zodResolver(cancelAppointmentFormSchema),
@@ -40,9 +40,10 @@ const CancelAppointmentForm = ({ appointment }) => {
   const { mutate } = useMutation({
     mutationFn: updateAppointment,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["all-appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["all-appointments"], queryKey: ["appointment-today"] });
       toast.success(`Appointment Cancelled Successfully`);
       setOpen(false);
+      if(onOpenIconChange) onOpenIconChange(false)
     },
     onError: () => {
       toast.error(`Appointment Failed to Cancelled`);
@@ -53,11 +54,16 @@ const CancelAppointmentForm = ({ appointment }) => {
     mutate({ ...values, appointmentId: appointment.AppointmentId, status: "3" });
   }
 
+  const setDialogOpen = () => {
+    setOpen(false)
+    if(onOpenIconChange) onOpenIconChange(false)
+  }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="flex px-2 hover:bg-accent font-normal py-1.5 text-sm rounded-sm">
+    <Dialog open={open || openIcon} onOpenChange={setDialogOpen}>
+      {!notDialogTrigger && <DialogTrigger className="flex px-2 hover:bg-accent font-normal py-1.5 text-sm rounded-sm">
         Cancel Appointment
-      </DialogTrigger>
+      </DialogTrigger>}
       <DialogContent className="sm:max-w-[425px] md:max-w-[525px] lg:max-w-[625px]">
         <DialogHeader>
           <DialogTitle>Cancel Appointment</DialogTitle>

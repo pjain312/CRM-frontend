@@ -38,7 +38,7 @@ import { addAppointment, getAppointmentDefaultOptions } from "../services/appoin
 
 import { toast } from "sonner";
 
-const ScheduleAppointmentForm = ({ patient }) => {
+const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialogTrigger }) => {
   const [open, setOpen] = useState(false);
 
   const { data: appointmentDefaultOptions } = useQuery({
@@ -65,6 +65,7 @@ const ScheduleAppointmentForm = ({ patient }) => {
       queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
       toast.success("Appointment Scheduled Successfully");
       setOpen(false);
+      onOpenIconChange && onOpenIconChange(false)
     },
     onError: () => {
       toast.error("Appointment Failed to Schedule");
@@ -75,11 +76,18 @@ const ScheduleAppointmentForm = ({ patient }) => {
     mutate({ ...values, patientId: patient.Id });
   }
 
+  const handleDialogClose = () =>{
+    setOpen(false);
+    onOpenIconChange && onOpenIconChange(false)
+  }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="flex px-2 hover:bg-accent font-normal py-1.5 text-sm rounded-sm">
-        Schedule Appointment
-      </DialogTrigger>
+    <Dialog open={open || openIcon} onOpenChange={handleDialogClose}>
+      {!notDialogTrigger && 
+        <DialogTrigger className="flex px-2 hover:bg-accent font-normal py-1.5 text-sm rounded-sm">
+          Schedule Appointment
+        </DialogTrigger>
+      }
       <DialogContent className="sm:max-w-[425px] md:max-w-[525px] lg:max-w-[625px]">
         <DialogHeader>
           <DialogTitle>Schedule Appointment</DialogTitle>
