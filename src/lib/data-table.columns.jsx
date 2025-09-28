@@ -25,7 +25,11 @@ import { deletePackage, deleteSessionType } from "../services/packages-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import AppointmentDetail from "../components/appointment-detail";
-import { checkinPatient, endSession, startSession } from "../services/session-service";
+import {
+  checkinPatient,
+  endSession,
+  startSession,
+} from "../services/session-service";
 import CancelAppointmentForm from "../components/cancel-appointment-form";
 import CheckoutPatientForm from "../components/checkout-patient-form";
 import { getPatientPrescription } from "../components/prescription";
@@ -33,6 +37,7 @@ import PackageInvoice from "../components/package-invoice";
 import DailyInvoice from "../components/daily-invoice";
 import ClosePatientForm from "../components/close-patient-form";
 import AssignToForm from "../components/assign-to-form";
+import PrescriptionDialog from "../components/prescription-dialog";
 
 export const leadsColumns = [
   {
@@ -142,7 +147,10 @@ export const leadsColumns = [
               <PatientFollowup patient={row.original} />
             </DropdownMenuItem>
             <DropdownMenuItem asChild disabled={isAssignedOrClosed}>
-              <AssignToForm patient={row.original} disabled={isAssignedOrClosed}/>
+              <AssignToForm
+                patient={row.original}
+                disabled={isAssignedOrClosed}
+              />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -253,9 +261,15 @@ export const patientListsColumns = [
             <DropdownMenuItem asChild>
               <AddLeadForm type="edit" patient={row.original} />
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => {getPatientPrescription(row.original)}}>
-                Generate Prescription
+            <DropdownMenuItem asChild>
+              <PrescriptionDialog
+                appointment={row.original}
+                patient={row.original}
+              />
             </DropdownMenuItem>
+            {/* <DropdownMenuItem onClick={() => {getPatientPrescription(row.original)}}>
+                Generate Prescription
+            </DropdownMenuItem> */}
             <DropdownMenuItem asChild>
               <ScheduleAppointmentForm patient={row.original} />
             </DropdownMenuItem>
@@ -263,7 +277,7 @@ export const patientListsColumns = [
               <PatientInfo title="Patient Information" patient={row.original} />
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <ClosePatientForm  leadData={row.original}/>
+              <ClosePatientForm leadData={row.original} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -354,7 +368,7 @@ export const appointmentsColumns = [
       const [showPackageInvoice, setShowPackageInvoice] = React.useState(false);
       const [showDailyInvoice, setShowDailyInvoice] = React.useState(false);
       const queryClient = useQueryClient();
-      
+
       const { mutate: checkinPatientMutation } = useMutation({
         mutationFn: checkinPatient,
         onSuccess: () => {
@@ -389,25 +403,28 @@ export const appointmentsColumns = [
       });
 
       const handlePatientCheckin = () => {
-        checkinPatientMutation({patientId: row.original.PatientId, appointmentId: row.original.AppointmentId});
-      }
+        checkinPatientMutation({
+          patientId: row.original.PatientId,
+          appointmentId: row.original.AppointmentId,
+        });
+      };
 
-      const handleStartSession = () =>{
-        startSessionMutation(row.original.SessionId)
-      }
+      const handleStartSession = () => {
+        startSessionMutation(row.original.SessionId);
+      };
 
-      const handleEndSession = () =>{
-        endSessionMutation(row.original.SessionId)
+      const handleEndSession = () => {
+        endSessionMutation(row.original.SessionId);
         setCheckoutOpen(true);
-      }
+      };
 
-      const handleViewInvoice = (appt) =>{
-        if(appt.IsTransacted && appt.PackageId){
-          setShowPackageInvoice(true)
-        }else if(appt.IsTransacted && !appt.PackageId){
-          setShowDailyInvoice(true)
+      const handleViewInvoice = (appt) => {
+        if (appt.IsTransacted && appt.PackageId) {
+          setShowPackageInvoice(true);
+        } else if (appt.IsTransacted && !appt.PackageId) {
+          setShowDailyInvoice(true);
         }
-      }
+      };
       return (
         <>
           <DropdownMenu>
@@ -421,31 +438,91 @@ export const appointmentsColumns = [
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                   <AppointmentDetail
-                appointment={row.original}
-                patient={row.original}
-              />
+                <AppointmentDetail
+                  appointment={row.original}
+                  patient={row.original}
+                />
               </DropdownMenuItem>
-              {row.original.Status !== "Cancelled" && !row.original.IsPatientCheckedIn && <DropdownMenuItem asChild> 
-                <RescheduleConfirmAppointmentForm appointment={row.original} />
-              </DropdownMenuItem>}
-              {row.original.Status !== "Cancelled" && !row.original.IsPatientCheckedIn &&
+              {row.original.Status !== "Cancelled" &&
+                !row.original.IsPatientCheckedIn && (
+                  <DropdownMenuItem asChild>
+                    <RescheduleConfirmAppointmentForm
+                      appointment={row.original}
+                    />
+                  </DropdownMenuItem>
+                )}
+              {row.original.Status !== "Cancelled" &&
+                !row.original.IsPatientCheckedIn && (
+                  <DropdownMenuItem asChild>
+                    <CancelAppointmentForm appointment={row.original} />
+                  </DropdownMenuItem>
+                )}
+              {row.original.Status === "Confirmed" &&
+              !row.original.IsPatientCheckedIn ? (
+                <DropdownMenuItem onClick={handlePatientCheckin}>
+                  Checkin Patient
+                </DropdownMenuItem>
+              ) : null}
+              {row.original.Status === "Confirmed" &&
+              row.original.IsPatientCheckedIn &&
+              !row.original.StartTime ? (
+                <DropdownMenuItem onClick={handleStartSession}>
+                  Start Session
+                </DropdownMenuItem>
+              ) : null}
+              {row.original.Status === "Confirmed" &&
+              row.original.StartTime &&
+              !row.original.EndTime ? (
+                <DropdownMenuItem onClick={handleEndSession}>
+                  End Session
+                </DropdownMenuItem>
+              ) : null}
+              {row.original.Status === "Confirmed" &&
+              row.original.EndTime &&
+              !row.original.IsInvoiceGenerated ? (
                 <DropdownMenuItem asChild>
-                  <CancelAppointmentForm appointment={row.original} />
-                </DropdownMenuItem>}
-              {row.original.Status === "Confirmed" && !row.original.IsPatientCheckedIn ? <DropdownMenuItem onClick = {handlePatientCheckin}>Checkin Patient</DropdownMenuItem>: null}
-              {(row.original.Status === "Confirmed" && row.original.IsPatientCheckedIn && !row.original.StartTime) ? <DropdownMenuItem onClick ={handleStartSession} >Start Session</DropdownMenuItem>: null}
-              {(row.original.Status === "Confirmed" && row.original.StartTime && !row.original.EndTime) ? <DropdownMenuItem onClick = {handleEndSession} >End Session</DropdownMenuItem>: null}
-              {(row.original.Status === "Confirmed" && row.original.EndTime && !row.original.IsInvoiceGenerated) ? 
-              <DropdownMenuItem asChild >
-                <CheckoutPatientForm session={row.original} open={checkoutOpen} onOpenChange={setCheckoutOpen} setShowPackageInvoice = {setShowPackageInvoice} setShowDailyInvoice = {setShowDailyInvoice} />
-              </DropdownMenuItem>: null}
-              {(row.original.IsInvoiceGenerated && row.original.IsTransacted) ? <DropdownMenuItem onClick ={()=>handleViewInvoice(row.original)} > View invoice </DropdownMenuItem>: null}
+                  <CheckoutPatientForm
+                    session={row.original}
+                    open={checkoutOpen}
+                    onOpenChange={setCheckoutOpen}
+                    setShowPackageInvoice={setShowPackageInvoice}
+                    setShowDailyInvoice={setShowDailyInvoice}
+                  />
+                </DropdownMenuItem>
+              ) : null}
+              {row.original.IsInvoiceGenerated && row.original.IsTransacted ? (
+                <DropdownMenuItem
+                  onClick={() => handleViewInvoice(row.original)}
+                >
+                  {" "}
+                  View invoice{" "}
+                </DropdownMenuItem>
+              ) : null}
             </DropdownMenuContent>
           </DropdownMenu>
-          {checkoutOpen && <CheckoutPatientForm session={row.original} open={checkoutOpen} onOpenChange={setCheckoutOpen} setShowPackageInvoice = {setShowPackageInvoice} setShowDailyInvoice = {setShowDailyInvoice} />}
-          {showPackageInvoice && <PackageInvoice appointment={row.original} open={showPackageInvoice} onOpenChange={setShowPackageInvoice} />}
-          {showDailyInvoice && <DailyInvoice appointment={row.original} open={showDailyInvoice} onOpenChange={setShowDailyInvoice} />}
+          {checkoutOpen && (
+            <CheckoutPatientForm
+              session={row.original}
+              open={checkoutOpen}
+              onOpenChange={setCheckoutOpen}
+              setShowPackageInvoice={setShowPackageInvoice}
+              setShowDailyInvoice={setShowDailyInvoice}
+            />
+          )}
+          {showPackageInvoice && (
+            <PackageInvoice
+              appointment={row.original}
+              open={showPackageInvoice}
+              onOpenChange={setShowPackageInvoice}
+            />
+          )}
+          {showDailyInvoice && (
+            <DailyInvoice
+              appointment={row.original}
+              open={showDailyInvoice}
+              onOpenChange={setShowDailyInvoice}
+            />
+          )}
         </>
       );
     },
@@ -651,7 +728,6 @@ export const sessionTypesColumns = [
           </DropdownMenuContent>
         </DropdownMenu>
       );
-      
     },
   },
 ];
