@@ -125,6 +125,17 @@ const CompletedAppointmentCard = ({appointmentData, value}) =>{
                                     </div>
                                 }
 
+                                {!!(appointment.EndTime && !appointment.IsInvoiceGenerated) &&
+                                    <div title = "Checkout Patient" 
+                                    onClick={()=> {
+                                        setCheckoutOpen(true);
+                                        setSelectedAppointment(appointment)
+                                    }} 
+                                    className="h-8 w-8 bg-red-300 cursor-pointer hover:bg-red:400 rounded-full flex items-center justify-center mr-2">
+                                        <UserCheck className="h-5 w-5 text-white" />
+                                    </div>
+                                }
+
                                 <div 
                                     title="Create Follow-up"
                                     className="h-8 w-8 bg-green-300 mr-2 rounded-full flex items-center justify-center cursor-pointer hover:bg-green-400 transition-colors"
@@ -135,16 +146,6 @@ const CompletedAppointmentCard = ({appointmentData, value}) =>{
                                 >
                                     <CalendarPlus className="h-5 w-5 text-white" />
                                 </div>
-
-                               {!!(appointment.EndTime && !appointment.IsInvoiceGenerated) &&
-                                <div title = "Checkout Patient" 
-                                onClick={()=> {
-                                    setCheckoutOpen(true);
-                                    setSelectedAppointment(appointment)
-                                }} 
-                                className="h-8 w-8 bg-red-300 cursor-pointer hover:bg-red:400 rounded-full flex items-center justify-center mr-2">
-                                    <UserCheck className="h-5 w-5 text-white" />
-                                </div>}
                                 
                                 {popupOpen && selectedAppointment?.AppointmentId === appointment.AppointmentId && (
                                     <div 
