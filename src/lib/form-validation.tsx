@@ -83,6 +83,17 @@ export const packageFormSchema = z.object({
           message: "Must be a valid positive number",
         })
     ),
+  chargePerSessionForPackage: z
+    .union([z.string(), z.number()])
+    .transform((val) => String(val))
+    .pipe(
+      z
+        .string()
+        .min(1, { message: "This field is required" })
+        .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+          message: "Must be a valid positive number",
+        })
+    ),
 });
 
 export const sessionTypeFormSchema = z.object({

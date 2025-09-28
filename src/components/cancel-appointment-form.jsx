@@ -39,17 +39,20 @@ const CancelAppointmentForm = ({ appointment, notDialogTrigger, openIcon, onOpen
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: updateAppointment,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["all-appointments"], queryKey: ["appointment-today"] });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["all-appointments"] }),
+        queryClient.invalidateQueries({ queryKey: ["appointment-today"] }),
+      ]);
       toast.success(`Appointment Cancelled Successfully`);
       setOpen(false);
-      if(onOpenIconChange) onOpenIconChange(false)
+      if (onOpenIconChange) onOpenIconChange(false);
     },
     onError: () => {
       toast.error(`Appointment Failed to Cancelled`);
     },
   });
-
+  
   function onSubmit(values) {
     mutate({ ...values, appointmentId: appointment.AppointmentId, status: "3" });
   }

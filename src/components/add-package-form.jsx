@@ -37,6 +37,7 @@ const AddPackageForm = ({ type, packageData }) => {
       chargePerSession: packageData?.ChargePerSession || "",
       totalSession: packageData?.TotalSessions || "",
       totalCost: packageData?.TotalCost || "",
+      chargePerSessionForPackage: packageData?.ChargePerSessionForPackage || "",
     },
   });
 
@@ -128,6 +129,23 @@ const AddPackageForm = ({ type, packageData }) => {
                     <Input 
                       type="number" 
                       placeholder="Enter charge per session" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+           <FormField
+              control={form.control}
+              name="chargePerSessionForPackage"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Charge Per Session For Package</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      placeholder="Enter charge per session for package" 
                       {...field} 
                     />
                   </FormControl>

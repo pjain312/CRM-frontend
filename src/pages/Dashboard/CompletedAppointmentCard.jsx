@@ -1,13 +1,17 @@
-import { CalendarPlus, CalendarX, Clock, MessageCircle } from "lucide-react";
+import { BadgeCheck, CalendarPlus, CalendarX, CheckCircle, Clock, MessageCircle, UserCheck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ScheduleAppointmentForm from "../../components/schedule-appointment-form";
 import { Avatar, AvatarFallback } from "../../components/ui/avatar";
 import { Card, CardContent } from "../../components/ui/card";
+import CheckoutPatientForm from "../../components/checkout-patient-form";
+import PackageInvoice from "../../components/package-invoice";
 
 const CompletedAppointmentCard = ({appointmentData, value}) =>{
     const [popupOpen, setPopupOpen] = useState(false);
     const [openScheduleAppt, setOpenScheduleAppt] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
+    const [checkoutOpen, setCheckoutOpen] = useState(false);
+    const [showPackageInvoice, setShowPackageInvoice] = useState(false);
     const popupRef = useRef(null);
     const iconRef = useRef(null);
 
@@ -74,30 +78,36 @@ const CompletedAppointmentCard = ({appointmentData, value}) =>{
                                     {appointment.PhoneNumber}
                                 </div>
 
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                    <Clock className="h-4 w-4 text-red-400" />
-                                    <span>
-                                        Scheduled at: {appointment.AppointmentTime}
-                                    </span>
-                                </div>
+                                {!appointment.IsPatientCheckedIn && 
+                                <>
+                                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                                        <Clock className="h-4 w-4 text-red-400" />
+                                        <span>
+                                            Scheduled at: {appointment.AppointmentTime}
+                                        </span>
+                                    </div>
 
-                                <div className="flex items-center gap-2 text-sm">
-                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                        appointment.StatusId == 3 
-                                            ? 'bg-red-100 text-red-600' 
-                                            : appointment.StatusId == 1
-                                            ? 'bg-green-100 text-green-600'
-                                            : 'bg-yellow-100 text-yellow-600'
-                                    }`}>
-                                        {appointment.Status}
-                                    </span>
-                                </div>
+                                    <div className="flex items-center gap-2 text-sm">
+                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                            appointment.StatusId == 3 
+                                                ? 'bg-red-100 text-red-600' 
+                                                : appointment.StatusId == 1
+                                                ? 'bg-green-100 text-green-600'
+                                                : 'bg-yellow-100 text-yellow-600'
+                                        }`}>
+                                            {appointment.Status}
+                                        </span>
+                                    </div>
+                                </>
+                                }
 
                                 {/* Follow-up Status */}
-                                {/* <div className="flex items-center gap-2 text-sm text-gray-600">
-                                    <CheckCircle className="h-4 w-4 text-green-500" />
-                                    <span>Follow-up created</span>
-                                </div> */}
+                               { appointment?.IsInvoiceGenerated && 
+                                <div className="flex items-center gap-2 text-sm text-gray-600">
+                                        <BadgeCheck className="h-4 w-4 text-green-500" />
+                                        <span>Invoiced</span>
+                                </div>
+                                }
                             </div>
 
                             {/* Action Icon */}
@@ -125,6 +135,16 @@ const CompletedAppointmentCard = ({appointmentData, value}) =>{
                                 >
                                     <CalendarPlus className="h-5 w-5 text-white" />
                                 </div>
+
+                               {!!(appointment.EndTime && !appointment.IsInvoiceGenerated) &&
+                                <div title = "Checkout Patient" 
+                                onClick={()=> {
+                                    setCheckoutOpen(true);
+                                    setSelectedAppointment(appointment)
+                                }} 
+                                className="h-8 w-8 bg-red-300 cursor-pointer hover:bg-red:400 rounded-full flex items-center justify-center mr-2">
+                                    <UserCheck className="h-5 w-5 text-white" />
+                                </div>}
                                 
                                 {popupOpen && selectedAppointment?.AppointmentId === appointment.AppointmentId && (
                                     <div 
@@ -147,6 +167,10 @@ const CompletedAppointmentCard = ({appointmentData, value}) =>{
         {!!openScheduleAppt &&
             <ScheduleAppointmentForm patient = {{...selectedAppointment, Id: selectedAppointment.PatientId} } notDialogTrigger={true} openIcon={openScheduleAppt} onOpenIconChange ={setOpenScheduleAppt}/>
         }
+
+        {checkoutOpen && <CheckoutPatientForm session={selectedAppointment} open={checkoutOpen} onOpenChange={setCheckoutOpen} setShowPackageInvoice = {setShowPackageInvoice}/>}
+        {showPackageInvoice && <PackageInvoice appointment={selectedAppointment} open={showPackageInvoice} onOpenChange={setShowPackageInvoice} />}
+
     </>
     )
 }

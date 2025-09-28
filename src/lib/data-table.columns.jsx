@@ -29,6 +29,7 @@ import { checkinPatient, endSession, startSession } from "../services/session-se
 import CancelAppointmentForm from "../components/cancel-appointment-form";
 import CheckoutPatientForm from "../components/checkout-patient-form";
 import { getPatientPrescription } from "../components/prescription";
+import PackageInvoice from "../components/package-invoice";
 
 export const leadsColumns = [
   {
@@ -348,6 +349,7 @@ export const appointmentsColumns = [
     enableHiding: false,
     cell: ({ row }) => {
       const [checkoutOpen, setCheckoutOpen] = React.useState(false);
+      const [showPackageInvoice, setShowPackageInvoice] = React.useState(false);
       const queryClient = useQueryClient();
       
       const { mutate: checkinPatientMutation } = useMutation({
@@ -427,11 +429,11 @@ export const appointmentsColumns = [
               <DropdownMenuItem asChild >
                 <CheckoutPatientForm session={row.original} open={checkoutOpen} onOpenChange={setCheckoutOpen} />
               </DropdownMenuItem>: null}
-              {(row.original.IsInvoiceGenerated) ? <DropdownMenuItem > View invoice </DropdownMenuItem>: null}
-            
+              {(row.original.IsInvoiceGenerated) ? <DropdownMenuItem onClick ={()=>setShowPackageInvoice(true)} > View invoice </DropdownMenuItem>: null}
             </DropdownMenuContent>
           </DropdownMenu>
-          {checkoutOpen && <CheckoutPatientForm session={row.original} open={checkoutOpen} onOpenChange={setCheckoutOpen} />}
+          {checkoutOpen && <CheckoutPatientForm session={row.original} open={checkoutOpen} onOpenChange={setCheckoutOpen} setShowPackageInvoice = {setShowPackageInvoice} />}
+          {showPackageInvoice && <PackageInvoice appointment={row.original} open={showPackageInvoice} onOpenChange={setShowPackageInvoice} />}
         </>
       );
     },
@@ -473,6 +475,18 @@ export const packagesColumns = [
     header: "Charge Per Session",
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("ChargePerSession"));
+      const formatted = new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+      }).format(amount);
+      return <div>{formatted}</div>;
+    },
+  },
+  {
+    accessorKey: "ChargePerSessionForPackage",
+    header: "Charge Per Session For Package",
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("ChargePerSessionForPackage"));
       const formatted = new Intl.NumberFormat("en-IN", {
         style: "currency",
         currency: "INR",

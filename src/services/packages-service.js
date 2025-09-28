@@ -88,3 +88,17 @@ export const deleteSessionType = async (sessionId) => {
     console.warn("API data not available", error.message);
   }
 };
+
+export const getPackageInvoiceData = async (params) => {
+  try {
+    const response = await axios.request({
+      method: "GET",
+      url: `${API_BASE_URL}/getPackageInvoiceData`,
+      params: params
+    });
+    return response.data.data;
+  } catch (error) {
+    console.warn("API data not available", error.message);
+    throw error
+  }
+};

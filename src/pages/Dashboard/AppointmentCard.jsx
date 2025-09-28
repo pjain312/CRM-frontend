@@ -1,19 +1,22 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CalendarCheck2, CalendarSync, CalendarX, CalendarX2, CheckCircle, Clock, Hourglass, Timer, TimerOff, UserRoundPlus } from "lucide-react";
+import { CalendarCheck2, CalendarSync, CalendarX, CheckCircle, Clock, Hourglass, Timer, TimerOff, UserRoundPlus } from "lucide-react";
 import { useState } from "react";
-import RescheduleConfirmAppointmentForm from "../../components/reschedule-confirm-appointment-form";
+import { toast } from "sonner";
 import CancelAppointmentForm from "../../components/cancel-appointment-form";
+import CheckoutPatientForm from "../../components/checkout-patient-form";
+import RescheduleConfirmAppointmentForm from "../../components/reschedule-confirm-appointment-form";
 import { Avatar, AvatarFallback } from "../../components/ui/avatar";
 import { Card, CardContent } from "../../components/ui/card";
 import { checkinPatient, endSession, startSession } from "../../services/session-service";
-import { toast } from "sonner";
-import CheckoutPatientForm from "../../components/checkout-patient-form";
+import PackageInvoice from "../../components/package-invoice";
 
 const AppointmentCard = ({appointmentData, value}) =>{
     const [rescheduleOpen, setRescheduleOpen] = useState(false);
     const [checkoutOpen, setCheckoutOpen] = useState(false);
     const [cancelFormOpen, setCancelFormOpen] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
+    const [showPackageInvoice, setShowPackageInvoice] = useState(false);
+
     const queryClient = useQueryClient();
 
     const { mutate: checkinPatientMutation } = useMutation({
@@ -41,8 +44,8 @@ const AppointmentCard = ({appointmentData, value}) =>{
       const { mutate: endSessionMutation } = useMutation({
         mutationFn: endSession,
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["appointment-today"] });
           toast.success("Session ended successfully");
+          setCheckoutOpen(true);
         },
         onError: () => {
           toast.error("Failed to end session");
@@ -80,7 +83,6 @@ const AppointmentCard = ({appointmentData, value}) =>{
       const handleEndSession = (appt) =>{
         setSelectedAppointment(appt)
         endSessionMutation(appt.SessionId)
-        setCheckoutOpen(true);
       }
 
     return(
@@ -190,9 +192,6 @@ const AppointmentCard = ({appointmentData, value}) =>{
                                         <TimerOff className="h-5 w-5 text-white" />
                                     </div>
                                 }
-                                {/* {!!(appointment.EndTime && !appointment.IsInvoiceGenerated) && <div title = "Checkout Patient" className="h-8 w-8 bg-green-300 rounded-full flex items-center justify-center mr-2">
-                                    <UserCheck className="h-5 w-5 text-white" />
-                                </div>} */}
                              
                             </div>
                         </CardContent>
@@ -210,7 +209,8 @@ const AppointmentCard = ({appointmentData, value}) =>{
         )}
         {cancelFormOpen && selectedAppointment && <CancelAppointmentForm notDialogTrigger = {true} openIcon = {cancelFormOpen} onOpenIconChange={setCancelFormOpen} appointment={selectedAppointment} />}
 
-        {checkoutOpen && <CheckoutPatientForm session={selectedAppointment} open={checkoutOpen} onOpenChange={setCheckoutOpen} />}
+        {checkoutOpen && <CheckoutPatientForm session={selectedAppointment} open={checkoutOpen} onOpenChange={setCheckoutOpen} setShowPackageInvoice = {setShowPackageInvoice}/>}
+        {showPackageInvoice && <PackageInvoice appointment={selectedAppointment} open={showPackageInvoice} onOpenChange={setShowPackageInvoice} />}
     </>
     )
 }
