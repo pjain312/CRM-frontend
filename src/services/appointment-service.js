@@ -56,3 +56,16 @@ export const updateAppointment = async (data) => {
     throw error; 
   }
 };
+
+export const getPendingCounts = async () => {
+  try {
+    const response = await axios.request({
+      method: "GET",
+      url: `${API_URL}/getPendingCounts`,
+    });
+    return response.data.data;
+  } catch (error) {
+    console.warn("API data not available", error.message);
+    throw error; 
+  }
+};
