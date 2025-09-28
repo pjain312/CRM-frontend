@@ -102,3 +102,17 @@ export const getPackageInvoiceData = async (params) => {
     throw error
   }
 };
+
+export const getDailyInvoiceData = async (params) => {
+  try {
+    const response = await axios.request({
+      method: "GET",
+      url: `${API_BASE_URL}/getDailyInvoiceData`,
+      params: params
+    });
+    return response.data.data;
+  } catch (error) {
+    console.warn("API data not available", error.message);
+    throw error
+  }
+};

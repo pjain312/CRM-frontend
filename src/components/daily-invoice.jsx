@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Download, Printer } from "lucide-react";
 import Logo from "../assets/Logo.png";
-import { getPackageInvoiceData } from "../services/packages-service";
+import { getDailyInvoiceData } from "../services/packages-service";
 import { Button } from "./ui/button";
 import {
     Dialog,
@@ -10,11 +10,11 @@ import {
     DialogHeader
 } from "./ui/dialog";
 
-const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
+const DailyInvoice = ({ open, onOpenChange, appointment }) => {
 
     const { data: invoiceData, isLoading } = useQuery({
-        queryKey: ["package-invoice", appointment.PatientId, appointment.AppointmentId],
-        queryFn: () => getPackageInvoiceData({patientId:appointment.PatientId, appointmentId : appointment.AppointmentId}),
+        queryKey: ["daily-invoice", appointment.PatientId, appointment.AppointmentId],
+        queryFn: () => getDailyInvoiceData({patientId:appointment.PatientId, appointmentId : appointment.AppointmentId}),
         enabled: !!(appointment.PatientId && appointment.AppointmentId),
       });
 
@@ -48,6 +48,9 @@ const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
             }
             .justify-start {
                 justify-content: flex-start;
+            }
+            .justify-end {
+                justify-content: flex-end;
             }
             .text-right {
                 text-align: right;
@@ -218,7 +221,7 @@ const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <title>Invoice - ${invoiceData.PatientName}</title>
+                    <title>Invoice - ${invoiceData?.details?.PatientName}</title>
                     <style>
                         ${getPrintStyles()}
                     </style>
@@ -248,7 +251,7 @@ const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <title>Invoice - ${invoiceData.PatientName}</title>
+                    <title>Invoice - ${invoiceData?.details?.PatientName}</title>
                     <style>
                         ${getPrintStyles()}
                     </style>
@@ -311,14 +314,14 @@ const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
                 <div className="border-b border-gray-200 mb-4"></div>
                 <div className="flex justify-between">
                     <div className="space-y-2 text-sm font-medium">
-                    <p>Patient Name: {invoiceData.PatientName}</p>
-                        <p>Address: {invoiceData.Address}</p>
-                        <p>Phone: {invoiceData.PhoneNumber}</p>
+                    <p>Patient Name: {invoiceData?.details?.PatientName}</p>
+                        <p>Address: {invoiceData?.details?.Address}</p>
+                        <p>Phone: {invoiceData?.details?.PhoneNumber}</p>
                     </div>
                     <div className="space-y-2 text-sm font-medium">
-                        <p>Invoice id: #{invoiceData?.TransactionId}</p>
+                        <p>Invoice id: #{invoiceData?.details?.TransactionId}</p>
                         <p>Date: {new Date().toLocaleDateString()}</p>
-                        <p>Doctor: {invoiceData.PhysioName}</p>
+                        <p>Doctor: {invoiceData?.details?.PhysioName}</p>
                     </div>
                 </div>
             </div>
@@ -334,47 +337,31 @@ const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
                             <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-900">Amount</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody> 
+                        { invoiceData?.services?.map((service, index) => (
                             <tr>
+                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">{index + 1}</td>
+                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">{service.SessionName}</td>
+                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">Rs. {parseFloat(service.ChargePerSession).toFixed(2)}</td>
                                 <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">{1}</td>
-                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">{invoiceData.PackageName}</td>
-                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">Rs. {parseFloat(invoiceData.ChargePerSession).toFixed(2)}</td>
-                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">{invoiceData.TotalSessions}</td>
-                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">Rs. {parseFloat(invoiceData.TotalPrice).toFixed(2)}</td>
+                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">Rs. {parseFloat(service.ChargePerSession).toFixed(2)}</td>
                             </tr>
+                        ))}   
                     </tbody>
                 </table>
             </div>
 
             <div className="mb-8">
-                <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-2">
-                        <div className="flex justify-between">
+                        <div className="flex justify-end">
                             <span className="text-sm font-medium text-gray-600">Sub Total:</span>
-                            <span className="text-sm text-gray-900">Rs. {parseFloat(invoiceData.TotalPrice).toFixed(2)}</span>
+                            <span className="text-sm text-gray-900 ml-2">Rs. {parseFloat(invoiceData?.details?.TotalCost).toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between">
+                        <div className="flex justify-end">
                             <span className="text-sm font-medium text-gray-600">Amount Received:</span>
-                            <span className="text-sm text-gray-900">Rs. {parseFloat(invoiceData.PackageAdvanceAmount).toFixed(2)}</span>
+                            <span className="text-sm text-gray-900 ml-2">Rs. {parseFloat(invoiceData?.details?.TotalCost).toFixed(2)}</span>
                         </div>
                     </div>
-                    <div className="space-y-2">
-                        <div className="flex justify-between">
-                            <span className="text-sm font-medium text-gray-600">Discount:</span>
-                            <span className="text-sm text-gray-900">
-                                {Math.round(((invoiceData.TotalPrice - invoiceData.DiscountedCost) / invoiceData.TotalPrice) * 100)}%
-                            </span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-sm font-medium text-gray-600">Grand Total:</span>
-                            <span className="text-sm text-gray-900">Rs. {parseFloat(invoiceData.DiscountedCost).toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-sm font-medium text-gray-600">Amount To Be Paid:</span>
-                            <span className="text-sm text-gray-900">Rs. {(parseFloat(invoiceData.DiscountedCost) - parseFloat(invoiceData.PackageAdvanceAmount)).toFixed(2)}</span>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div className="mb-8">
@@ -395,4 +382,4 @@ const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
     );
 };
 
-export default PackageInvoice
+export default DailyInvoice

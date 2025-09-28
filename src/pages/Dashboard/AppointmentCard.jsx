@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback } from "../../components/ui/avatar";
 import { Card, CardContent } from "../../components/ui/card";
 import { checkinPatient, endSession, startSession } from "../../services/session-service";
 import PackageInvoice from "../../components/package-invoice";
+import DailyInvoice from "../../components/daily-invoice";
 
 const AppointmentCard = ({appointmentData, value}) =>{
     const [rescheduleOpen, setRescheduleOpen] = useState(false);
@@ -16,7 +17,7 @@ const AppointmentCard = ({appointmentData, value}) =>{
     const [cancelFormOpen, setCancelFormOpen] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const [showPackageInvoice, setShowPackageInvoice] = useState(false);
-
+    const [showDailyInvoice, setShowDailyInvoice] = useState(false);
     const queryClient = useQueryClient();
 
     const { mutate: checkinPatientMutation } = useMutation({
@@ -209,8 +210,9 @@ const AppointmentCard = ({appointmentData, value}) =>{
         )}
         {cancelFormOpen && selectedAppointment && <CancelAppointmentForm notDialogTrigger = {true} openIcon = {cancelFormOpen} onOpenIconChange={setCancelFormOpen} appointment={selectedAppointment} />}
 
-        {checkoutOpen && <CheckoutPatientForm session={selectedAppointment} open={checkoutOpen} onOpenChange={setCheckoutOpen} setShowPackageInvoice = {setShowPackageInvoice}/>}
+        {checkoutOpen && <CheckoutPatientForm session={selectedAppointment} open={checkoutOpen} onOpenChange={setCheckoutOpen} setShowPackageInvoice = {setShowPackageInvoice} setShowDailyInvoice = {setShowDailyInvoice} />}
         {showPackageInvoice && <PackageInvoice appointment={selectedAppointment} open={showPackageInvoice} onOpenChange={setShowPackageInvoice} />}
+        {showDailyInvoice && <DailyInvoice appointment={selectedAppointment} open={showDailyInvoice} onOpenChange={setShowDailyInvoice} />}
     </>
     )
 }

@@ -30,6 +30,7 @@ import CancelAppointmentForm from "../components/cancel-appointment-form";
 import CheckoutPatientForm from "../components/checkout-patient-form";
 import { getPatientPrescription } from "../components/prescription";
 import PackageInvoice from "../components/package-invoice";
+import DailyInvoice from "../components/daily-invoice";
 
 export const leadsColumns = [
   {
@@ -350,6 +351,7 @@ export const appointmentsColumns = [
     cell: ({ row }) => {
       const [checkoutOpen, setCheckoutOpen] = React.useState(false);
       const [showPackageInvoice, setShowPackageInvoice] = React.useState(false);
+      const [showDailyInvoice, setShowDailyInvoice] = React.useState(false);
       const queryClient = useQueryClient();
       
       const { mutate: checkinPatientMutation } = useMutation({
@@ -397,6 +399,14 @@ export const appointmentsColumns = [
         endSessionMutation(row.original.SessionId)
         setCheckoutOpen(true);
       }
+
+      const handleViewInvoice = (appt) =>{
+        if(appt.IsTransacted && appt.PackageId){
+          setShowPackageInvoice(true)
+        }else if(appt.IsTransacted && !appt.PackageId){
+          setShowDailyInvoice(true)
+        }
+      }
       return (
         <>
           <DropdownMenu>
@@ -427,13 +437,14 @@ export const appointmentsColumns = [
               {(row.original.Status === "Confirmed" && row.original.StartTime && !row.original.EndTime) ? <DropdownMenuItem onClick = {handleEndSession} >End Session</DropdownMenuItem>: null}
               {(row.original.Status === "Confirmed" && row.original.EndTime && !row.original.IsInvoiceGenerated) ? 
               <DropdownMenuItem asChild >
-                <CheckoutPatientForm session={row.original} open={checkoutOpen} onOpenChange={setCheckoutOpen} />
+                <CheckoutPatientForm session={row.original} open={checkoutOpen} onOpenChange={setCheckoutOpen} setShowPackageInvoice = {setShowPackageInvoice} setShowDailyInvoice = {setShowDailyInvoice} />
               </DropdownMenuItem>: null}
-              {(row.original.IsInvoiceGenerated) ? <DropdownMenuItem onClick ={()=>setShowPackageInvoice(true)} > View invoice </DropdownMenuItem>: null}
+              {(row.original.IsInvoiceGenerated && row.original.IsTransacted) ? <DropdownMenuItem onClick ={()=>handleViewInvoice(row.original)} > View invoice </DropdownMenuItem>: null}
             </DropdownMenuContent>
           </DropdownMenu>
-          {checkoutOpen && <CheckoutPatientForm session={row.original} open={checkoutOpen} onOpenChange={setCheckoutOpen} setShowPackageInvoice = {setShowPackageInvoice} />}
+          {checkoutOpen && <CheckoutPatientForm session={row.original} open={checkoutOpen} onOpenChange={setCheckoutOpen} setShowPackageInvoice = {setShowPackageInvoice} setShowDailyInvoice = {setShowDailyInvoice} />}
           {showPackageInvoice && <PackageInvoice appointment={row.original} open={showPackageInvoice} onOpenChange={setShowPackageInvoice} />}
+          {showDailyInvoice && <DailyInvoice appointment={row.original} open={showDailyInvoice} onOpenChange={setShowDailyInvoice} />}
         </>
       );
     },

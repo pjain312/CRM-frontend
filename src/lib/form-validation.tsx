@@ -31,9 +31,10 @@ export const leadFormSchema = z.object({
 
 export const appointmentFormSchema = z.object({
   appointmentDate: requiredString,
-  appointmentTime: requiredString,
+  appointmentTime: optionalString,
   appointmentType: requiredString,
   status: requiredString,
+  physio:requiredString,
   comments: optionalString,
 });
 

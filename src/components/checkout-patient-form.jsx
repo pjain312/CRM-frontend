@@ -33,7 +33,7 @@ import {
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { checkoutPatient, getAllPackagesAndSessionTypes, getPatientDetailsForCheckout } from "../services/session-service";
 
-const CheckoutPatientForm = ({ session, open, onOpenChange, notDialogTrigger, setShowPackageInvoice }) => {
+const CheckoutPatientForm = ({ session, open, onOpenChange, notDialogTrigger, setShowPackageInvoice, setShowDailyInvoice }) => {
   const [isFullAmountSelected, setIsFullAmountSelected] = useState(false);
 
 
@@ -71,6 +71,7 @@ const CheckoutPatientForm = ({ session, open, onOpenChange, notDialogTrigger, se
     //   toast.success("Patient CheckedOut Successfully");
       onOpenChange(false);
       if(!patientCheckoutDetails?.PackageId && form.watch("packageId")) setShowPackageInvoice(true)
+      if(!patientCheckoutDetails?.PackageId && form.watch("sessionTypes")?.length) setShowDailyInvoice(true)
     },
     onError: () => {
       toast.error("Patient Failed to Checkout");
@@ -104,6 +105,7 @@ const CheckoutPatientForm = ({ session, open, onOpenChange, notDialogTrigger, se
         sessionId: session.SessionId,
         sessionCharges: values.sessionCharges ? parseFloat(values.sessionCharges) : 0,
         paymentMode: values.paymentMode,
+        selectedSessionTypes: values.sessionTypes?.toString(),
       };
     }
     mutate(checkoutData);

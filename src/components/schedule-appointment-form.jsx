@@ -46,7 +46,6 @@ const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialo
     queryFn: getAppointmentDefaultOptions,
   });
 
-  console.log(appointmentDefaultOptions)
   const form = useForm({
     resolver: zodResolver(appointmentFormSchema),
     defaultValues: {
@@ -55,6 +54,7 @@ const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialo
       appointmentType: "",
       status: "",
       comments: "",
+      physio:""
     },
   });
 
@@ -62,7 +62,8 @@ const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialo
   const { mutate } = useMutation({
     mutationFn: addAppointment,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
+        queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
+        queryClient.invalidateQueries({ queryKey: ["appointment-today"] });
       toast.success("Appointment Scheduled Successfully");
       setOpen(false);
       onOpenIconChange && onOpenIconChange(false)
@@ -189,6 +190,28 @@ const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialo
                     </FormControl>
                     <SelectContent>
                       {appointmentDefaultOptions?.appointmentStatusList?.map(a=>{
+                        return <SelectItem value={a.Id?.toString()}>{a.Name}</SelectItem>
+                      })}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="physio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Physio" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {appointmentDefaultOptions?.physioList?.map(a=>{
                         return <SelectItem value={a.Id?.toString()}>{a.Name}</SelectItem>
                       })}
                     </SelectContent>

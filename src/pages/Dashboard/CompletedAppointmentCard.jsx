@@ -1,10 +1,11 @@
-import { BadgeCheck, CalendarPlus, CalendarX, CheckCircle, Clock, MessageCircle, UserCheck } from "lucide-react";
+import { BadgeCheck, CalendarCheck, CalendarPlus, CalendarX, CheckCircle, Clock, MessageCircle, UserCheck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ScheduleAppointmentForm from "../../components/schedule-appointment-form";
 import { Avatar, AvatarFallback } from "../../components/ui/avatar";
 import { Card, CardContent } from "../../components/ui/card";
 import CheckoutPatientForm from "../../components/checkout-patient-form";
 import PackageInvoice from "../../components/package-invoice";
+import DailyInvoice from "../../components/daily-invoice";
 
 const CompletedAppointmentCard = ({appointmentData, value}) =>{
     const [popupOpen, setPopupOpen] = useState(false);
@@ -12,6 +13,7 @@ const CompletedAppointmentCard = ({appointmentData, value}) =>{
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const [checkoutOpen, setCheckoutOpen] = useState(false);
     const [showPackageInvoice, setShowPackageInvoice] = useState(false);
+    const [showDailyInvoice, setShowDailyInvoice] = useState(false);
     const popupRef = useRef(null);
     const iconRef = useRef(null);
 
@@ -101,11 +103,16 @@ const CompletedAppointmentCard = ({appointmentData, value}) =>{
                                 </>
                                 }
 
-                                {/* Follow-up Status */}
                                { appointment?.IsInvoiceGenerated && 
                                 <div className="flex items-center gap-2 text-sm text-gray-600">
                                         <BadgeCheck className="h-4 w-4 text-green-500" />
                                         <span>Invoiced</span>
+                                </div>
+                                }
+                                 { appointment?.IsFollowUpCreated && 
+                                <div className="flex items-center gap-2 text-sm text-gray-600">
+                                        <CalendarCheck className="h-4 w-4 text-green-500" />
+                                        <span>Follow-up Created</span>
                                 </div>
                                 }
                             </div>
@@ -136,7 +143,7 @@ const CompletedAppointmentCard = ({appointmentData, value}) =>{
                                     </div>
                                 }
 
-                                <div 
+                                {!!(!appointment?.IsFollowUpCreated) && <div 
                                     title="Create Follow-up"
                                     className="h-8 w-8 bg-green-300 mr-2 rounded-full flex items-center justify-center cursor-pointer hover:bg-green-400 transition-colors"
                                     onClick={() => {
@@ -145,7 +152,7 @@ const CompletedAppointmentCard = ({appointmentData, value}) =>{
                                     }}
                                 >
                                     <CalendarPlus className="h-5 w-5 text-white" />
-                                </div>
+                                </div>}
                                 
                                 {popupOpen && selectedAppointment?.AppointmentId === appointment.AppointmentId && (
                                     <div 
@@ -169,8 +176,9 @@ const CompletedAppointmentCard = ({appointmentData, value}) =>{
             <ScheduleAppointmentForm patient = {{...selectedAppointment, Id: selectedAppointment.PatientId} } notDialogTrigger={true} openIcon={openScheduleAppt} onOpenIconChange ={setOpenScheduleAppt}/>
         }
 
-        {checkoutOpen && <CheckoutPatientForm session={selectedAppointment} open={checkoutOpen} onOpenChange={setCheckoutOpen} setShowPackageInvoice = {setShowPackageInvoice}/>}
+        {checkoutOpen && <CheckoutPatientForm session={selectedAppointment} open={checkoutOpen} onOpenChange={setCheckoutOpen} setShowPackageInvoice = {setShowPackageInvoice} setShowDailyInvoice = {setShowDailyInvoice} />}
         {showPackageInvoice && <PackageInvoice appointment={selectedAppointment} open={showPackageInvoice} onOpenChange={setShowPackageInvoice} />}
+        {showDailyInvoice && <DailyInvoice appointment={selectedAppointment} open={showDailyInvoice} onOpenChange={setShowDailyInvoice} />}
 
     </>
     )
