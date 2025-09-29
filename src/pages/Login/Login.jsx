@@ -54,7 +54,7 @@ const Login = () => {
                 {/* Logo placeholder */}
                 <div className="flex justify-center mb-8">
                   <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-orange-500 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-2xl">A</span>
+                    <span className="text-white font-bold text-2xl">K</span>
                   </div>
                 </div>
 
@@ -160,8 +160,8 @@ const Login = () => {
                       <path d="M12 2L2 7v10c0 5.55 3.84 9.739 9 9.9 5.16-.161 9-4.35 9-9.9V7l-10-5z"/>
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Acharya ERP</h3>
-                  <p className="text-blue-100">Modern Enterprise Solution</p>
+                  <h3 className="text-xl font-semibold mb-2">Kinetara Physiotherapy CRM</h3>
+                  {/* <p className="text-blue-100">Modern Enterprise Solution</p> */}
                 </div>
               </div>
             </div>
