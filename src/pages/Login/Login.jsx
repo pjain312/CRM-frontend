@@ -9,6 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '../../components/ui/input';
 import config from '../../config/environment';
 import { saveTokens, saveUser } from '../../utils/auth';
+import Logo from '../../assets/Logo.png';
 // Removed image import - using gradient background instead
 
 const Login = () => {
@@ -47,17 +48,19 @@ const Login = () => {
            }}>
       </div>
       
-      <Card className="w-full max-w-4xl mx-auto relative z-10">
+      <Card className="w-full max-w-4xl mx-auto relative z-10 py-0">
         <CardContent className="p-0">
-          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 h-[600px]">
             {/* Login Form Section */}
             <div className="p-8 lg:p-12 flex flex-col justify-center">
               <div className="max-w-md mx-auto w-full">
-                {/* Logo placeholder */}
+                {/* Logo */}
                 <div className="flex justify-center mb-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-orange-500 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-2xl">K</span>
-                  </div>
+                  <img 
+                    src={Logo} 
+                    alt="Kinetara Logo" 
+                    className="h-16 w-auto"
+                  />
                 </div>
 
                 {/* Welcome text */}
@@ -152,20 +155,47 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Image Section */}
-            <div className="hidden lg:block relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-orange-500 opacity-90"></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-white text-center">
-                  <div className="w-32 h-32 mx-auto mb-4 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                    <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2L2 7v10c0 5.55 3.84 9.739 9 9.9 5.16-.161 9-4.35 9-9.9V7l-10-5z"/>
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">Kinetara Physiotherapy CRM</h3>
-                  {/* <p className="text-blue-100">Modern Enterprise Solution</p> */}
-                </div>
+            {/* Modern Animated Background Section */}
+            <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 h-full">
+              {/* Animated geometric shapes */}
+              <div className="absolute inset-0">
+                {/* Large floating circles */}
+                <div className="absolute top-20 left-20 w-32 h-32 bg-blue-200 bg-opacity-30 rounded-full animate-float-gentle"></div>
+                <div className="absolute top-40 right-32 w-24 h-24 bg-indigo-200 bg-opacity-40 rounded-full animate-float-gentle-delayed"></div>
+                <div className="absolute bottom-32 left-32 w-28 h-28 bg-purple-200 bg-opacity-35 rounded-full animate-float-gentle-slow"></div>
+                <div className="absolute bottom-20 right-20 w-20 h-20 bg-cyan-200 bg-opacity-30 rounded-full animate-float-gentle"></div>
+                
+                {/* Medium shapes */}
+                <div className="absolute top-1/3 left-1/2 w-16 h-16 bg-blue-300 bg-opacity-25 rounded-full animate-pulse-gentle"></div>
+                <div className="absolute bottom-1/3 right-1/3 w-12 h-12 bg-indigo-300 bg-opacity-30 rounded-full animate-pulse-gentle-delayed"></div>
+                
+                {/* Small accent dots */}
+                <div className="absolute top-16 right-16 w-3 h-3 bg-blue-400 rounded-full animate-twinkle"></div>
+                <div className="absolute top-32 left-16 w-2 h-2 bg-indigo-400 rounded-full animate-twinkle-delayed"></div>
+                <div className="absolute bottom-24 right-12 w-2 h-2 bg-purple-400 rounded-full animate-twinkle"></div>
+                <div className="absolute bottom-16 left-24 w-3 h-3 bg-cyan-400 rounded-full animate-twinkle-delayed"></div>
               </div>
+              
+              {/* Animated lines/connections */}
+              <div className="absolute inset-0">
+                <div className="absolute top-1/4 left-1/4 w-px h-20 bg-gradient-to-b from-blue-300 to-transparent animate-line-grow"></div>
+                <div className="absolute top-1/3 right-1/4 w-16 h-px bg-gradient-to-r from-indigo-300 to-transparent animate-line-grow-delayed"></div>
+                <div className="absolute bottom-1/4 left-1/3 w-px h-16 bg-gradient-to-t from-purple-300 to-transparent animate-line-grow-slow"></div>
+              </div>
+              
+              {/* Subtle wave pattern */}
+              <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-blue-100 to-transparent animate-wave"></div>
+              
+              {/* Floating particles */}
+              <div className="absolute inset-0">
+                <div className="absolute top-1/4 left-1/5 w-1 h-1 bg-blue-500 rounded-full animate-particle-float-1"></div>
+                <div className="absolute top-1/2 right-1/4 w-1 h-1 bg-indigo-500 rounded-full animate-particle-float-2"></div>
+                <div className="absolute bottom-1/3 left-1/2 w-1 h-1 bg-purple-500 rounded-full animate-particle-float-3"></div>
+                <div className="absolute top-2/3 right-1/3 w-1 h-1 bg-cyan-500 rounded-full animate-particle-float-4"></div>
+              </div>
+              
+              {/* Gradient overlay for depth */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-blue-100/30"></div>
             </div>
           </div>
         </CardContent>
