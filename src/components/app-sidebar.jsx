@@ -9,7 +9,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "./ui/sidebar";
-import { FaUserDoctor } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
 export function AppSidebar({ ...props }) {
@@ -22,9 +21,9 @@ export function AppSidebar({ ...props }) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <Link href="/" className="text-primary">
-                <FaUserDoctor className="!size-5" />
-                <span className="text-base font-semibold">Physio CRM</span>
+              <Link href="/" className="flex items-center">
+                <img src="/logo.png" width={40} height={40} alt="Kinetara" />
+                <span className="text-base font-semibold">Kinetara</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
