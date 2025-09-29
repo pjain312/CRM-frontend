@@ -20,11 +20,12 @@ export const updatePatientLeads = async (leadData) => {
   return response.data;
 };
 
-export const getPatientLeads = async () => {
+export const getPatientLeads = async (params = {}) => {
   try {
     const response = await api.request({
       method: "GET",
       url: `${API_URL}/getPatientLeads`,
+      params: params,
     });
     return response.data.data;
   } catch (error) {

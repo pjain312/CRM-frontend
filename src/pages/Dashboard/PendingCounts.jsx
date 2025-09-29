@@ -4,21 +4,20 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card"
-import { Calendar, CalendarDays, Users, Clock } from "lucide-react"
+import { ViewIcon, Users, Clock, View, EyeIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useQuery } from "@tanstack/react-query"
 import { getPendingCounts } from "../../services/appointment-service"
+import { getPatientLeads } from "../../services/leads-service"
 import { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 
 const PendingCounts = () => {
+  const navigate = useNavigate();
   const { data: pendingCounts, isLoading, error } = useQuery({
     queryKey: ["pending-counts"],
     queryFn: getPendingCounts,
   });
-
-  useEffect(() => {
-    console.log(pendingCounts);
-  }, [pendingCounts]);
 
   if (isLoading) {
     return (
@@ -73,6 +72,13 @@ const PendingCounts = () => {
           icon: Users,
           color: 'bg-green-100 text-green-700 hover:bg-green-100'
         };
+        case 'TodayFollowups':
+        return {
+          title: 'Pending Lead Followups' ,
+          description: 'Pending Leads Followups for Today',
+          icon: Users,
+          color: 'bg-blue-100 text-blue-700 hover:bg-blue-100'
+        };
       default:
         return {
           title: key,
@@ -82,6 +88,17 @@ const PendingCounts = () => {
         };
     }
   };
+
+  const handleComponentClick = async (key) => {
+    if (key === 'TodayFollowups') {
+      const today = new Date().toISOString();
+      navigate('/leads', { 
+        state: { 
+          params: { date: today },
+        } 
+      });
+    }
+  }
 
   return (
     <Card className="w-full max-w-md mt-6">
@@ -109,6 +126,7 @@ const PendingCounts = () => {
                     <p className="text-sm text-gray-600">{displayInfo.description}</p>
                   </div>
                 </div>
+                {key === "TodayFollowups" && <EyeIcon className="h-4 w-4 text-gray-500 cursor-pointer"  onClick={()=>handleComponentClick(key)}/>}
                 <Badge variant="secondary" className={`text-xs ${displayInfo.color}`}>
                   {pendingCounts[key] || 0}
                 </Badge>

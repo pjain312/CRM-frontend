@@ -40,12 +40,15 @@ import {
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
+  IconRefresh,
 } from "@tabler/icons-react";
 import AddLeadForm from "./add-lead-form";
 import AddPackageForm from "./add-package-form";
 import AddSessionTypeForm from "./add-session-type-form";
+import { useNavigate } from "react-router-dom";
 
 export function DataTable({ data, columns, showAddButton = false, actions }) {
+  const navigate = useNavigate();
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
@@ -69,6 +72,14 @@ export function DataTable({ data, columns, showAddButton = false, actions }) {
       rowSelection,
     },
   });
+
+  const handleShowAllLeads = () => {
+    navigate('/leads', { 
+      state: { 
+        params: { },
+      } 
+    });
+  }
 
   return (
     <div className="w-full">
@@ -111,6 +122,12 @@ export function DataTable({ data, columns, showAddButton = false, actions }) {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        {actions === "leads" &&  
+          <div className="flex items-center cursor-pointer hover:bg-accent text-sm border px-2 py-2 lg:py-1.5 rounded-sm gap-1" onClick={handleShowAllLeads}>
+            <IconRefresh size={16}/>
+            <span className="hidden lg:inline">Show All Leads</span>
+          </div>
+          }
         {actions === "leads" && (showAddButton && <AddLeadForm />)}
         {actions === "packages" && (showAddButton && <AddPackageForm/>)}
         {actions === "sessionTypes" && (showAddButton && <AddSessionTypeForm/>)}

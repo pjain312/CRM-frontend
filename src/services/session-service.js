@@ -1,4 +1,5 @@
 import api from "../api/axiosUtil";
+const API_BASE_URL = "http://localhost:9005/sessions";
 
 export const checkinPatient = async (sessionData) => {
   try {
