@@ -1,10 +1,10 @@
-import axios from "axios";
+import api from "../api/axiosUtil";
 
 const API_URL = "http://localhost:9005/appointments";
 
 export const getAppointmentDefaultOptions = async () => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "GET",
       url: `${API_URL}/getAppointmentDefaultOptions`,
     });
@@ -17,7 +17,7 @@ export const getAppointmentDefaultOptions = async () => {
 
 export const addAppointment = async (data) => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "POST",
       url: `${API_URL}/addAppointment`,
       data: data,
@@ -31,7 +31,7 @@ export const addAppointment = async (data) => {
 
 export const getAllAppointments = async (params) => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "GET",
       url: `${API_URL}/getAllAppointments`,
       params: params,
@@ -45,7 +45,7 @@ export const getAllAppointments = async (params) => {
 
 export const updateAppointment = async (data) => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "POST",
       url: `${API_URL}/updateAppointment`,
       data: data,
@@ -59,7 +59,7 @@ export const updateAppointment = async (data) => {
 
 export const getPendingCounts = async () => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "GET",
       url: `${API_URL}/getPendingCounts`,
     });
