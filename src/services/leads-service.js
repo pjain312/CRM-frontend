@@ -84,7 +84,7 @@ export const saveFollowUpData = async (data) => {
 
 export const closePatient = async (data) => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "POST",
       url: `${API_URL}/closePatient`,
       data: data,

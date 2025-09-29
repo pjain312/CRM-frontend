@@ -59,7 +59,7 @@ export const updateAppointment = async (data) => {
 
 export const getPendingCounts = async () => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "GET",
       url: `${API_URL}/getPendingCounts`,
     });

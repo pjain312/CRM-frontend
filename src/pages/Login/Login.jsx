@@ -6,7 +6,7 @@ import { Input } from '../../components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../components/ui/form';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { saveTokens } from '../../utils/auth';
+import { saveTokens, saveUser } from '../../utils/auth';
 import { toast } from 'sonner';
 
 const Login = () => {
@@ -26,6 +26,7 @@ const Login = () => {
       const response = await axios.post('http://localhost:9005/auth/login', data);
       const tokens = response.data.data;
       saveTokens(tokens.accessToken, tokens.refreshToken);
+      saveUser(tokens.user);
       navigate('/dashboard');
       toast.success(`Welcome ${tokens.user.Name}`)
     } catch (error) {

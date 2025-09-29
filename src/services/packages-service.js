@@ -91,7 +91,7 @@ export const deleteSessionType = async (sessionId) => {
 
 export const getPackageInvoiceData = async (params) => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "GET",
       url: `${API_BASE_URL}/getPackageInvoiceData`,
       params: params
@@ -105,7 +105,7 @@ export const getPackageInvoiceData = async (params) => {
 
 export const getDailyInvoiceData = async (params) => {
   try {
-    const response = await axios.request({
+    const response = await api.request({
       method: "GET",
       url: `${API_BASE_URL}/getDailyInvoiceData`,
       params: params
