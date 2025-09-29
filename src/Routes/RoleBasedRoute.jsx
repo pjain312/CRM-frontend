@@ -9,7 +9,7 @@ const RoleBasedRoute = ({ children, requiredRoleId }) => {
     return <Navigate to="/login" replace />;
   }
   
-  if (user.roleId !== requiredRoleId) {
+  if (user.RoleId !== requiredRoleId) {
     return <Navigate to="/dashboard" replace />;
   }
   

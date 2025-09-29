@@ -3,7 +3,7 @@ import { getUser } from "../utils/auth";
 
 const getNavData = () => {
   const user = getUser();
-  const isRoleId1 = user && user.roleId === 1;
+  const isRoleId1 = user && user.RoleId === 1;
 
   const allNavItems = [
     {
