@@ -203,56 +203,39 @@ function PrescriptionDialog({ appointment, patient, open, onOpenChange }) {
         {/* Dialog Header */}
         <div className="no-print bg-white border-b p-4 sticky top-0 z-10">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">
-              Prescription Details
-            </DialogTitle>
-            <DialogDescription>
-              Generate prescription for {patient?.Name || "this patient"} and
-              appointment.
-            </DialogDescription>
+            <div className="flex justify-end items-center gap-4">
+              <div className="p-2 hidden md:block rounded-lg">
+                <p className="text-xs text-muted-foreground text-center sm:text-left">
+                  <strong>Keyboard shortcut:</strong> Press{" "}
+                  <kbd className="px-2 py-1 bg-background border rounded text-xs">
+                    Ctrl
+                  </kbd>{" "}
+                  +{" "}
+                  <kbd className="px-2 py-1 bg-background border rounded text-xs">
+                    P
+                  </kbd>{" "}
+                  to print
+                </p>
+              </div>
+              <Button
+                onClick={handlePrint}
+                className="flex items-center  gap-2 sm:w-auto cursor-pointer"
+              >
+                <PrinterIcon className="h-4 w-4" />
+                Print Prescription
+              </Button>
+            </div>
           </DialogHeader>
         </div>
 
         {/* Prescription Form */}
-        <div ref={containerRef} className="flex-1">
+        <div ref={containerRef} className="flex-1 p-4">
           <PrescriptionForm
             contentRef={contentRef}
             containerRef={containerRef}
             appointment={appointment}
             patient={patient}
           />
-        </div>
-
-        {/* Print Button Section */}
-        <div className="no-print bg-gray-50 border-t p-4 sticky bottom-0">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-center sm:text-left">
-              <h3 className="text-base font-semibold">Generate Prescription</h3>
-              <p className="text-sm text-muted-foreground">
-                Click the button below to generate and print the prescription
-              </p>
-            </div>
-            <Button
-              onClick={handlePrint}
-              className="flex items-center gap-2 w-full sm:w-auto"
-            >
-              <PrinterIcon className="h-4 w-4" />
-              Print Prescription
-            </Button>
-          </div>
-          <div className="mt-3 p-2 bg-muted/50 rounded-lg">
-            <p className="text-xs text-muted-foreground text-center sm:text-left">
-              <strong>Keyboard shortcut:</strong> Press{" "}
-              <kbd className="px-2 py-1 bg-background border rounded text-xs">
-                Ctrl
-              </kbd>{" "}
-              +{" "}
-              <kbd className="px-2 py-1 bg-background border rounded text-xs">
-                P
-              </kbd>{" "}
-              to print
-            </p>
-          </div>
         </div>
       </DialogContent>
     </Dialog>

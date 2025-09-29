@@ -124,7 +124,8 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  #prescription-form {
+  #prescription-form,
+  #invoice {
     width: 210mm !important;
     height: 297mm !important;
     position: absolute !important;
