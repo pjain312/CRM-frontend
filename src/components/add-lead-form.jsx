@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -38,9 +38,8 @@ import { toast } from "sonner";
 const AddLeadForm = ({ type, patient, disabled = false }) => {
   const [open, setOpen] = useState(false);
 
-  const form = useForm({
-    resolver: zodResolver(leadFormSchema),
-    defaultValues: {
+  const defaultValues = useMemo(() => {
+    return {
       name: patient?.Name || "",
       age: patient?.Age || "",
       gender: patient?.GenderId?.toString() || "",
@@ -58,7 +57,12 @@ const AddLeadForm = ({ type, patient, disabled = false }) => {
       condition: patient?.Condition || "",
       treatment: patient?.TreatmentTypeId?.toString() || "",
       assignedTo: patient?.AssignedTo?.toString() || "",
-    },
+    }
+  },[patient])
+
+  const form = useForm({
+    resolver: zodResolver(leadFormSchema),
+    defaultValues: defaultValues
   });
 
   const queryClient = useQueryClient();
@@ -121,6 +125,11 @@ const AddLeadForm = ({ type, patient, disabled = false }) => {
     } else {
       addLead(sanitizedValues);
     }
+  }
+
+  const handleCancelLead = () => {
+    form.reset(defaultValues);
+    console.log("Form fields cleared");
   }
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -454,7 +463,7 @@ const AddLeadForm = ({ type, patient, disabled = false }) => {
             />
             <DialogFooter className="col-span-2">
               <DialogClose asChild>
-                <Button type="button" variant="outline">
+                <Button type="button" variant="outline" onClick = {handleCancelLead}>
                   Cancel
                 </Button>
               </DialogClose>

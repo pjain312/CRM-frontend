@@ -32,6 +32,7 @@ import { getPatientPrescription } from "../components/prescription";
 import PackageInvoice from "../components/package-invoice";
 import DailyInvoice from "../components/daily-invoice";
 import ClosePatientForm from "../components/close-patient-form";
+import AssignToForm from "../components/assign-to-form";
 
 export const leadsColumns = [
   {
@@ -141,11 +142,7 @@ export const leadsColumns = [
               <PatientFollowup patient={row.original} />
             </DropdownMenuItem>
             <DropdownMenuItem asChild disabled={isAssignedOrClosed}>
-              <AddLeadForm
-                type="assign"
-                patient={row.original}
-                disabled={isAssignedOrClosed}
-              />
+              <AssignToForm patient={row.original} disabled={isAssignedOrClosed}/>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

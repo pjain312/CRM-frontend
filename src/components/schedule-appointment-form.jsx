@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -46,16 +46,20 @@ const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialo
     queryFn: getAppointmentDefaultOptions,
   });
 
-  const form = useForm({
-    resolver: zodResolver(appointmentFormSchema),
-    defaultValues: {
+  const defaultAppointmentValues = useMemo(() => {
+    return {
       appointmentDate: "",
       appointmentTime: "",
       appointmentType: "",
       status: "",
       comments: "",
       physio:""
-    },
+    }
+  },[])
+
+  const form = useForm({
+    resolver: zodResolver(appointmentFormSchema),
+    defaultValues: defaultAppointmentValues
   });
 
   const queryClient = useQueryClient();
@@ -72,15 +76,21 @@ const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialo
       toast.error("Appointment Failed to Schedule");
     },
   });
+  const handleDialogClose = () =>{
+    setOpen(false);
+    onOpenIconChange && onOpenIconChange(false)
+  }
 
   function onSubmit(values) {
     mutate({ ...values, patientId: patient.Id });
   }
 
-  const handleDialogClose = () =>{
-    setOpen(false);
-    onOpenIconChange && onOpenIconChange(false)
+  const handleCloseButton = () => {
+    form.reset(defaultAppointmentValues);
   }
+
+
+
 
   return (
     <Dialog open={open || openIcon} onOpenChange={handleDialogClose}>
@@ -203,7 +213,7 @@ const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialo
               name="physio"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel>Select Physio</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger className="w-full">
@@ -242,13 +252,17 @@ const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialo
                   className="cursor-pointer"
                   type="button"
                   variant="outline"
+                  onClick={handleCloseButton}
                 >
                   Cancel
                 </Button>
               </DialogClose>
-              <Button className="cursor-pointer" type="submit">
-                Schedule Appointment
-              </Button>
+              <DialogClose>
+                <Button className="cursor-pointer" type="submit">
+                  Schedule Appointment
+                </Button>
+              </DialogClose>
+             
             </DialogFooter>
           </form>
         </Form>
