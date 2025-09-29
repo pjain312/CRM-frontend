@@ -9,7 +9,7 @@ const Leads = () => {
     queryKey: ["patient-leads"],
     queryFn: getPatientLeads,
   });
-  console.log(leads);
+  
   return (
     <div>
       {!isLoading && (

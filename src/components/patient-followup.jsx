@@ -24,14 +24,38 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
+import { Textarea } from "./ui/textarea";
+
+// Form validation schema
+const followUpSchema = z.object({
+  followupComment: z.string().min(1, "Follow-up comment is required"),
+  nextFollowupDate: z.string().min(1, "Next follow-up date is required"),
+});
 
 function PatientFollowup({ patient }) {
   const [open, setOpen] = useState(false);
-  const [followupComment, setFollowupComment] = useState("");
-  const [nextFollowupDate, setNextFollowupDate] = useState();
+
+  const form = useForm({
+    resolver: zodResolver(followUpSchema),
+    defaultValues: {
+      followupComment: "",
+      nextFollowupDate: "",
+    },
+  });
 
   const { data: followUpData } = useQuery({
-    queryKey: ["patient-appointments"],
+    queryKey: ["add-follow-up"],
     queryFn: () => getLeadDetailsForFollowUp({ id: patient.Id }),
   });
 
@@ -42,20 +66,28 @@ function PatientFollowup({ patient }) {
       queryClient.invalidateQueries({ queryKey: ["add-follow-up"] });
       toast.success("Follow Up Added!");
       setOpen(false);
+      form.reset();
     },
     onError: () => {
       toast.error("Follow Up Failed to Add");
     },
   });
 
-  const handleSave = () => {
+  const handleCloseFollowUpDialog = () => {
+    setOpen(false);
+    form.reset();
+  }
+
+  const onSubmit = (values) => {
     const payload = {
       leadId: patient.Id,
-      followUpComment: followupComment,
-      nextFollowUpDate: nextFollowupDate,
+      followUpComment: values.followupComment,
+      nextFollowUpDate: values.nextFollowupDate,
     };
     mutate(payload);
   };
+
+
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -153,64 +185,82 @@ function PatientFollowup({ patient }) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <label
-                  htmlFor="followupComment"
-                  className="text-base font-medium"
-                >
-                  Follow-up Comment
-                </label>
-                <textarea
-                  id="followupComment"
-                  placeholder="Enter your follow-up notes and observations..."
-                  value={followupComment}
-                  onChange={(e) => setFollowupComment(e.target.value)}
-                  rows={4}
-                  disabled={followUpData?.FollowUpCount >= 3}
-                  className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
-                />
-                {followUpData?.FollowUpCount === 3 && (
-                  <p className="text-sm text-muted-foreground">
-                    You have reached the maximum number of follow-ups. Comments
-                    are disabled.
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-base font-medium">
-                  Next Follow-up Date
-                </label>
-                {followUpData?.FollowUpCount >= 2 ? (
-                  <p className="text-sm text-muted-foreground">
-                    Date selection is disabled after two follow-ups.
-                  </p>
-                ) : (
-                  <DatePicker
-                    date={nextFollowupDate}
-                    onDateChange={setNextFollowupDate}
-                    placeholder="Select next follow-up date"
-                    className="w-full"
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="followupComment"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-base font-medium">
+                          Follow-up Comment *
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Enter your follow-up notes and observations..."
+                            rows={4}
+                            disabled={followUpData?.FollowUpCount >= 3}
+                            className="resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                        {followUpData?.FollowUpCount === 3 && (
+                          <p className="text-sm text-muted-foreground">
+                            You have reached the maximum number of follow-ups. Comments
+                            are disabled.
+                          </p>
+                        )}
+                      </FormItem>
+                    )}
                   />
-                )}
-              </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setOpen(false)}
-                  className="flex-1 h-12 text-base font-medium"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleSave}
-                  className="flex-1 h-12 text-base font-medium"
-                >
-                  <MessageSquareIcon className="h-4 w-4 mr-2" />
-                  Save Follow-up
-                </Button>
-              </div>
+                  <FormField
+                    control={form.control}
+                    name="nextFollowupDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-base font-medium">
+                          Next Follow-up Date *
+                        </FormLabel>
+                        <FormControl>
+                          {followUpData?.FollowUpCount >= 2 ? (
+                            <p className="text-sm text-muted-foreground">
+                              Date selection is disabled after two follow-ups.
+                            </p>
+                          ) : (
+                            <DatePicker
+                              date={field.value}
+                              onDateChange={field.onChange}
+                              placeholder="Select next follow-up date"
+                              className="w-full"
+                            />
+                          )}
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleCloseFollowUpDialog}
+                      className="flex-1 h-12 text-base font-medium"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="flex-1 h-12 text-base font-medium"
+                    >
+                      <MessageSquareIcon className="h-4 w-4 mr-2" />
+                      Save Follow-up
+                    </Button>
+                  </div>
+                </form>
+              </Form>
             </CardContent>
           </Card>
         </div>
