@@ -1,6 +1,7 @@
 import api from "../api/axiosUtil";
+import config from "../config/environment";
 
-const API_URL = "http://localhost:9005/patientLeads";
+const API_URL = `${config.api.baseURL}/patientLeads`;
 
 export const addPatientLead = async (leadData) => {
   const response = await api.request({

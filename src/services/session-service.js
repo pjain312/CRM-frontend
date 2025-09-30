@@ -1,5 +1,7 @@
 import api from "../api/axiosUtil";
-const API_BASE_URL = "http://localhost:9005/sessions";
+import config from "../config/environment";
+
+const API_BASE_URL = `${config.api.baseURL}/sessions`;
 
 export const checkinPatient = async (sessionData) => {
   try {
