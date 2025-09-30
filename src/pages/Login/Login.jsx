@@ -155,7 +155,7 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Modern Animated Background Section */}
+            {/* Modern Animated Background Sectionn */}
             <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 h-full">
               {/* Animated geometric shapes */}
               <div className="absolute inset-0">
