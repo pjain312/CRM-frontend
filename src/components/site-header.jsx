@@ -7,6 +7,7 @@ import axios from "axios";
 import { clearTokens, getRefreshToken } from "../utils/auth";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import config from "../config/environment";
 
 export function SiteHeader() {
   const { pathname } = useLocation();
@@ -14,7 +15,7 @@ export function SiteHeader() {
   const page = data.navMain.find((item) => item.url === pathname);
   const logout = async () => {
     const refreshToken = getRefreshToken();
-    await axios.post("http://localhost:9005/auth/logout", { refreshToken });
+    await axios.post(`${config.api.baseURL}/auth/logout`, { refreshToken });
     clearTokens();
     navigate("/login");
     toast.success("Logout successful!");

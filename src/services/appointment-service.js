@@ -1,6 +1,7 @@
 import api from "../api/axiosUtil";
+import config from "../config/environment";
 
-const API_URL = "http://localhost:9005/appointments";
+const API_URL = `${config.api.baseURL}/appointments`;
 
 export const getAppointmentDefaultOptions = async () => {
   try {

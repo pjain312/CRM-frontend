@@ -1,13 +1,15 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Card, CardContent } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';    
-import { Input } from '../../components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../components/ui/form';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { saveTokens, saveUser } from '../../utils/auth';
 import { toast } from 'sonner';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent } from '../../components/ui/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../components/ui/form';
+import { Input } from '../../components/ui/input';
+import config from '../../config/environment';
+import { saveTokens, saveUser } from '../../utils/auth';
+// Removed image import - using gradient background instead
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,7 +25,7 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post('http://localhost:9005/auth/login', data);
+      const response = await axios.post(`${config.api.baseURL}/auth/login`, data);
       const tokens = response.data.data;
       saveTokens(tokens.accessToken, tokens.refreshToken);
       saveUser(tokens.user);

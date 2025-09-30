@@ -1,6 +1,7 @@
 import api from "../api/axiosUtil";
+import config from "../config/environment";
 
-const API_BASE_URL = "http://localhost:9005/packages";
+const API_BASE_URL = `${config.api.baseURL}/packages`;
 
 export const addPackage = async (packageData) => {
   const response = await api.request({
