@@ -1,27 +1,26 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card"
-import { ViewIcon, Users, Clock, View, EyeIcon } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { useQuery } from "@tanstack/react-query"
-import { getPendingCounts } from "../../services/appointment-service"
-import { getPatientLeads } from "../../services/leads-service"
-import { useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ViewIcon, Users, Clock, View, EyeIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import { getPendingCounts } from "../../services/appointment-service";
+import { getPatientLeads } from "../../services/leads-service";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const PendingCounts = () => {
   const navigate = useNavigate();
-  const { data: pendingCounts, isLoading, error } = useQuery({
+  const {
+    data: pendingCounts,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["pending-counts"],
     queryFn: getPendingCounts,
   });
 
   if (isLoading) {
     return (
-      <Card className="w-full max-w-md mt-6">
+      <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
@@ -39,7 +38,7 @@ const PendingCounts = () => {
 
   if (error) {
     return (
-      <Card className="w-full max-w-md mt-6">
+      <Card className="w-full max-w-md ">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
@@ -58,47 +57,47 @@ const PendingCounts = () => {
   // Define the display labels for each key
   const getDisplayInfo = (key) => {
     switch (key) {
-      case 'PendingFollowUps':
+      case "PendingFollowUps":
         return {
-          title: 'Pending Followup',
-          description: 'Patients requiring follow-up',
+          title: "Pending Followup",
+          description: "Patients requiring follow-up",
           icon: Clock,
-          color: 'bg-orange-100 text-orange-700 hover:bg-orange-100'
+          color: "bg-orange-100 text-orange-700 hover:bg-orange-100",
         };
-      case 'TodayLeads':
+      case "TodayLeads":
         return {
-          title: 'New Leads',
-          description: 'New leads for today',
+          title: "New Leads",
+          description: "New leads for today",
           icon: Users,
-          color: 'bg-green-100 text-green-700 hover:bg-green-100'
+          color: "bg-green-100 text-green-700 hover:bg-green-100",
         };
-        case 'TodayFollowups':
+      case "TodayFollowups":
         return {
-          title: 'Pending Lead Followups' ,
-          description: 'Pending Leads Followups for Today',
+          title: "Pending Lead Followups",
+          description: "Pending Leads Followups for Today",
           icon: Users,
-          color: 'bg-blue-100 text-blue-700 hover:bg-blue-100'
+          color: "bg-blue-100 text-blue-700 hover:bg-blue-100",
         };
       default:
         return {
           title: key,
-          description: 'Count information',
+          description: "Count information",
           icon: Clock,
-          color: 'bg-blue-100 text-blue-700 hover:bg-blue-100'
+          color: "bg-blue-100 text-blue-700 hover:bg-blue-100",
         };
     }
   };
 
   const handleComponentClick = async (key) => {
-    if (key === 'TodayFollowups') {
+    if (key === "TodayFollowups") {
       const today = new Date().toISOString();
-      navigate('/leads', { 
-        state: { 
+      navigate("/leads", {
+        state: {
           params: { date: today },
-        } 
+        },
       });
     }
-  }
+  };
 
   return (
     <Card className="w-full max-w-md mt-6">
@@ -110,33 +109,49 @@ const PendingCounts = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {pendingCounts && Object.keys(pendingCounts).map((key) => {
-            const displayInfo = getDisplayInfo(key);
-            const IconComponent = displayInfo.icon;
-            
-            return (
-              <div key={key} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <IconComponent className="h-4 w-4 text-gray-500" />
+          {pendingCounts &&
+            Object.keys(pendingCounts).map((key) => {
+              const displayInfo = getDisplayInfo(key);
+              const IconComponent = displayInfo.icon;
+
+              return (
+                <div
+                  key={key}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <IconComponent className="h-4 w-4 text-gray-500" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        {displayInfo.title}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {displayInfo.description}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-900">{displayInfo.title}</p>
-                    <p className="text-sm text-gray-600">{displayInfo.description}</p>
-                  </div>
+                  {key === "TodayFollowups" && (
+                    <EyeIcon
+                      className="h-4 w-4 text-gray-500 cursor-pointer"
+                      onClick={() => handleComponentClick(key)}
+                    />
+                  )}
+                  <Badge
+                    variant="secondary"
+                    className={`text-xs ${displayInfo.color}`}
+                  >
+                    {pendingCounts[key] || 0}
+                  </Badge>
                 </div>
-                {key === "TodayFollowups" && <EyeIcon className="h-4 w-4 text-gray-500 cursor-pointer"  onClick={()=>handleComponentClick(key)}/>}
-                <Badge variant="secondary" className={`text-xs ${displayInfo.color}`}>
-                  {pendingCounts[key] || 0}
-                </Badge>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
 export default PendingCounts;
