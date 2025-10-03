@@ -311,14 +311,14 @@ const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
                 <div className="border-b border-gray-200 mb-4"></div>
                 <div className="flex justify-between">
                     <div className="space-y-2 text-sm font-medium">
-                    <p>Patient Name: {invoiceData.PatientName}</p>
+                    <p>Patient Name: {invoiceData?.Gender == 1 ? "Mr." : "Ms."} {invoiceData.PatientName}</p>
                         <p>Address: {invoiceData.Address}</p>
                         <p>Phone: {invoiceData.PhoneNumber}</p>
                     </div>
                     <div className="space-y-2 text-sm font-medium">
                         <p>Invoice id: #{invoiceData?.TransactionId}</p>
                         <p>Date: {new Date().toLocaleDateString()}</p>
-                        <p>Doctor: {invoiceData.PhysioName}</p>
+                        <p>Doctor: Dr. {invoiceData.PhysioName} PT</p>
                     </div>
                 </div>
             </div>

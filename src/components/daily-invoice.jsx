@@ -52,14 +52,14 @@ const InvoiceContent = ({ invoiceData, contentRef, containerRef }) => {
         <div className="border-b border-gray-200 mb-4"></div>
         <div className="flex justify-between">
           <div className="space-y-2 text-sm font-medium">
-            <p>Patient Name: {invoiceData?.details?.PatientName}</p>
+            <p>Patient Name: {invoiceData?.Gender == 1 ? "Mr." : "Ms."} {invoiceData?.details?.PatientName}</p>
             <p>Address: {invoiceData?.details?.Address}</p>
             <p>Phone: {invoiceData?.details?.PhoneNumber}</p>
           </div>
           <div className="space-y-2 text-sm font-medium">
             <p>Invoice id: #{invoiceData?.details?.TransactionId}</p>
             <p>Date: {new Date().toLocaleDateString()}</p>
-            <p>Doctor: {invoiceData?.details?.PhysioName}</p>
+            <p>Doctor: Dr. {invoiceData?.details?.PhysioName} PT</p>
           </div>
         </div>
       </div>

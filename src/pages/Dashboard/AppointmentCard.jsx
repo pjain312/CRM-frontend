@@ -109,7 +109,7 @@ const AppointmentCard = ({appointmentData, value}) =>{
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <span className="text-sm text-gray-500">
-                                        {"Dr."} {appointment.PhysioName}
+                                        {"Dr."} {appointment.PhysioName} PT
                                     </span>
                                 </div>
 
