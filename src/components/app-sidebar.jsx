@@ -1,5 +1,5 @@
 import * as React from "react";
-import data from "../lib/nav-data";
+import getNavData from "../lib/nav-data";
 import { NavMain } from "./nav-main";
 import {
   Sidebar,
@@ -21,7 +21,7 @@ export function AppSidebar({ ...props }) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <Link href="/" className="flex items-center">
+              <Link to="/" className="flex items-center">
                 <img src="/logo.png" width={40} height={40} alt="Kinetara" />
                 <span className="text-base font-semibold">Kinetara</span>
               </Link>
@@ -30,7 +30,7 @@ export function AppSidebar({ ...props }) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={getNavData()} />
       </SidebarContent>
     </Sidebar>
   );
