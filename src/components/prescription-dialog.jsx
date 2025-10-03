@@ -8,6 +8,7 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
+import Logo from "../assets/Logo.webp";
 import { PrinterIcon } from "lucide-react";
 import useDimensions from "../hooks/use-dimension";
 import { useReactToPrint } from "react-to-print";
@@ -41,7 +42,7 @@ const PrescriptionForm = ({
           {/* Logo */}
           <div className="flex-shrink-0">
             <img
-              src="/src/assets/Logo.webp"
+              src={Logo}
               alt="Kinetara Logo"
               className="h-20 w-auto"
             />
