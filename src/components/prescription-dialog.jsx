@@ -41,7 +41,7 @@ const PrescriptionForm = ({
           {/* Logo */}
           <div className="flex-shrink-0">
             <img
-              src="/src/assets/Logo.png"
+              src="/src/assets/Logo.webp"
               alt="Kinetara Logo"
               className="h-20 w-auto"
             />
