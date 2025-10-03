@@ -65,7 +65,7 @@ export const leadsColumns = [
   {
     accessorKey: "Name",
     header: "Name",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("Name")}</div>,
+    cell: ({ row }) => <div className="capitalize">{row.getValue("Gender") === "Male" ? "Mr." : "Ms."} {row.getValue("Name")}</div>,
   },
   {
     accessorKey: "Age",
@@ -185,7 +185,7 @@ export const patientListsColumns = [
   {
     accessorKey: "Name",
     header: "Name",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("Name")}</div>,
+    cell: ({ row }) => <div className="capitalize">{row.getValue("Gender") === "Male" ? "Mr." : "Ms."} {row.getValue("Name")}</div>,
   },
   {
     accessorKey: "Age",
@@ -312,7 +312,7 @@ export const appointmentsColumns = [
   {
     accessorKey: "Name",
     header: "Name",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("Name")}</div>,
+    cell: ({ row }) => <div className="capitalize">{row.getValue("Gender") === "Male" ? "Mr." : "Ms."} {row.getValue("Name")}</div>,
   },
   {
     accessorKey: "Age",
@@ -353,6 +353,11 @@ export const appointmentsColumns = [
         {row.getValue("Status")}
       </Badge>
     ),
+  },
+  {
+    accessorKey: "PhysioName",
+    header: () => "Doctor",
+    cell: ({ row }) => <div>Dr. {row.getValue("PhysioName")} PT</div>,
   },
   {
     accessorKey: "Comments",

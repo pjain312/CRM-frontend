@@ -222,7 +222,7 @@ const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialo
                     </FormControl>
                     <SelectContent>
                       {appointmentDefaultOptions?.physioList?.map(a=>{
-                        return <SelectItem value={a.Id?.toString()}>{a.Name}</SelectItem>
+                        return <SelectItem value={a.Id?.toString()}>Dr. {a.Name} PT</SelectItem>
                       })}
                     </SelectContent>
                   </Select>

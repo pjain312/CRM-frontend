@@ -127,7 +127,7 @@ export const getPatientPrescription = (patientData) => {
                   <div class="patient-details" style="grid-template-columns: 1fr 1fr 1fr; gap: 24px; font-size: 14px;">
                     <div class="detail-item">
                       <span class="detail-label">Name: </span>
-                      <span class="detail-value">${patientData?.Name || 'N/A'}</span>
+                      <span class="detail-value">${patientData?.Gender == "Male" ? "Mr." : "Ms."} ${patientData?.Name || 'N/A'}</span>
                     </div>
                     <div class="detail-item">
                       <span class="detail-label">Gender: </span>
