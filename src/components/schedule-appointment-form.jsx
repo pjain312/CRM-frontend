@@ -1,4 +1,16 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { appointmentFormSchema } from "../lib/form-validation";
+import {
+  addAppointment,
+  getAllTimeSlots,
+  getAppointmentDefaultOptions
+} from "../services/appointment-service";
+import DatePicker from "./date-picker";
+import { Button } from "./ui/button";
+import { Calendar } from "./ui/calendar";
 import {
   Dialog,
   DialogClose,
@@ -17,10 +29,7 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
-import { Button } from "./ui/button";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { appointmentFormSchema } from "../lib/form-validation";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import {
   Select,
   SelectContent,
@@ -28,16 +37,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Calendar } from "./ui/calendar";
 import { Textarea } from "./ui/textarea";
-import DatePicker from "./date-picker";
-import { TimePicker } from "./time-picker";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  addAppointment,
-  getAppointmentDefaultOptions,
-} from "../services/appointment-service";
 
 import { toast } from "sonner";
 
@@ -52,6 +52,11 @@ const ScheduleAppointmentForm = ({
   const { data: appointmentDefaultOptions } = useQuery({
     queryKey: ["appointment-default-options"],
     queryFn: getAppointmentDefaultOptions,
+  });
+
+  const { data: timeSlots } = useQuery({
+    queryKey: ["time-slots"],
+    queryFn: getAllTimeSlots,
   });
 
   const defaultAppointmentValues = useMemo(() => {
@@ -161,14 +166,18 @@ const ScheduleAppointmentForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Time</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <TimePicker
-                      time={field.value}
-                      onTimeChange={field.onChange}
-                      placeholder="Select event time"
-                      className="w-full"
-                    />
-                  </FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Time" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                     {timeSlots?.map(t => {
+                      return <SelectItem key={t.Id} value={t.StartTime}>{t.Slot}</SelectItem>
+                     })}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -211,7 +220,7 @@ const ScheduleAppointmentForm = ({
                       {appointmentDefaultOptions?.appointmentStatusList?.map(
                         (a) => {
                           return (
-                            <SelectItem value={a.Id?.toString()}>
+                            <SelectItem key={a.Id} value={a.Id?.toString()}>
                               {a.Name}
                             </SelectItem>
                           );
@@ -238,7 +247,7 @@ const ScheduleAppointmentForm = ({
                     <SelectContent>
                       {appointmentDefaultOptions?.physioList?.map((a) => {
                         return (
-                          <SelectItem value={a.Id?.toString()}>
+                          <SelectItem key={a.Id} value={a.Id?.toString()}>
                             Dr. {a.Name} PT
                           </SelectItem>
                         );

@@ -1,34 +1,33 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { recheduleConfirmAppointmentFormSchema } from "../lib/form-validation";
-import { getAppointmentDefaultOptions, updateAppointment } from "../services/appointment-service";
-import { TimePicker } from "./time-picker";
+import { getAllTimeSlots, getAppointmentDefaultOptions, updateAppointment } from "../services/appointment-service";
 import { Button } from "./ui/button";
 import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
 } from "./ui/dialog";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "./ui/form";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
 
@@ -42,13 +41,22 @@ const RescheduleConfirmAppointmentForm = ({ appointment, openIcon, onOpenIconCha
     queryFn: getAppointmentDefaultOptions,
   });
 
-  const form = useForm({
-    resolver: zodResolver(recheduleConfirmAppointmentFormSchema),
-    defaultValues: {
+  const { data: timeSlots } = useQuery({
+    queryKey: ["time-slots"],
+    queryFn: getAllTimeSlots,
+  });
+
+  const defaultAppointmentValues = useMemo(() => {
+    return {
       appointmentTime: "" ,
       status: appointment?.StatusId?.toString(),
       comments: "",
-    },
+    };
+  }, []);
+
+  const form = useForm({
+    resolver: zodResolver(recheduleConfirmAppointmentFormSchema),
+    defaultValues: defaultAppointmentValues
   });
 
   const queryClient = useQueryClient();
@@ -59,6 +67,7 @@ const RescheduleConfirmAppointmentForm = ({ appointment, openIcon, onOpenIconCha
       queryClient.invalidateQueries({ queryKey: ["appointment-today"] });
       toast.success(`Appointment ${appointment?.Status === "Pending" ? "Confirmed" : "Rescheduled"} Successfully`);
       setOpen(false);
+      form.reset(defaultAppointmentValues);
       if (openIcon && onOpenIconChange) {
         onOpenIconChange(false);
       }
@@ -98,17 +107,18 @@ const RescheduleConfirmAppointmentForm = ({ appointment, openIcon, onOpenIconCha
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Time</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <TimePicker
-                      time={field.value}
-                      onTimeChange={(time) => {
-                        field.onChange(time);
-                        form.setValue("status", "1"); // Assuming "2" is the confirmed status
-                      }}
-                      placeholder="Select appointment time"
-                      className="w-full"
-                    />
-                  </FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Time" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                     {timeSlots?.map(t => {
+                      return <SelectItem key={t.Id} value={t.StartTime}>{t.Slot}</SelectItem>
+                     })}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -127,7 +137,7 @@ const RescheduleConfirmAppointmentForm = ({ appointment, openIcon, onOpenIconCha
                     </FormControl>
                     <SelectContent>
                       {appointmentDefaultOptions?.appointmentStatusList?.map(a=>{
-                        return <SelectItem value={a.Id?.toString()}>{a.Name}</SelectItem>
+                        return <SelectItem key={a.Id} value={a.Id?.toString()}>{a.Name}</SelectItem>
                       })}
                     </SelectContent>
                   </Select>

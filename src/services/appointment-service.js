@@ -70,3 +70,16 @@ export const getPendingCounts = async () => {
     throw error; 
   }
 };
+
+export const getAllTimeSlots = async () => {
+  try {
+    const response = await api.request({
+      method: "GET",
+      url: `${API_URL}/getAllTimeSlots`,
+    });
+    return response.data.data;
+  } catch (error) {
+    console.warn("API data not available", error.message);
+    throw error; 
+  }
+};

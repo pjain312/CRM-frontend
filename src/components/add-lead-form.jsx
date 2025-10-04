@@ -104,6 +104,7 @@ const AddLeadForm = ({ type, patient, disabled = false }) => {
     const sanitizedValues = {
       ...values,
       assignedTo: values.assignedTo === "" ? null : values.assignedTo,
+      leadStatus: values.assignedTo ? "2" : values.leadStatus,
     };
     if (type === "edit") {
       const updatePayload = {
@@ -263,7 +264,7 @@ const AddLeadForm = ({ type, patient, disabled = false }) => {
                 <FormItem>
                   <FormLabel>City</FormLabel>
                   <FormControl>
-                    <Input placeholder="New Delhi" {...field} />
+                    <Input placeholder="Enter City" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -276,7 +277,7 @@ const AddLeadForm = ({ type, patient, disabled = false }) => {
                 <FormItem>
                   <FormLabel>State</FormLabel>
                   <FormControl>
-                    <Input placeholder="Delhi" {...field} />
+                    <Input placeholder="Enter State" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -289,7 +290,7 @@ const AddLeadForm = ({ type, patient, disabled = false }) => {
                 <FormItem>
                   <FormLabel>Pincode</FormLabel>
                   <FormControl>
-                    <Input placeholder="110001" {...field} />
+                    <Input placeholder="Enter Pincode" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -302,7 +303,7 @@ const AddLeadForm = ({ type, patient, disabled = false }) => {
                 <FormItem>
                   <FormLabel>Country</FormLabel>
                   <FormControl>
-                    <Input placeholder="India" {...field} />
+                    <Input placeholder="Enter Country" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

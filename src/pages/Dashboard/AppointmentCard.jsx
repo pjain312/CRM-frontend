@@ -189,7 +189,7 @@ const AppointmentCard = ({appointmentData, value}) =>{
                                     </div>
                                 }
                                 {!!(appointment.StartTime && !appointment.EndTime) &&
-                                    <div title = "End Session" onClick={()=>handleEndSession(appointment)} className="h-8 w-8 bg-green-300 cursor-pointer hover:bg-green-400 rounded-full flex items-center justify-center mr-2">
+                                    <div title = "End Session" onClick={()=>handleEndSession(appointment)} className="h-8 w-8 bg-orange-300 cursor-pointer hover:bg-orange-400 rounded-full flex items-center justify-center mr-2">
                                         <TimerOff className="h-5 w-5 text-white" />
                                     </div>
                                 }

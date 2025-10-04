@@ -223,17 +223,17 @@ export const patientListsColumns = [
     cell: ({ row }) => <div>{row.getValue("Treatment")}</div>,
   },
   {
-    accessorKey: "LeadStatusName",
+    accessorKey: "IsPatientClosed",
     header: () => "Status",
     cell: ({ row }) => (
       <Badge
         className={`${
-          row.getValue("LeadStatusName") === "Assigned"
+          row.getValue("IsPatientClosed") === 0
             ? "border-blue-500 bg-blue-100 text-blue-500"
-            : "border-red-500 bg-red-100 text-red-500"
+            : "border-green-500 bg-green-100 text-green-500"
         }`}
       >
-        {row.getValue("LeadStatusName")}
+        {row.getValue("IsPatientClosed") === 0 ? "Active": "Closed" }
       </Badge>
     ),
   },
@@ -267,9 +267,6 @@ export const patientListsColumns = [
                 patient={row.original}
               />
             </DropdownMenuItem>
-            {/* <DropdownMenuItem onClick={() => {getPatientPrescription(row.original)}}>
-                Generate Prescription
-            </DropdownMenuItem> */}
             <DropdownMenuItem asChild>
               <ScheduleAppointmentForm patient={row.original} />
             </DropdownMenuItem>
@@ -674,10 +671,10 @@ export const sessionTypesColumns = [
     enableHiding: false,
   },
   {
-    accessorKey: "SessionName",
+    accessorKey: "Name",
     header: "Session Type Name",
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("SessionName")}</div>
+      <div className="font-medium">{row.getValue("Name")}</div>
     ),
   },
   {

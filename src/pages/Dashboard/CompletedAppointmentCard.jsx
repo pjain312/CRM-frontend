@@ -4,6 +4,7 @@ import {
   CalendarPlus,
   CalendarX,
   CheckCircle,
+  CircleCheckBig,
   Clock,
   MessageCircle,
   UserCheck,
@@ -83,7 +84,7 @@ const CompletedAppointmentCard = ({ appointmentData, value }) => {
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-gray-900">
-                      {appointment.Gender === "Male" ? "Mr." : "Ms."}
+                      {appointment.Gender === "Male" ? "Mr. " : "Ms. "} 
                       {appointment.Name}
                     </span>
                   </div>
@@ -121,16 +122,22 @@ const CompletedAppointmentCard = ({ appointmentData, value }) => {
                     </>
                   )}
 
-                  {appointment?.IsInvoiceGenerated && (
+                  {!!appointment?.IsInvoiceGenerated && (
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <BadgeCheck className="h-4 w-4 text-green-500" />
                       <span>Invoiced</span>
                     </div>
                   )}
-                  {appointment?.IsFollowUpCreated && (
+                  {!!appointment?.IsFollowUpCreated && (
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <CalendarCheck className="h-4 w-4 text-green-500" />
                       <span>Follow-up Created</span>
+                    </div>
+                  )}
+                   {!!appointment?.IsPatientClosed && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <CircleCheckBig className="h-4 w-4 text-green-500" />
+                      <span>Patient Closed</span>
                     </div>
                   )}
                 </div>
@@ -166,7 +173,7 @@ const CompletedAppointmentCard = ({ appointmentData, value }) => {
                     </div>
                   )}
 
-                  {!!!appointment?.IsFollowUpCreated && (
+                  {!!(!appointment?.IsFollowUpCreated && !appointment?.IsPatientClosed) && (
                     <div
                       title="Create Follow-up"
                       className="h-8 w-8 bg-green-300 mr-2 rounded-full flex items-center justify-center cursor-pointer hover:bg-green-400 transition-colors"

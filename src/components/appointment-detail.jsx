@@ -78,7 +78,7 @@ function AppointmentDetail({ appointment, patient, open, onOpenChange }) {
                   <p className="text-sm font-medium text-muted-foreground">
                     Full Name
                   </p>
-                  <p className="text-base font-semibold">{patient?.Name}</p>
+                  <p className="text-base font-semibold">{patient?.Gender === "Male" ? "Mr. " : "Ms. "}{patient?.Name}</p>
                 </div>
                 <div className="space-y-2">
                   <p className="text-sm font-medium text-muted-foreground">
