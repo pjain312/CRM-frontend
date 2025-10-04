@@ -53,7 +53,7 @@ const PrescriptionForm = ({
             <div className="grid grid-cols-3 gap-6 text-sm">
               <div className="flex py-2">
                 <span className="font-bold text-gray-600 mr-2">Name:</span>
-                <span className="text-gray-800">{patient?.Name || "N/A"}</span>
+                <span className="text-gray-800">{patient?.Gender === "Male" ? "Mr." : "Ms."} {patient?.Name || "N/A"}</span>
               </div>
               <div className="flex py-2">
                 <span className="font-bold text-gray-600 mr-2">Gender:</span>
