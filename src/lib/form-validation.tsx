@@ -61,7 +61,7 @@ export const packageFormSchema = z.object({
     .pipe(
       z
         .string()
-        .min(1, { message: "This field is required" })
+        .min(0, { message: "This field is required" })
         .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
           message: "Must be a valid positive number",
         })
@@ -109,7 +109,7 @@ export const sessionTypeFormSchema = z.object({
     .pipe(
       z
         .string()
-        .min(1, { message: "This field is required" })
+        .min(0, { message: "This field is required" })
         .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
           message: "Must be a valid positive number",
         })
