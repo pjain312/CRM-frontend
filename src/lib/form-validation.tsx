@@ -61,8 +61,8 @@ export const packageFormSchema = z.object({
     .pipe(
       z
         .string()
-        .min(0, { message: "This field is required" })
-        .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+        .min(1, { message: "This field is required" })
+        .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
           message: "Must be a valid positive number",
         })
     ),
@@ -84,7 +84,7 @@ export const packageFormSchema = z.object({
       z
         .string()
         .min(1, { message: "This field is required" })
-        .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+        .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
           message: "Must be a valid positive number",
         })
     ),
@@ -95,7 +95,7 @@ export const packageFormSchema = z.object({
       z
         .string()
         .min(1, { message: "This field is required" })
-        .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+        .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
           message: "Must be a valid positive number",
         })
     ),
@@ -109,9 +109,9 @@ export const sessionTypeFormSchema = z.object({
     .pipe(
       z
         .string()
-        .min(0, { message: "This field is required" })
-        .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-          message: "Must be a valid positive number",
+        .min(1, { message: "This field is required" })
+        .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+          message: "Must be a valid non-negative number",
         })
     ),
 });
