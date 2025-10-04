@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -34,11 +34,19 @@ import { Textarea } from "./ui/textarea";
 import DatePicker from "./date-picker";
 import { TimePicker } from "./time-picker";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addAppointment, getAppointmentDefaultOptions } from "../services/appointment-service";
+import {
+  addAppointment,
+  getAppointmentDefaultOptions,
+} from "../services/appointment-service";
 
 import { toast } from "sonner";
 
-const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialogTrigger }) => {
+const ScheduleAppointmentForm = ({
+  patient,
+  openIcon,
+  onOpenIconChange,
+  notDialogTrigger,
+}) => {
   const [open, setOpen] = useState(false);
 
   const { data: appointmentDefaultOptions } = useQuery({
@@ -53,33 +61,35 @@ const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialo
       appointmentType: "",
       status: "",
       comments: "",
-      physio:""
-    }
-  },[])
+      physio: "",
+    };
+  }, []);
 
   const form = useForm({
     resolver: zodResolver(appointmentFormSchema),
-    defaultValues: defaultAppointmentValues
+    defaultValues: defaultAppointmentValues,
   });
 
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: addAppointment,
     onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
-        queryClient.invalidateQueries({ queryKey: ["appointment-today"] });
+      queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["appointment-today"] });
       toast.success("Appointment Scheduled Successfully");
+      form.reset(defaultAppointmentValues);
       setOpen(false);
-      onOpenIconChange && onOpenIconChange(false)
+      onOpenIconChange && onOpenIconChange(false);
     },
     onError: () => {
       toast.error("Appointment Failed to Schedule");
     },
   });
-  const handleDialogClose = () =>{
+  const handleDialogClose = () => {
+    form.reset(defaultAppointmentValues);
     setOpen(false);
-    onOpenIconChange && onOpenIconChange(false)
-  }
+    onOpenIconChange && onOpenIconChange(false);
+  };
 
   function onSubmit(values) {
     mutate({ ...values, patientId: patient.Id });
@@ -87,18 +97,17 @@ const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialo
 
   const handleCloseButton = () => {
     form.reset(defaultAppointmentValues);
-  }
-
-
-
+    setOpen(false);
+    onOpenIconChange && onOpenIconChange(false);
+  };
 
   return (
     <Dialog open={open || openIcon} onOpenChange={handleDialogClose}>
-      {!notDialogTrigger && 
+      {!notDialogTrigger && (
         <DialogTrigger className="flex px-2 hover:bg-accent font-normal py-1.5 text-sm rounded-sm">
           Schedule Appointment
         </DialogTrigger>
-      }
+      )}
       <DialogContent className="sm:max-w-[425px] md:max-w-[525px] lg:max-w-[625px]">
         <DialogHeader>
           <DialogTitle>Schedule Appointment</DialogTitle>
@@ -199,9 +208,15 @@ const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialo
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {appointmentDefaultOptions?.appointmentStatusList?.map(a=>{
-                        return <SelectItem value={a.Id?.toString()}>{a.Name}</SelectItem>
-                      })}
+                      {appointmentDefaultOptions?.appointmentStatusList?.map(
+                        (a) => {
+                          return (
+                            <SelectItem value={a.Id?.toString()}>
+                              {a.Name}
+                            </SelectItem>
+                          );
+                        }
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -221,8 +236,12 @@ const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialo
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {appointmentDefaultOptions?.physioList?.map(a=>{
-                        return <SelectItem value={a.Id?.toString()}>Dr. {a.Name} PT</SelectItem>
+                      {appointmentDefaultOptions?.physioList?.map((a) => {
+                        return (
+                          <SelectItem value={a.Id?.toString()}>
+                            Dr. {a.Name} PT
+                          </SelectItem>
+                        );
                       })}
                     </SelectContent>
                   </Select>
@@ -257,12 +276,15 @@ const ScheduleAppointmentForm = ({ patient, openIcon, onOpenIconChange, notDialo
                   Cancel
                 </Button>
               </DialogClose>
-              <DialogClose>
-                <Button className="cursor-pointer" type="submit">
-                  Schedule Appointment
-                </Button>
-              </DialogClose>
-             
+              <Button
+                className="cursor-pointer"
+                type="submit"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting
+                  ? "Scheduling..."
+                  : "Schedule Appointment"}
+              </Button>
             </DialogFooter>
           </form>
         </Form>

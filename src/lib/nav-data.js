@@ -1,7 +1,15 @@
-import { FaHome, FaUser, FaUsers, FaCog, FaCalendar, FaFolder, FaBookMedical } from "react-icons/fa";
+import {
+  FaHome,
+  FaUser,
+  FaUsers,
+  FaCog,
+  FaCalendar,
+  FaFolder,
+  FaBookMedical,
+} from "react-icons/fa";
 import { getUser } from "../utils/auth";
 
-const getNavData = () => {
+export function getNavData() {
   const user = getUser();
   const isRoleId1 = user && user.RoleId === 1;
 
@@ -46,12 +54,7 @@ const getNavData = () => {
     },
   ];
 
-  // Filter out items that require roleId 1 if user doesn't have it
-  return allNavItems.filter(item => !item.requiresRoleId1 || isRoleId1);
-};
+  return allNavItems.filter((item) => !item.requiresRoleId1 || isRoleId1);
+}
 
-const data = {
-  navMain: getNavData(),
-};
-
-export default data;
+export default getNavData;
