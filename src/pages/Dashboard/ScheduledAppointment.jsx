@@ -1,21 +1,11 @@
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle
-} from "@/components/ui/card"
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from "@/components/ui/tabs"
-import { Calendar } from "lucide-react"
-import AppointmentCard from "./AppointmentCard"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calendar } from "lucide-react";
+import AppointmentCard from "./AppointmentCard";
 
-const ScheduledAppointment = ({appointmentDetails}) => {
+const ScheduledAppointment = ({ appointmentDetails }) => {
   return (
-    <Card className="w-full max-w-md mt-6">
+    <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Calendar className="h-5 w-5" />
@@ -33,15 +23,27 @@ const ScheduledAppointment = ({appointmentDetails}) => {
             <AppointmentCard appointmentData={appointmentDetails} />
           </TabsContent>
           <TabsContent value="confirmed">
-            <AppointmentCard value="confirmed" appointmentData={appointmentDetails?.filter(appointment => appointment.StatusId == 1 && !appointment.EndTime)}/>
+            <AppointmentCard
+              value="confirmed"
+              appointmentData={appointmentDetails?.filter(
+                (appointment) =>
+                  appointment.StatusId == 1 && !appointment.EndTime
+              )}
+            />
           </TabsContent>
           <TabsContent value="pending">
-            <AppointmentCard value="pending" appointmentData={appointmentDetails?.filter(appointment => appointment.StatusId == 2 && !appointment.EndTime)}/>
+            <AppointmentCard
+              value="pending"
+              appointmentData={appointmentDetails?.filter(
+                (appointment) =>
+                  appointment.StatusId == 2 && !appointment.EndTime
+              )}
+            />
           </TabsContent>
         </Tabs>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
 export default ScheduledAppointment;
