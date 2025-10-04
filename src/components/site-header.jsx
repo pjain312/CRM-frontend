@@ -12,7 +12,7 @@ import config from "../config/environment";
 export function SiteHeader() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const page = data.navMain.find((item) => item.url === pathname);
+  const page = data.navMain?.find((item) => item.url === pathname);
   const logout = async () => {
     const refreshToken = getRefreshToken();
     await axios.post(`${config.api.baseURL}/auth/logout`, { refreshToken });
