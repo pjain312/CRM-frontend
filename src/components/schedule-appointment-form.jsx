@@ -46,6 +46,7 @@ const ScheduleAppointmentForm = ({
   openIcon,
   onOpenIconChange,
   notDialogTrigger,
+  onSuccess
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -79,12 +80,13 @@ const ScheduleAppointmentForm = ({
   const { mutate } = useMutation({
     mutationFn: addAppointment,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["all-appointments"] });
       queryClient.invalidateQueries({ queryKey: ["appointment-today"] });
       toast.success("Appointment Scheduled Successfully");
       form.reset(defaultAppointmentValues);
       setOpen(false);
       onOpenIconChange && onOpenIconChange(false);
+      onSuccess && onSuccess()
     },
     onError: () => {
       toast.error("Appointment Failed to Schedule");

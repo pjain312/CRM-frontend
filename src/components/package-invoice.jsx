@@ -13,9 +13,13 @@ import {
 const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
 
     const { data: invoiceData, isLoading } = useQuery({
-        queryKey: ["package-invoice", appointment.PatientId, appointment.AppointmentId],
-        queryFn: () => getPackageInvoiceData({patientId:appointment.PatientId, appointmentId : appointment.AppointmentId}),
-        enabled: !!(appointment.PatientId && appointment.AppointmentId),
+        queryKey: ["package-invoice", appointment.PatientId, appointment.paymentTransactionId || appointment.AppointmentId],
+        queryFn: () => getPackageInvoiceData({
+            patientId: appointment.PatientId, 
+            appointmentId: appointment.AppointmentId,
+            paymentTransactionId: appointment.paymentTransactionId
+        }),
+        enabled: !!(appointment.PatientId && (appointment.paymentTransactionId || appointment.AppointmentId)),
       });
 
     const getPrintStyles = () => {

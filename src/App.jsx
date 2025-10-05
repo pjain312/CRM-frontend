@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Layout from "./layout";
 import Leads from "./pages/Leads/Leads";
 import PatientList from "./pages/PatientList/PatientList";
+import PatientProfile from "./components/PatientProfile";
 import Appointment from "./pages/Appointment/Appointment";
 import Packages from "./pages/Packages/Packages";
 import SessionTypes from "./pages/SessionTypes/SessionTypes";
@@ -30,6 +31,7 @@ function App() {
             </RoleBasedRoute>
           } />
           <Route path="/patient-list" element={<PatientList />} />
+          <Route path="/patient/:patientId" element={<PatientProfile />} />
           <Route path="/physio-overview" element={<PhysioOverview />} />
           <Route path="/appointment" element={<Appointment />} />
           <Route path="/packages" element={

@@ -27,7 +27,7 @@ function PatientInfo({ title, patient }) {
   const [appointmentDetailOpen, setAppointmentDetailOpen] = useState(false);
 
   const { data: appointmentsData } = useQuery({
-    queryKey: ["patient-appointments"],
+    queryKey: ["all-appointments"],
     queryFn: () =>
       getAllAppointments({ patientId: patient.Id || patient.PatientId }),
   });

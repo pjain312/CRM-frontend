@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CalendarCheck2, CalendarSync, CalendarX, CheckCircle, Clock, Hourglass, Timer, TimerOff, UserRoundPlus } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import CancelAppointmentForm from "../../components/cancel-appointment-form";
 import CheckoutPatientForm from "../../components/checkout-patient-form";
@@ -12,6 +13,7 @@ import PackageInvoice from "../../components/package-invoice";
 import DailyInvoice from "../../components/daily-invoice";
 
 const AppointmentCard = ({appointmentData, value}) =>{
+    const navigate = useNavigate();
     const [rescheduleOpen, setRescheduleOpen] = useState(false);
     const [checkoutOpen, setCheckoutOpen] = useState(false);
     const [cancelFormOpen, setCancelFormOpen] = useState(false);
@@ -86,6 +88,10 @@ const AppointmentCard = ({appointmentData, value}) =>{
         endSessionMutation(appt.SessionId)
       }
 
+      const handlePatientProfileClick = (patientId) => {
+        navigate(`/patient/${patientId}`);
+      }
+
     return(
         <>
         <div className="space-y-4 max-h-150 overflow-y-auto">
@@ -95,7 +101,11 @@ const AppointmentCard = ({appointmentData, value}) =>{
 
                         <CardContent className="flex items-center gap-4 p-0">
                             {/* Avatar Section */}
-                            <Avatar className="h-12 w-12 bg-blue-100">
+                            <Avatar 
+                                className="h-12 w-12 bg-blue-100 cursor-pointer hover:bg-blue-200 transition-colors"
+                                onClick={() => handlePatientProfileClick(appointment.PatientId)}
+                                title="Click to view patient profile"
+                            >
                                 <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
                                     {appointment.Name?.charAt(0)?.toUpperCase()}
                                 </AvatarFallback>
@@ -103,7 +113,11 @@ const AppointmentCard = ({appointmentData, value}) =>{
 
                             <div className="flex-1 space-y-1">
                                 <div className="flex items-center gap-2">
-                                    <span className="font-semibold text-gray-900">
+                                    <span 
+                                        className="font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors"
+                                        onClick={() => handlePatientProfileClick(appointment.PatientId)}
+                                        title="Click to view patient profile"
+                                    >
                                         {appointment.Gender === "Male" ? "Mr.": "Ms."} {appointment.Name}
                                     </span>
                                 </div>

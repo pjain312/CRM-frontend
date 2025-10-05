@@ -10,6 +10,7 @@ import {
   UserCheck,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ScheduleAppointmentForm from "../../components/schedule-appointment-form";
 import { Avatar, AvatarFallback } from "../../components/ui/avatar";
 import { Card, CardContent } from "../../components/ui/card";
@@ -18,6 +19,7 @@ import PackageInvoice from "../../components/package-invoice";
 import DailyInvoice from "../../components/daily-invoice";
 
 const CompletedAppointmentCard = ({ appointmentData, value }) => {
+  const navigate = useNavigate();
   const [popupOpen, setPopupOpen] = useState(false);
   const [openScheduleAppt, setOpenScheduleAppt] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -45,6 +47,11 @@ const CompletedAppointmentCard = ({ appointmentData, value }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handlePatientProfileClick = (patientId) => {
+    navigate(`/patient/${patientId}`);
+  };
+
   if (!appointmentData || appointmentData.length === 0) {
     return (
       <Card className="p-8">
@@ -75,7 +82,11 @@ const CompletedAppointmentCard = ({ appointmentData, value }) => {
               className="p-4 shadow-sm w-full max-w-2xl"
             >
               <CardContent className="flex items-center gap-4 p-0">
-                <Avatar className="h-12 w-12 bg-blue-100">
+                <Avatar 
+                  className="h-12 w-12 bg-blue-100 cursor-pointer hover:bg-blue-200 transition-colors"
+                  onClick={() => handlePatientProfileClick(appointment.PatientId)}
+                  title="Click to view patient profile"
+                >
                   <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
                     {appointment.Name?.charAt(0)?.toUpperCase()}
                   </AvatarFallback>
@@ -83,7 +94,11 @@ const CompletedAppointmentCard = ({ appointmentData, value }) => {
 
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-gray-900">
+                    <span 
+                      className="font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors"
+                      onClick={() => handlePatientProfileClick(appointment.PatientId)}
+                      title="Click to view patient profile"
+                    >
                       {appointment.Gender === "Male" ? "Mr. " : "Ms. "} 
                       {appointment.Name}
                     </span>
