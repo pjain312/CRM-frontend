@@ -77,8 +77,8 @@ const PatientProfile = () => {
     return (
       <div className="text-center py-8">
         <p className="text-gray-500">Patient not found</p>
-        <Button onClick={() => navigate('/patient-list')} className="mt-4">
-          Back to Patient List
+        <Button onClick={() => navigate(-1)} className="mt-4">
+          Go Back
         </Button>
       </div>
     );
@@ -92,7 +92,7 @@ const PatientProfile = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate('/patient-list')}
+            onClick={() => navigate(-1)}
             className="flex items-center space-x-2"
           >
             <ArrowLeft className="h-4 w-4" />

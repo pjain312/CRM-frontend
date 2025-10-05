@@ -17,6 +17,7 @@ import { Card, CardContent } from "../../components/ui/card";
 import CheckoutPatientForm from "../../components/checkout-patient-form";
 import PackageInvoice from "../../components/package-invoice";
 import DailyInvoice from "../../components/daily-invoice";
+import { parse, format } from "date-fns";
 
 const CompletedAppointmentCard = ({ appointmentData, value }) => {
   const navigate = useNavigate();
@@ -52,6 +53,22 @@ const CompletedAppointmentCard = ({ appointmentData, value }) => {
     navigate(`/patient/${patientId}`);
   };
 
+  const calculateTimeDifference = (startTime, endTime) => {
+    if (!startTime || !endTime) return null;
+    
+    try {
+      const start = parse(startTime, 'yyyy-MM-dd HH:mm:ss', new Date());
+      const end = parse(endTime, 'yyyy-MM-dd HH:mm:ss', new Date());
+      
+      const diffInMs = end.getTime() - start.getTime();
+      const diffInMinutes = Math.round(diffInMs / (1000 * 60));
+      
+      return diffInMinutes;
+    } catch (error) {
+      return null;
+    }
+  };
+
   if (!appointmentData || appointmentData.length === 0) {
     return (
       <Card className="p-8">
@@ -79,9 +96,9 @@ const CompletedAppointmentCard = ({ appointmentData, value }) => {
           return (
             <Card
               key={appointment.AppointmentId}
-              className="p-4 shadow-sm w-full max-w-2xl"
+              className="p-4 shadow-sm w-full"
             >
-              <CardContent className="flex items-center gap-4 p-0">
+              <CardContent className="flex items-start gap-4 p-0">
                 <Avatar 
                   className="h-12 w-12 bg-blue-100 cursor-pointer hover:bg-blue-200 transition-colors"
                   onClick={() => handlePatientProfileClick(appointment.PatientId)}
@@ -92,7 +109,7 @@ const CompletedAppointmentCard = ({ appointmentData, value }) => {
                   </AvatarFallback>
                 </Avatar>
 
-                <div className="flex-1 space-y-1">
+                <div className="flex-1 space-y-2 min-w-0">
                   <div className="flex items-center gap-2">
                     <span 
                       className="font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors"
@@ -114,27 +131,16 @@ const CompletedAppointmentCard = ({ appointmentData, value }) => {
                     {appointment.PhoneNumber}
                   </div>
 
-                  {!appointment.IsPatientCheckedIn && (
-                    <>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Clock className="h-4 w-4 text-red-400" />
-                        <span>Scheduled at: {appointment.AppointmentTime}</span>
-                      </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Clock className="h-4 w-4 text-blue-400" />
+                    <span>Scheduled at: {appointment.AppointmentTime}</span>
+                  </div>
 
-                      <div className="flex items-center gap-2 text-sm">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            appointment.StatusId == 3
-                              ? "bg-red-100 text-red-600"
-                              : appointment.StatusId == 1
-                              ? "bg-green-100 text-green-600"
-                              : "bg-yellow-100 text-yellow-600"
-                          }`}
-                        >
-                          {appointment.Status}
-                        </span>
-                      </div>
-                    </>
+                  {appointment.StartTime && appointment.EndTime && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Clock className="h-4 w-4 text-green-400" />
+                      <span>Duration: {format(appointment?.StartTime, 'h:mm a')}-{format(appointment?.EndTime, 'h:mm a')} ({calculateTimeDifference(appointment?.StartTime, appointment?.EndTime)} mins)</span>
+                    </div>
                   )}
 
                   {!!appointment?.IsInvoiceGenerated && (

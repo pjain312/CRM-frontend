@@ -2,8 +2,28 @@
 
 import * as React from "react";
 import { MoreHorizontal } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "../components/ui/button";
+
+// Clickable Name Component
+const ClickableName = ({ row }) => {
+  const navigate = useNavigate();
+  console.log(row)
+  const handleNameClick = () => {
+    navigate(`/patient/${row.Id}`);
+  };
+
+  return (
+    <div 
+      className="capitalize cursor-pointer hover:text-blue-600 transition-colors"
+      onClick={handleNameClick}
+      title="Click to view patient profile"
+    >
+      {row.Gender === "Male" ? "Mr." : "Ms."} {row.Name}
+    </div>
+  );
+};
 import { Checkbox } from "../components/ui/checkbox";
 import { Badge } from "../components/ui/badge";
 import {
@@ -65,7 +85,7 @@ export const leadsColumns = [
   {
     accessorKey: "Name",
     header: "Name",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("Gender") === "Male" ? "Mr." : "Ms."} {row.getValue("Name")}</div>,
+    cell: ({ row }) => <ClickableName row={row.original} />,
   },
   {
     accessorKey: "Age",
@@ -185,7 +205,7 @@ export const patientListsColumns = [
   {
     accessorKey: "Name",
     header: "Name",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("Gender") === "Male" ? "Mr." : "Ms."} {row.getValue("Name")}</div>,
+    cell: ({ row }) => <ClickableName row={row.original} />,
   },
   {
     accessorKey: "Age",
@@ -309,7 +329,7 @@ export const appointmentsColumns = [
   {
     accessorKey: "Name",
     header: "Name",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("Gender") === "Male" ? "Mr." : "Ms."} {row.getValue("Name")}</div>,
+    cell: ({ row }) => <ClickableName row={{...row.original, Id : row.original.PatientId}} />,
   },
   {
     accessorKey: "Age",

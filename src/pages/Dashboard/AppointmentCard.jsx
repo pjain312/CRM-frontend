@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CalendarCheck2, CalendarSync, CalendarX, CheckCircle, Clock, Hourglass, Timer, TimerOff, UserRoundPlus } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import CancelAppointmentForm from "../../components/cancel-appointment-form";
@@ -21,6 +21,56 @@ const AppointmentCard = ({appointmentData, value}) =>{
     const [showPackageInvoice, setShowPackageInvoice] = useState(false);
     const [showDailyInvoice, setShowDailyInvoice] = useState(false);
     const queryClient = useQueryClient();
+
+    // Timer state management
+    const [sessionTimers, setSessionTimers] = useState({});
+    const intervalRefs = useRef({});
+
+    // Timer utility functions
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const startTimer = (appointmentId) => {
+        const startTime = Date.now();
+        setSessionTimers(prev => ({
+            ...prev,
+            [appointmentId]: { startTime, elapsed: 0 }
+        }));
+
+        const interval = setInterval(() => {
+            setSessionTimers(prev => ({
+                ...prev,
+                [appointmentId]: {
+                    ...prev[appointmentId],
+                    elapsed: Math.floor((Date.now() - startTime) / 1000)
+                }
+            }));
+        }, 1000);
+
+        intervalRefs.current[appointmentId] = interval;
+    };
+
+    const stopTimer = (appointmentId) => {
+        if (intervalRefs.current[appointmentId]) {
+            clearInterval(intervalRefs.current[appointmentId]);
+            delete intervalRefs.current[appointmentId];
+        }
+        setSessionTimers(prev => {
+            const newTimers = { ...prev };
+            delete newTimers[appointmentId];
+            return newTimers;
+        });
+    };
+
+    // Cleanup intervals on unmount
+    useEffect(() => {
+        return () => {
+            Object.values(intervalRefs.current).forEach(interval => clearInterval(interval));
+        };
+    }, []);
 
     const { mutate: checkinPatientMutation } = useMutation({
         mutationFn: checkinPatient,
@@ -80,12 +130,14 @@ const AppointmentCard = ({appointmentData, value}) =>{
       }
 
       const handleStartSession = (appt) =>{
-        startSessionMutation(appt.SessionId)
+        startSessionMutation(appt.SessionId);
+        startTimer(appt.AppointmentId);
       }
 
       const handleEndSession = (appt) =>{
-        setSelectedAppointment(appt)
-        endSessionMutation(appt.SessionId)
+        setSelectedAppointment(appt);
+        endSessionMutation(appt.SessionId);
+        stopTimer(appt.AppointmentId);
       }
 
       const handlePatientProfileClick = (patientId) => {
@@ -170,6 +222,14 @@ const AppointmentCard = ({appointmentData, value}) =>{
                                     <Hourglass className="h-4 w-4 text-yellow-500" />
                                     <span>Ongoing Session</span>
                                 </div>}
+                                {!!(appointment.IsPatientCheckedIn && appointment.StartTime && sessionTimers[appointment.AppointmentId]) && (
+                                    <div className="flex items-center gap-2 text-sm text-blue-600 font-mono">
+                                        <Timer className="h-4 w-4 text-blue-500" />
+                                        <span className="font-semibold">
+                                            {formatTime(sessionTimers[appointment.AppointmentId].elapsed)}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="flex-shrink-0 flex">

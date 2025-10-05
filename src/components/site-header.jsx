@@ -1,18 +1,18 @@
+import { Skeleton } from "@/components/ui/skeleton";
+import axios from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import config from "../config/environment";
+import { getNavData } from "../lib/nav-data";
+import { clearTokens, getRefreshToken } from "../utils/auth";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { SidebarTrigger } from "./ui/sidebar";
-import { useLocation, useNavigate } from "react-router-dom";
-import data from "../lib/nav-data";
-import axios from "axios";
-import { clearTokens, getRefreshToken } from "../utils/auth";
-import { toast } from "sonner";
-import { Skeleton } from "@/components/ui/skeleton";
-import config from "../config/environment";
 
 export function SiteHeader() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const page = data.navMain?.find((item) => item.url === pathname);
+  const page = getNavData()?.find((item) => item.url === pathname);
   const logout = async () => {
     const refreshToken = getRefreshToken();
     await axios.post(`${config.api.baseURL}/auth/logout`, { refreshToken });
@@ -29,7 +29,7 @@ export function SiteHeader() {
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
         />
-        <h1 className="text-base font-medium">{page?.title || "Dashboard"}</h1>
+        <h1 className="text-base font-medium">{page?.title || ""}</h1>
         <div className="ml-auto flex items-center gap-2">
           {Name ? (
             <div className="h-10 w-10 bg-orange-500 rounded-full flex items-center justify-center text-xl text-white">
