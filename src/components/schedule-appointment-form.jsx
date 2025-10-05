@@ -99,7 +99,7 @@ const ScheduleAppointmentForm = ({
   };
 
   function onSubmit(values) {
-    mutate({ ...values, patientId: patient.Id });
+    mutate({ ...values, patientId: patient.Id,  appointmentTime: values.appointmentTime ? values.appointmentTime: null });
   }
 
   const handleCloseButton = () => {

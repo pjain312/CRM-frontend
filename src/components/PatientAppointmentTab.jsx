@@ -76,6 +76,13 @@ const PatientAppointmentTab = ({ patientId }) => {
         return null;
       }
     };
+
+    const getStatusColor = (status) => {
+      if (status === "Cancelled") return "bg-red-100 text-red-600";
+      if (status === "Confirmed") return "bg-green-100 text-green-600";
+      if (status === "Pending") return "bg-yellow-100 text-yellow-600";
+      return "bg-green-100 text-green-600";
+    };
   
     if (loading) {
       return (
@@ -121,9 +128,9 @@ const PatientAppointmentTab = ({ patientId }) => {
                           <h3 className="text-base font-bold text-gray-900 leading-tight">
                             {new Date(appointment.AppointmentDate).toLocaleDateString()}
                           </h3>
-                          {!!appointment.EndTime && (
-                            <span className="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">
-                              Treated
+                          {(appointment?.EndTime || appointment?.Status) && (
+                            <span className={`text-xs font-semibold ${appointment?.EndTime ? "bg-green-100 text-green-600" :getStatusColor(appointment?.Status)} px-2 py-1 rounded-full`}>
+                             {appointment.EndTime ? "Treated" : appointment?.Status }
                             </span>
                           )}
                         </div>
@@ -181,9 +188,9 @@ const PatientAppointmentTab = ({ patientId }) => {
                           <h3 className="text-lg font-bold text-gray-900">
                             {new Date(appointment.AppointmentDate).toLocaleDateString()}
                           </h3>
-                          {appointment.EndTime && (
-                            <span className="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">
-                              Treated
+                          {(appointment?.EndTime || appointment?.Status) && (
+                            <span className={`text-xs font-semibold ${ appointment?.EndTime ? "bg-green-100 text-green-600" : getStatusColor(appointment?.Status)} px-2 py-1 rounded-full`}>
+                             {appointment.EndTime ? "Treated" : appointment?.Status }
                             </span>
                           )}
                         </div>
@@ -195,20 +202,21 @@ const PatientAppointmentTab = ({ patientId }) => {
                       
                       {/* Time Row */}
                       <div className="space-y-1">
+                       { !!appointment.AppointmentTime &&
                         <div className="flex items-center gap-2">
                           <Clock className="h-4 w-4 text-green-500" />
                           <span className="text-green-600">
                             {formatAppointmentTime(appointment.AppointmentDate, appointment.AppointmentTime)}
                           </span>
-                        </div>
-                        {calculateWaitingTime(appointment?.CheckInTime, appointment?.StartTime) !== null && (
+                        </div>}
+                        {!!appointment.CheckInTime && !!appointment.StartTime && calculateWaitingTime(appointment?.CheckInTime, appointment?.StartTime) !== null && (
                           <div className="flex items-center gap-2">
                             <span className="text-sm text-gray-500">
                               Waiting Time: {format(appointment?.CheckInTime, 'h:mm a')} - {format(appointment?.StartTime, 'h:mm a')} ({calculateWaitingTime(appointment.CheckInTime, appointment.StartTime)} mins)
                             </span>
                           </div>
                         )}
-                        {calculateWaitingTime(appointment?.StartTime, appointment?.EndTime) !== null && (
+                        {!!appointment.StartTime && !!appointment.EndTime && calculateWaitingTime(appointment?.StartTime, appointment?.EndTime) !== null && (
                           <div className="flex items-center gap-2">
                             <span className="text-sm text-gray-500">
                               Actual Session Time: {format(appointment?.StartTime, 'h:mm a')} - {format(appointment?.EndTime, 'h:mm a')} ({calculateWaitingTime(appointment?.StartTime, appointment?.EndTime)} mins)
