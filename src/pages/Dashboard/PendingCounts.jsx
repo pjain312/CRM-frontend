@@ -1,16 +1,14 @@
+import { Badge } from "@/components/ui/badge"
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle
 } from "@/components/ui/card"
-import { ViewIcon, Users, Clock, View, EyeIcon } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
 import { useQuery } from "@tanstack/react-query"
-import { getPendingCounts } from "../../services/appointment-service"
-import { getPatientLeads } from "../../services/leads-service"
-import { useEffect } from "react"
+import { Clock, EyeIcon, Users } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { getPendingCounts } from "../../services/appointment-service"
 
 const PendingCounts = () => {
   const navigate = useNavigate();

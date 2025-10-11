@@ -52,7 +52,7 @@ const PatientPackagesTab = ({ patientId }) => {
     const handlePaymentSubmit = async () => {
       try {
         const paymentData = {
-          packageId: selectedPackage.Id,
+          patientPackageId: selectedPackage.PatientPackageId,
           sessionCharges: parseInt(paymentAmount),
           paymentMode: paymentMode,
           patientId: patientId

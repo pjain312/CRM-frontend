@@ -8,6 +8,7 @@ import {
   Clock,
   MessageCircle,
   UserCheck,
+  UserRoundX,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +19,9 @@ import CheckoutPatientForm from "../../components/checkout-patient-form";
 import PackageInvoice from "../../components/package-invoice";
 import DailyInvoice from "../../components/daily-invoice";
 import { parse, format } from "date-fns";
+import { useMutation } from "@tanstack/react-query";
+import { undoCheckin } from "../../services/session-service";
+import { toast } from "sonner";
 
 const CompletedAppointmentCard = ({ appointmentData, value }) => {
   const navigate = useNavigate();
@@ -48,6 +52,17 @@ const CompletedAppointmentCard = ({ appointmentData, value }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const { mutate: undoCheckinMutation } = useMutation({
+    mutationFn: (sessionId) => undoCheckin({sessionId: sessionId}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["appointment-today"] });
+      toast.success("Session deleted");
+    },
+    onError: () => {
+      toast.error("Failed to delete session");
+    },
+  });
 
   const handlePatientProfileClick = (patientId) => {
     navigate(`/patient/${patientId}`);
@@ -87,6 +102,11 @@ const CompletedAppointmentCard = ({ appointmentData, value }) => {
         </CardContent>
       </Card>
     );
+  }
+
+  const handleUndoCheckin = (appt) =>{
+    setSelectedAppointment(appt);
+    undoCheckinMutation(appt.SessionId);
   }
 
   return (
@@ -178,6 +198,12 @@ const CompletedAppointmentCard = ({ appointmentData, value }) => {
                       <MessageCircle className="h-5 w-5 text-white" />
                     </div>
                   )}
+
+                  {!!( appointment.EndTime && !appointment.IsInvoiceGenerated ) &&
+                    <div title = "Undo Checkin / Session" onClick={()=>handleUndoCheckin(appointment)} className="h-8 w-8 bg-red-300 cursor-pointer hover:bg-red-400 rounded-full flex items-center justify-center mr-2">
+                      <UserRoundX className="h-5 w-5 text-white" />
+                    </div>
+                  }
 
                   {!!(
                     appointment.EndTime && !appointment.IsInvoiceGenerated

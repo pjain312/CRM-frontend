@@ -69,9 +69,9 @@ const CheckoutPatientForm = ({ session, open, onOpenChange, notDialogTrigger, se
         //     queryClient.invalidateQueries({ queryKey: ["appointment-today"]}),
         //   ]);
     //   toast.success("Patient CheckedOut Successfully");
-      onOpenChange(false);
-      if(!patientCheckoutDetails?.PackageId && form.watch("packageId")) setShowPackageInvoice(true)
-      if(!patientCheckoutDetails?.PackageId && form.watch("sessionTypes")?.length) setShowDailyInvoice(true)
+    if(!patientCheckoutDetails?.PackageId && form.watch("packageId")) setShowPackageInvoice(true)
+    if(!patientCheckoutDetails?.PackageId && form.watch("sessionTypes")?.length) setShowDailyInvoice(true)
+    onOpenChange(false);
     },
     onError: () => {
       toast.error("Patient Failed to Checkout");
@@ -114,8 +114,8 @@ const CheckoutPatientForm = ({ session, open, onOpenChange, notDialogTrigger, se
   return (
     <>
         <Dialog open={open} onOpenChange={onOpenChange}>
-        { !notDialogTrigger && <DialogTrigger className="flex px-2 hover:bg-accent font-normal py-1.5 text-sm rounded-sm">
-            Checkout Patient
+            { !notDialogTrigger && <DialogTrigger className="flex px-2 hover:bg-accent font-normal py-1.5 text-sm rounded-sm">
+                Checkout Patient
             </DialogTrigger>}
         <DialogContent className="sm:max-w-[425px] md:max-w-[525px] lg:max-w-[625px]">
             <DialogHeader>

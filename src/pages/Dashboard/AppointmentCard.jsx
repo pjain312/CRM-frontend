@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CalendarCheck2, CalendarSync, CalendarX, CheckCircle, Clock, Hourglass, Timer, TimerOff, UserRoundPlus } from "lucide-react";
+import { CalendarCheck2, CalendarSync, CalendarX, CheckCircle, Clock, Hourglass, Timer, TimerOff, UserRoundPlus, UserRoundX } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -8,7 +8,7 @@ import CheckoutPatientForm from "../../components/checkout-patient-form";
 import RescheduleConfirmAppointmentForm from "../../components/reschedule-confirm-appointment-form";
 import { Avatar, AvatarFallback } from "../../components/ui/avatar";
 import { Card, CardContent } from "../../components/ui/card";
-import { checkinPatient, endSession, startSession } from "../../services/session-service";
+import { checkinPatient, endSession, startSession, undoCheckin } from "../../services/session-service";
 import PackageInvoice from "../../components/package-invoice";
 import DailyInvoice from "../../components/daily-invoice";
 
@@ -83,9 +83,20 @@ const AppointmentCard = ({appointmentData, value}) =>{
         },
       });
 
+      const { mutate: undoCheckinMutation } = useMutation({
+        mutationFn: (sessionId) => undoCheckin({sessionId: sessionId}),
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["appointment-today"] });
+          toast.success("Session deleted");
+        },
+        onError: () => {
+          toast.error("Failed to delete session");
+        },
+      });
+
       const { mutate: startSessionMutation } = useMutation({
         mutationFn: startSession,
-        onSuccess: () => {
+        onSuccess: () => {  
           queryClient.invalidateQueries({ queryKey: ["appointment-today"] });
           toast.success("Session started successfully");
         },
@@ -137,6 +148,12 @@ const AppointmentCard = ({appointmentData, value}) =>{
       const handleEndSession = (appt) =>{
         setSelectedAppointment(appt);
         endSessionMutation(appt.SessionId);
+        stopTimer(appt.AppointmentId);
+      }
+
+      const handleUndoCheckin = (appt) =>{
+        setSelectedAppointment(appt);
+        undoCheckinMutation(appt.SessionId);
         stopTimer(appt.AppointmentId);
       }
 
@@ -252,6 +269,11 @@ const AppointmentCard = ({appointmentData, value}) =>{
                                         className="h-8 w-8 cursor-pointner bg-green-300 rounded-full flex items-center hover:bg-green-400 justify-center mr-2 cursor-pointer hover:bg-green-400 transition-colors"
                                     >
                                         <CalendarCheck2 className="h-5 w-5 text-white" />
+                                    </div>
+                                }
+                                {!! appointment.IsPatientCheckedIn &&
+                                    <div title = "Undo Checkin / Session" onClick={()=>handleUndoCheckin(appointment)} className="h-8 w-8 bg-red-300 cursor-pointer hover:bg-red-400 rounded-full flex items-center justify-center mr-2">
+                                        <UserRoundX className="h-5 w-5 text-white" />
                                     </div>
                                 }
                                 {!!(appointment.StatusId == 1 && !appointment.IsPatientCheckedIn) && <div title = "Checkin Patient" className="h-8 w-8 bg-green-300 cursor-pointer rounded-full flex items-center hover:bg-green-400 justify-center mr-2" onClick={() => handlePatientCheckin(appointment)}>

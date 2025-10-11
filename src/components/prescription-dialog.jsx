@@ -124,7 +124,7 @@ const PrescriptionForm = ({
             <div className="text-sm font-bold text-gray-800 mb-2">
               Treatment:
             </div>
-            <div className="min-h-[180px] p-2 text-xs bg-white"></div>
+            <div className="min-h-[500px] p-2 text-xs bg-white"></div>
           </div>
 
           {/* Home Advice Section */}

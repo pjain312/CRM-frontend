@@ -113,9 +113,6 @@ const AssignToForm = ({ patient, disabled = false }) => {
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="1">CR Park</SelectItem>
-                      <SelectItem value="2">Greater Kailash</SelectItem>
-                      <SelectItem value="3">Lajpat Nagar</SelectItem>
-                      <SelectItem value="4">Defence Colony</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

@@ -17,6 +17,20 @@ export const checkinPatient = async (sessionData) => {
   }
 };
 
+export const undoCheckin = async (sessionData) => {
+  try {
+    const response = await api.request({
+      method: "POST",
+      url: `${API_BASE_URL}/undoCheckin`,
+      data: sessionData,
+    });
+    return response.data;
+  } catch (error) {
+    console.warn("API data not available", error.message);
+    throw error; 
+  }
+};
+
 export const startSession = async (sessionId) => {
   try {
     const response = await api.request({
