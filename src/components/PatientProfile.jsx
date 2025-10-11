@@ -1,4 +1,4 @@
-import { ArrowLeft, Calendar, CreditCard, Mail, MapPin, Package, Phone, User } from 'lucide-react';
+import { ArrowLeft, Calendar, CreditCard, Mail, MapPin, MoreVertical, Package, Phone, User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { paymentColumns } from '../lib/patient-profile.columns';
@@ -6,17 +6,29 @@ import {
   getPatientDetails,
   getPatientTransactions
 } from '../services/patient-service';
+import ClosePatientForm from './close-patient-form';
 import DailyInvoice from './daily-invoice';
 import { DataTable } from './data-table';
 import PackageInvoice from './package-invoice';
 import PatientAppointmentTab from './PatientAppointmentTab';
 import PatientPackagesTab from './PatientPackagesTab';
+import PrescriptionDialog from './prescription-dialog';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader } from './ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 import { Separator } from './ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import AddLeadForm from './add-lead-form';
+import { reopenPatient } from '../services/leads-service';
 
 const PatientProfile = () => {
   const { patientId } = useParams();
@@ -33,6 +45,18 @@ const PatientProfile = () => {
   useEffect(() => {
     fetchPatientDetails();
   }, [patientId]);
+
+  const reOpenPatient = async () => {
+    try {
+      setLoading(true);
+      await reopenPatient({patientId});
+      fetchPatientDetails();
+    } catch (error) {
+      console.error('Error fetching patient details:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchPatientDetails = async () => {
     try {
@@ -100,6 +124,39 @@ const PatientProfile = () => {
           <Separator orientation="vertical" className="h-6" />
           <h1 className="text-2xl font-bold">Patient Profile</h1>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm">
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <AddLeadForm type="edit" patient={patient} />
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <PrescriptionDialog patient={patient} />
+            </DropdownMenuItem>
+            {!patient?.IsPatientClosed && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <ClosePatientForm leadData={patient} onPatientUpdate={fetchPatientDetails} />
+                </DropdownMenuItem>
+              </>
+            )}
+            {!!patient?.IsPatientClosed && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick ={reOpenPatient}>
+                  Reopen Patient
+                </DropdownMenuItem>
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Patient Header Card */}
@@ -193,10 +250,6 @@ const PatientProfile = () => {
                   <span>Remaining:</span>
                   <span className="font-medium text-orange-600">{patient.TotalSessions - patient.CompletedSessions}</span>
                 </div>
-                  {/* <div className="flex justify-between">
-                    <span>Last Visit:</span>
-                    <span className="font-medium">{new Date(patient.LastVisit).toLocaleDateString()}</span>
-                  </div> */}
               </div>
             </div>
           }

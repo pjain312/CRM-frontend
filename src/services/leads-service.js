@@ -97,3 +97,15 @@ export const closePatient = async (data) => {
   }
 };
 
+export const reopenPatient = async (data) => {
+  try {
+    const response = await api.request({
+      method: "POST",
+      url: `${API_URL}/reopenPatient`,
+      data: data,
+    });
+    return response.data.data;
+  } catch (error) {
+    console.warn("API data not available", error.message);
+  }
+};

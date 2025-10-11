@@ -25,7 +25,7 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 
-const ClosePatientForm = ({ leadData}) => {
+const ClosePatientForm = ({ leadData, onPatientUpdate }) => {
   const [open, setOpen] = useState(false);
 
   const form = useForm({
@@ -40,9 +40,13 @@ const ClosePatientForm = ({ leadData}) => {
     mutationFn: closePatient,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-leads"] });
+      queryClient.invalidateQueries({ queryKey: ["patient-details"] });
       toast.success("Patient Closed Successfully");
       setOpen(false);
       form.reset();
+      if (onPatientUpdate) {
+        onPatientUpdate();
+      }
     },
     onError: () => {
       toast.error("Patient Failed to Close");
