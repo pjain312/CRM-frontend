@@ -33,7 +33,7 @@ export function SiteHeader() {
 
         <div className="ml-auto flex items-center gap-4">
           <div className="text-green-600 font-semibold text-lg">
-            Total Revenue: ₹{parseFloat(TotalRevenue).toFixed(2)}
+            Total Collection: ₹{parseFloat(TotalRevenue).toFixed(2)}
           </div>
           {Name ? (
             <div className="h-10 w-10 bg-orange-500 rounded-full flex items-center justify-center text-xl text-white">

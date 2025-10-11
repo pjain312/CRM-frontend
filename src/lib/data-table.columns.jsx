@@ -1,10 +1,44 @@
 "use client";
 
-import * as React from "react";
 import { MoreHorizontal } from "lucide-react";
+import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import AddLeadForm from "../components/add-lead-form";
+import AddPackageForm from "../components/add-package-form";
+import AddSessionTypeForm from "../components/add-session-type-form";
+import AppointmentDetail from "../components/appointment-detail";
+import AssignToForm from "../components/assign-to-form";
+import CancelAppointmentForm from "../components/cancel-appointment-form";
+import CheckoutPatientForm from "../components/checkout-patient-form";
+import ClosePatientForm from "../components/close-patient-form";
+import DailyInvoice from "../components/daily-invoice";
+import PackageInvoice from "../components/package-invoice";
+import PatientFollowup from "../components/patient-followup";
+import PatientInfo from "../components/patient-info";
+import PrescriptionDialog from "../components/prescription-dialog";
+import RescheduleConfirmAppointmentForm from "../components/reschedule-confirm-appointment-form";
+import ScheduleAppointmentForm from "../components/schedule-appointment-form";
+import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
+import { Checkbox } from "../components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
+import { reopenPatient } from "../services/leads-service";
+import { deletePackage, deleteSessionType } from "../services/packages-service";
+import {
+  checkinPatient,
+  endSession,
+  startSession,
+} from "../services/session-service";
 
 // Clickable Name Component
 const ClickableName = ({ row }) => {
@@ -24,40 +58,6 @@ const ClickableName = ({ row }) => {
     </div>
   );
 };
-import { Checkbox } from "../components/ui/checkbox";
-import { Badge } from "../components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu";
-import ScheduleAppointmentForm from "../components/schedule-appointment-form";
-import PatientInfo from "../components/patient-info";
-import AddLeadForm from "../components/add-lead-form";
-import PatientFollowup from "../components/patient-followup";
-import AddPackageForm from "../components/add-package-form";
-import RescheduleConfirmAppointmentForm from "../components/reschedule-confirm-appointment-form";
-import AddSessionTypeForm from "../components/add-session-type-form";
-import { deletePackage, deleteSessionType } from "../services/packages-service";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import AppointmentDetail from "../components/appointment-detail";
-import {
-  checkinPatient,
-  endSession,
-  startSession,
-} from "../services/session-service";
-import CancelAppointmentForm from "../components/cancel-appointment-form";
-import CheckoutPatientForm from "../components/checkout-patient-form";
-import { getPatientPrescription } from "../components/prescription";
-import PackageInvoice from "../components/package-invoice";
-import DailyInvoice from "../components/daily-invoice";
-import ClosePatientForm from "../components/close-patient-form";
-import AssignToForm from "../components/assign-to-form";
-import PrescriptionDialog from "../components/prescription-dialog";
 
 export const leadsColumns = [
   {
@@ -267,6 +267,23 @@ export const patientListsColumns = [
     header: () => "Actions",
     enableHiding: false,
     cell: ({ row }) => {
+        const queryClient = useQueryClient();
+        
+        const { mutate: reopenPatientMutation } = useMutation({
+          mutationFn: () => reopenPatient({patientId: row.original.Id}),
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["patient-leads"] });
+            toast.success("Patient Reopened Successfully");
+          },
+          onError: () => {
+            toast.error("Patient Failed to reopen");
+          },
+        });
+
+        const handleReopen = async () => {
+          reopenPatientMutation()
+        };
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -278,24 +295,35 @@ export const patientListsColumns = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
+            {  
+              !row.original.IsPatientClosed && <DropdownMenuItem asChild>
               <AddLeadForm type="edit" patient={row.original} />
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
+               </DropdownMenuItem>
+            }
+            {  
+              !row.original.IsPatientClosed && <DropdownMenuItem asChild>
               <PrescriptionDialog
                 appointment={row.original}
                 patient={row.original}
               />
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
+              </DropdownMenuItem>
+            }
+            {  
+              !row.original.IsPatientClosed && <DropdownMenuItem asChild>
               <ScheduleAppointmentForm patient={row.original} />
-            </DropdownMenuItem>
+              </DropdownMenuItem>
+            }
             <DropdownMenuItem asChild>
               <PatientInfo title="Patient Information" patient={row.original} />
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
+            {!row.original.IsPatientClosed && <DropdownMenuItem asChild>
               <ClosePatientForm leadData={row.original} />
-            </DropdownMenuItem>
+              </DropdownMenuItem>
+            }
+            {!!row.original.IsPatientClosed && <DropdownMenuItem onClick = {handleReopen}>
+              Reopen Patient
+              </DropdownMenuItem>
+            }
           </DropdownMenuContent>
         </DropdownMenu>
       );
