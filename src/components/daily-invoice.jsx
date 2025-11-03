@@ -130,13 +130,6 @@ const InvoiceContent = ({ invoiceData, contentRef, containerRef }) => {
         </div>
       </div>
 
-      <div className="mb-8">
-        <span className="text-sm font-bold text-gray-600">
-          Note: This package remains valid for 30 days starting from the date of
-          your first session.
-        </span>
-      </div>
-
       <div className="border-t border-gray-200 pt-6">
         <div className="text-center space-y-2">
           <p className="text-sm text-gray-600">
