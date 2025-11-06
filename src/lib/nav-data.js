@@ -11,6 +11,7 @@ import { getUser } from "../utils/auth";
 
 export function getNavData() {
   const user = getUser();
+  const isRoleId2 = user && user.RoleId === 2;
   const isRoleId1 = user && user.RoleId === 1;
 
   const allNavItems = [
@@ -23,7 +24,7 @@ export function getNavData() {
       title: "Leads",
       url: "/leads",
       icon: FaUser,
-      requiresRoleId1: true,
+      requiresRoleId2: true,
     },
     {
       title: "Patient List",
@@ -44,17 +45,17 @@ export function getNavData() {
       title: "Packages",
       url: "/packages",
       icon: FaFolder,
-      requiresRoleId1: true,
+      requiresRoleId2: true,
     },
     {
       title: "Session Types",
       url: "/sessionTypes",
       icon: FaBookMedical,
-      requiresRoleId1: true,
+      requiresRoleId2: true,
     },
   ];
 
-  return allNavItems.filter((item) => !item.requiresRoleId1 || isRoleId1);
+  return allNavItems.filter((item) => !item.requiresRoleId2 || isRoleId2 || isRoleId1);
 }
 
 export default getNavData;

@@ -20,7 +20,7 @@ export function SiteHeader() {
     navigate("/login");
     toast.success("Logout successful!");
   };
-  const { Name, TotalRevenue } = JSON.parse(localStorage.getItem("userDetails"));
+  const { Name, TotalRevenue , RoleId} = JSON.parse(localStorage.getItem("userDetails"));
   return (
     <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
       <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
@@ -32,9 +32,9 @@ export function SiteHeader() {
         <h1 className="text-base font-medium">{page?.title || ""}</h1>
 
         <div className="ml-auto flex items-center gap-4">
-          <div className="text-green-600 font-semibold text-lg">
+          {RoleId == 1 && <div className="text-green-600 font-semibold text-lg">
             Total Collection: ₹{parseFloat(TotalRevenue).toFixed(2)}
-          </div>
+          </div>}
           {Name ? (
             <div className="h-10 w-10 bg-orange-500 rounded-full flex items-center justify-center text-xl text-white">
               {Name ? Name.charAt(0).toUpperCase() : ""}

@@ -26,7 +26,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/leads" element={
-            <RoleBasedRoute requiredRoleId={1}>
+            <RoleBasedRoute unauthorizedRole={3}>
               <Leads />
             </RoleBasedRoute>
           } />
@@ -35,12 +35,12 @@ function App() {
           <Route path="/physio-overview" element={<PhysioOverview />} />
           <Route path="/appointment" element={<Appointment />} />
           <Route path="/packages" element={
-            <RoleBasedRoute requiredRoleId={1}>
+            <RoleBasedRoute unauthorizedRole={3}>
               <Packages />
             </RoleBasedRoute>
           } />
            <Route path="/sessionTypes" element={
-            <RoleBasedRoute requiredRoleId={1}>
+            <RoleBasedRoute unauthorizedRole={3}>
               <SessionTypes />
             </RoleBasedRoute>
           } />
