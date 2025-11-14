@@ -109,20 +109,20 @@ const PatientProfile = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-3 md:p-6 space-y-4 md:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center space-x-2 md:space-x-4 min-w-0">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate(-1)}
-            className="flex items-center space-x-2"
+            className="flex items-center space-x-2 flex-shrink-0"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <Separator orientation="vertical" className="h-6" />
-          <h1 className="text-2xl font-bold">Patient Profile</h1>
+          <Separator orientation="vertical" className="h-6 hidden sm:block" />
+          <h1 className="text-lg md:text-2xl font-bold truncate">Patient Profile</h1>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -162,36 +162,36 @@ const PatientProfile = () => {
       {/* Patient Header Card */}
       <Card>
         <CardHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex items-center space-x-6">
-              <Avatar className="h-20 w-20">
-                <AvatarFallback className="text-lg font-semibold">
+          <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+            <div className="flex items-center space-x-3 md:space-x-6 min-w-0 flex-1">
+              <Avatar className="h-16 w-16 md:h-20 md:w-20 flex-shrink-0">
+                <AvatarFallback className="text-base md:text-lg font-semibold">
                   {getInitials(patient?.Name)}
                 </AvatarFallback>
               </Avatar>
-              <div className="space-y-2">
+              <div className="space-y-2 min-w-0 flex-1">
                 <div>
-                  <h2 className="text-2xl font-bold">{patient.Gender === "Male" ? "Mr. " : "Ms. "}{patient.Name}</h2>
+                  <h2 className="text-lg md:text-2xl font-bold break-words">{patient.Gender === "Male" ? "Mr. " : "Ms. "}{patient.Name}</h2>
                 </div>
-                <div className="flex items-center space-x-4">
+                <div className="flex flex-wrap items-center gap-2 md:gap-4">
                   <Badge className={patient.IsPatientClosed ? "bg-green-100 text-green-800": "bg-blue-100 text-blue-800"}>
                     {patient.IsPatientClosed ? "Closed": "Active"}
                   </Badge>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-xs md:text-sm text-gray-500">
                     Registered: {new Date(patient.RegistrationDate).toLocaleDateString()}
                   </span>
                 </div>
               </div>
             </div>
-            <div className="text-right space-y-2">
-              <div className="text-xl font-bold text-green-600">
+            <div className="text-left sm:text-right space-y-2 flex-shrink-0">
+              <div className="text-lg md:text-xl font-bold text-green-600">
                 {patient.InPackage ? "In Package" : "Daily"}
               </div>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {/* Contact Information */}
             <div className="space-y-4">
               <h3 className="font-semibold text-gray-900 flex items-center">
@@ -262,31 +262,32 @@ const PatientProfile = () => {
         <CardContent className="p-0">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="appointments" className="flex items-center space-x-2">
-                <Calendar className="h-4 w-4" />
-                <span>Appointments</span>
+              <TabsTrigger value="appointments" className="flex items-center space-x-1 md:space-x-2 text-xs md:text-sm">
+                <Calendar className="h-3 w-3 md:h-4 md:w-4" />
+                <span className="hidden sm:inline">Appointments</span>
+                <span className="sm:hidden">Apps</span>
               </TabsTrigger>
-              <TabsTrigger value="payments" className="flex items-center space-x-2">
-                <CreditCard className="h-4 w-4" />
+              <TabsTrigger value="payments" className="flex items-center space-x-1 md:space-x-2 text-xs md:text-sm">
+                <CreditCard className="h-3 w-3 md:h-4 md:w-4" />
                 <span>Payments</span>
               </TabsTrigger>
               {!!patient?.InPackage &&
-                <TabsTrigger value="packages" className="flex items-center space-x-2">
-                <Package className="h-4 w-4" />
+                <TabsTrigger value="packages" className="flex items-center space-x-1 md:space-x-2 text-xs md:text-sm">
+                <Package className="h-3 w-3 md:h-4 md:w-4" />
                 <span>Packages</span>
                 </TabsTrigger>
               }
             </TabsList>
 
-            <TabsContent value="appointments" className="p-6">
+            <TabsContent value="appointments" className="p-3 md:p-6">
               <PatientAppointmentTab patientId={patientId} />
             </TabsContent>
 
-            <TabsContent value="payments" className="p-6">
+            <TabsContent value="payments" className="p-3 md:p-6">
               <PaymentsTab patientId={patientId} onInvoiceOpen={handleInvoiceOpen} />
             </TabsContent>
 
-            {!!patient?.InPackage && <TabsContent value="packages" className="p-6">
+            {!!patient?.InPackage && <TabsContent value="packages" className="p-3 md:p-6">
               <PatientPackagesTab patientId={patientId} />
             </TabsContent>}
           </Tabs>
@@ -344,7 +345,7 @@ const PaymentsTab = ({ patientId, onInvoiceOpen }) => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Payment History</h3>
+        <h3 className="text-base md:text-lg font-semibold">Payment History</h3>
       </div>
       <DataTable columns={paymentColumns(onInvoiceOpen)} data={payments} loading={loading} />
     </div>

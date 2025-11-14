@@ -115,10 +115,10 @@ const ScheduleAppointmentForm = ({
           Schedule Appointment
         </DialogTrigger>
       )}
-      <DialogContent className="sm:max-w-[425px] md:max-w-[525px] lg:max-w-[625px]">
+      <DialogContent className="max-w-[95vw] sm:max-w-[425px] md:max-w-[525px] lg:max-w-[625px]">
         <DialogHeader>
-          <DialogTitle>Schedule Appointment</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-lg md:text-xl">Schedule Appointment</DialogTitle>
+          <DialogDescription className="text-sm">
             Sehedule an appointment for a patient.
           </DialogDescription>
         </DialogHeader>
@@ -127,7 +127,7 @@ const ScheduleAppointmentForm = ({
             onSubmit={form.handleSubmit(onSubmit, (errors) => {
               console.log("validation errors", errors);
             })}
-            className="grid grid-cols-2 gap-3"
+            className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-3"
           >
             <FormField
               control={form.control}
@@ -264,7 +264,7 @@ const ScheduleAppointmentForm = ({
               control={form.control}
               name="comments"
               render={({ field }) => (
-                <FormItem className="col-span-2">
+                <FormItem className="col-span-1 md:col-span-2">
                   <FormLabel>Comments</FormLabel>
                   <FormControl>
                     <Textarea
@@ -276,10 +276,10 @@ const ScheduleAppointmentForm = ({
                 </FormItem>
               )}
             />
-            <DialogFooter className="col-span-2">
+            <DialogFooter className="col-span-1 md:col-span-2 flex-col sm:flex-row gap-2 sm:gap-0">
               <DialogClose asChild>
                 <Button
-                  className="cursor-pointer"
+                  className="cursor-pointer w-full sm:w-auto"
                   type="button"
                   variant="outline"
                   onClick={handleCloseButton}
@@ -288,7 +288,7 @@ const ScheduleAppointmentForm = ({
                 </Button>
               </DialogClose>
               <Button
-                className="cursor-pointer"
+                className="cursor-pointer w-full sm:w-auto"
                 type="submit"
                 disabled={form.formState.isSubmitting}
               >

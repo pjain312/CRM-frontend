@@ -147,12 +147,12 @@ const PatientAppointmentTab = ({ patientId }) => {
                     
                     {/* Time Row */}
                     <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                      { !!appointment.AppointmentTime && <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-green-500 flex-shrink-0" />
                         <span className="text-green-600 text-sm">
                           {formatAppointmentTime(appointment.AppointmentDate, appointment.AppointmentTime)}
                         </span>
-                      </div>
+                      </div>}
                       {calculateWaitingTime(appointment?.CheckInTime, appointment?.StartTime) !== null && (
                         <div className="flex items-center gap-2">
                           <span className="text-xs text-gray-500">
@@ -169,6 +169,13 @@ const PatientAppointmentTab = ({ patientId }) => {
                         </div>
                       )}
                     </div>
+                    
+                    {/* Amount Row */}
+                    {appointment.IsInvoiceGenerated && <div className="flex items-center gap-2 mt-2">
+                      <span className="text-sm font-medium text-gray-700">
+                        {appointment?.Amount != null ? `Rs. ${parseFloat(appointment.Amount).toFixed(2)}` : "Covered In Package"}
+                      </span>
+                    </div>}
                   </div>
   
                   {/* Desktop Layout */}
@@ -224,6 +231,13 @@ const PatientAppointmentTab = ({ patientId }) => {
                           </div>
                         )}
                       </div>
+                      
+                      {/* Amount Row */}
+                      {appointment.IsInvoiceGenerated && <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-blue-700">
+                          {appointment?.Amount != null ? `Rs. ${parseFloat(appointment.Amount).toFixed(2)}` : "Covered In Package"}
+                        </span>
+                      </div>}
                     </div>
                   </div>
                 </CardContent>
