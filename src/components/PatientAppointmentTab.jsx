@@ -172,7 +172,7 @@ const PatientAppointmentTab = ({ patientId }) => {
                     
                     {/* Amount Row */}
                     {appointment.IsInvoiceGenerated && <div className="flex items-center gap-2 mt-2">
-                      <span className="text-sm font-medium text-gray-700">
+                      <span className="text-sm font-medium text-blue-700">
                         {appointment?.Amount != null ? `Rs. ${parseFloat(appointment.Amount).toFixed(2)}` : "Covered In Package"}
                       </span>
                     </div>}
