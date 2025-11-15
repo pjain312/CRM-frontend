@@ -4,13 +4,16 @@ import { addHours, format, parse } from "date-fns";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Clock, User } from "lucide-react";
+import { Clock, User, Edit } from "lucide-react";
 import ScheduleAppointmentForm from "./schedule-appointment-form";
+import RescheduleConfirmAppointmentForm from "./reschedule-confirm-appointment-form";
 
 const PatientAppointmentTab = ({ patientId }) => {
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [scheduleFormOpen, setScheduleFormOpen] = useState(false);
+    const [editFormOpen, setEditFormOpen] = useState(false);
+    const [selectedAppointment, setSelectedAppointment] = useState(null);
   
     useEffect(() => {
       fetchAppointments();
@@ -18,6 +21,17 @@ const PatientAppointmentTab = ({ patientId }) => {
 
     const handleScheduleSuccess = () => {
       setScheduleFormOpen(false);
+      fetchAppointments(); // Refresh the appointments list
+    };
+
+    const handleEditClick = (appointment) => {
+      setSelectedAppointment(appointment);
+      setEditFormOpen(true);
+    };
+
+    const handleEditSuccess = () => {
+      setEditFormOpen(false);
+      setSelectedAppointment(null);
       fetchAppointments(); // Refresh the appointments list
     };
   
@@ -133,6 +147,17 @@ const PatientAppointmentTab = ({ patientId }) => {
                              {appointment.EndTime ? "Treated" : appointment?.Status }
                             </span>
                           )}
+                          {appointment?.Status !== "Cancelled" && !appointment?.IsPatientCheckedIn && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0 ml-auto flex-shrink-0"
+                              onClick={() => handleEditClick(appointment)}
+                              title="Edit Appointment"
+                            >
+                              <Edit className="h-4 w-4 text-gray-600" />
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -201,9 +226,22 @@ const PatientAppointmentTab = ({ patientId }) => {
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-gray-500" />
-                          <span className="font-medium text-gray-700">Dr. {appointment.Physio} PT</span>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2">
+                            <User className="h-4 w-4 text-gray-500" />
+                            <span className="font-medium text-gray-700">Dr. {appointment.Physio} PT</span>
+                          </div>
+                          {appointment?.Status !== "Cancelled" && !appointment?.IsPatientCheckedIn && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0"
+                              onClick={() => handleEditClick(appointment)}
+                              title="Edit Appointment"
+                            >
+                              <Edit className="h-4 w-4 text-gray-600" />
+                            </Button>
+                          )}
                         </div>
                       </div>
                       
@@ -254,6 +292,22 @@ const PatientAppointmentTab = ({ patientId }) => {
           notDialogTrigger={true}
           onSuccess={handleScheduleSuccess}
         />
+
+        {/* Edit Appointment Form */}
+        {selectedAppointment && (
+          <RescheduleConfirmAppointmentForm
+            appointment={selectedAppointment}
+            openIcon={editFormOpen}
+            onOpenIconChange={(open) => {
+              setEditFormOpen(open);
+              if (!open) {
+                setSelectedAppointment(null);
+                fetchAppointments(); // Refresh appointments when form closes
+              }
+            }}
+            notDialogTrigger={true}
+          />
+        )}
       </div>
     );
   };

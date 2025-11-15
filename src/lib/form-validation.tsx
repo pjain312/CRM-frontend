@@ -39,6 +39,7 @@ export const appointmentFormSchema = z.object({
 });
 
 export const recheduleConfirmAppointmentFormSchema = z.object({
+  appointmentDate: optionalString,
   appointmentTime: requiredString,
   status: requiredString,
   comments: optionalString,

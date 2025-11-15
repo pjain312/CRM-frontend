@@ -4,7 +4,9 @@ import React, { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { recheduleConfirmAppointmentFormSchema } from "../lib/form-validation";
 import { getAllTimeSlots, getAppointmentDefaultOptions, updateAppointment } from "../services/appointment-service";
+import DatePicker from "./date-picker";
 import { Button } from "./ui/button";
+import { Calendar } from "./ui/calendar";
 import {
   Dialog,
   DialogClose,
@@ -22,6 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import {
   Select,
   SelectContent,
@@ -47,12 +50,22 @@ const RescheduleConfirmAppointmentForm = ({ appointment, openIcon, onOpenIconCha
   });
 
   const defaultAppointmentValues = useMemo(() => {
+    // Convert appointment date to yyyy-MM-dd format if it exists
+    let appointmentDate = "";
+    if (appointment?.AppointmentDate) {
+      const date = new Date(appointment.AppointmentDate);
+      if (!isNaN(date.getTime())) {
+        appointmentDate = date.toISOString().split('T')[0];
+      }
+    }
+    
     return {
-      appointmentTime: "" ,
+      appointmentDate: appointmentDate,
+      appointmentTime: appointment?.AppointmentTime || "",
       status: appointment?.StatusId?.toString(),
       comments: "",
     };
-  }, []);
+  }, [appointment]);
 
   const form = useForm({
     resolver: zodResolver(recheduleConfirmAppointmentFormSchema),
@@ -90,17 +103,52 @@ const RescheduleConfirmAppointmentForm = ({ appointment, openIcon, onOpenIconCha
       {!notDialogTrigger && <DialogTrigger className="flex px-2 hover:bg-accent font-normal py-1.5 text-sm rounded-sm">
         {appointment?.Status === "Pending" ? "Confirm Appointment" : "Reschedule Appointment"}
       </DialogTrigger>}
-      <DialogContent className="sm:max-w-[425px] md:max-w-[525px] lg:max-w-[625px]">
+      <DialogContent className="max-w-[95vw] sm:max-w-[425px] md:max-w-[525px] lg:max-w-[625px]">
         <DialogHeader>
-          <DialogTitle>{appointment?.Status === "Pending" ? "Confirm Appointment" : "Reschedule Appointment"}          </DialogTitle>
+          <DialogTitle className="text-lg md:text-xl">{appointment?.Status === "Pending" ? "Confirm Appointment" : "Reschedule Appointment"}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit, (errors) => {
               console.log("validation errors", errors);
             })}
-            className="grid grid-cols-2 gap-3"
+            className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-3"
           >
+            <FormField
+              control={form.control}
+              name="appointmentDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <DatePicker
+                          date={field.value}
+                          onDateChange={field.onChange}
+                          placeholder="Select appointment date"
+                          className="w-full"
+                        />
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          return date < today || date < new Date("1900-01-01");
+                        }}
+                        captionLayout="dropdown"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="appointmentTime"
@@ -149,7 +197,7 @@ const RescheduleConfirmAppointmentForm = ({ appointment, openIcon, onOpenIconCha
               control={form.control}
               name="comments"
               render={({ field }) => (
-                <FormItem className="col-span-2">
+                <FormItem className="col-span-1 md:col-span-2">
                   <FormLabel>Comments</FormLabel>
                   <FormControl>
                     <Textarea
@@ -161,17 +209,17 @@ const RescheduleConfirmAppointmentForm = ({ appointment, openIcon, onOpenIconCha
                 </FormItem>
               )}
             />
-            <DialogFooter className="col-span-2">
+            <DialogFooter className="col-span-1 md:col-span-2 flex-col sm:flex-row gap-2 sm:gap-0">
               <DialogClose asChild>
                 <Button
-                  className="cursor-pointer"
+                  className="cursor-pointer w-full sm:w-auto"
                   type="button"
                   variant="outline"
                 >
                   Cancel
                 </Button>
               </DialogClose>
-              <Button className="cursor-pointer" type="submit">
+              <Button className="cursor-pointer w-full sm:w-auto" type="submit">
                 {appointment?.Status === "Pending" ? "Confirm Appointment" : "Reschedule Appointment"}
               </Button>
             </DialogFooter>
