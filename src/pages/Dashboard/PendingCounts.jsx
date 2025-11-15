@@ -19,7 +19,7 @@ const PendingCounts = () => {
 
   if (isLoading) {
     return (
-      <Card className="w-full max-w-md mt-6">
+      <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
@@ -37,7 +37,7 @@ const PendingCounts = () => {
 
   if (error) {
     return (
-      <Card className="w-full max-w-md mt-6">
+      <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
@@ -99,7 +99,7 @@ const PendingCounts = () => {
   }
 
   return (
-    <Card className="w-full max-w-md mt-6">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Users className="h-5 w-5" />

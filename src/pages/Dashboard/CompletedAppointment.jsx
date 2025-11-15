@@ -15,7 +15,7 @@ import CompletedAppointmentCard from "./CompletedAppointmentCard"
 
 const CompletedAppointment = ({appointmentDetails}) => {
   return (
-    <Card className="w-full max-w-md mt-6">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CheckCircle className="h-5 w-5" />

@@ -10,13 +10,19 @@ export function Dashboard() {
         queryFn: () => getAllAppointments({appointmentDate: new Date()}),
       });
   return (
-    <>
-        <div className="flex gap-6">
-            <ScheduledAppointment appointmentDetails ={appointmentDetails?.filter(appointment => appointment.StatusId != 3 && !appointment.EndTime)} />
-            <CompletedAppointment appointmentDetails ={appointmentDetails?.filter(appointment => appointment.StatusId == 3 || appointment.EndTime)} />
+    <div className="p-3 md:p-6 space-y-4 md:space-y-6">
+        <div className="flex flex-col lg:flex-row gap-4 md:gap-6">
+            <div className="flex-1 w-full lg:max-w-md">
+                <ScheduledAppointment appointmentDetails ={appointmentDetails?.filter(appointment => appointment.StatusId != 3 && !appointment.EndTime)} />
+            </div>
+            <div className="flex-1 w-full lg:max-w-md">
+                <CompletedAppointment appointmentDetails ={appointmentDetails?.filter(appointment => appointment.StatusId == 3 || appointment.EndTime)} />
+            </div>
         </div>
-        <div> <PendingCounts />  </div>
-    </>
+        <div className="w-full lg:max-w-md">
+            <PendingCounts />
+        </div>
+    </div>
   )
 }
 
