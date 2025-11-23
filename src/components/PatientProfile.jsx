@@ -173,13 +173,25 @@ const PatientProfile = () => {
                 <div>
                   <h2 className="text-lg md:text-2xl font-bold break-words">{patient.Gender === "Male" ? "Mr. " : "Ms. "}{patient.Name}</h2>
                 </div>
-                <div className="flex flex-wrap items-center gap-2 md:gap-4">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3">
                   <Badge className={patient.IsPatientClosed ? "bg-green-100 text-green-800": "bg-blue-100 text-blue-800"}>
                     {patient.IsPatientClosed ? "Closed": "Active"}
                   </Badge>
-                  <span className="text-xs md:text-sm text-gray-500">
-                    Registered: {new Date(patient.RegistrationDate).toLocaleDateString()}
-                  </span>
+                  <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm text-gray-600">
+                    <div className="flex items-center gap-1.5">
+                      <Calendar className="h-3 w-3 md:h-3.5 md:w-3.5 text-gray-400 flex-shrink-0" />
+                      <span className="whitespace-nowrap">
+                        Registered: <span className="font-medium text-gray-700">{new Date(patient.RegistrationDate).toLocaleDateString()}</span>
+                      </span>
+                    </div>
+                    <span className="text-gray-400 hidden sm:inline">•</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-gray-500">Source:</span>
+                      <Badge variant="outline" className="text-xs font-normal px-2 py-0.5">
+                        {patient.Source}
+                      </Badge>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
