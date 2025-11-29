@@ -157,7 +157,7 @@ function PatientInfo({ title, patient }) {
                           <div className="flex items-center gap-2">
                             <ClockIcon className="h-4 w-4 text-muted-foreground" />
                             <span className="text-sm text-muted-foreground">
-                              {appointment.AppointmentTime}
+                              {appointment.FormattedAppointmentTime}
                             </span>
                           </div>
                           <p className="text-sm font-medium">

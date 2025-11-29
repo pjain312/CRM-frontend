@@ -375,9 +375,9 @@ export const appointmentsColumns = [
     cell: ({ row }) => <div>{row.getValue("AppointmentDate")}</div>,
   },
   {
-    accessorKey: "AppointmentTime",
+    accessorKey: "FormattedAppointmentTime",
     header: "Time",
-    cell: ({ row }) => <div>{row.getValue("AppointmentTime")}</div>,
+    cell: ({ row }) => <div>{row.getValue("FormattedAppointmentTime")}</div>,
   },
   {
     accessorKey: "AppointmentType",

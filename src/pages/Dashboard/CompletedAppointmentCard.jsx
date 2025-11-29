@@ -153,7 +153,7 @@ const CompletedAppointmentCard = ({ appointmentData, value }) => {
 
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Clock className="h-4 w-4 text-blue-400" />
-                    <span>Scheduled at: {appointment.AppointmentTime}</span>
+                    <span>Scheduled at: {appointment.FormattedAppointmentTime}</span>
                   </div>
 
                   {appointment.StartTime && appointment.EndTime && (

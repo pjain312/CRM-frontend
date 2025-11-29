@@ -9,7 +9,7 @@ import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { toast } from "sonner";
 
-const PatientPackagesTab = ({ patientId }) => {
+const PatientPackagesTab = ({ patientId, isPatientClosed}) => {
     const [packages, setPackages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
@@ -169,13 +169,13 @@ const PatientPackagesTab = ({ patientId }) => {
                             Rs. {(parseFloat(pkg.TotalCost) - parseFloat(pkg.AmountPaid)).toFixed(2)}
                           </span>
                         </div>
-                        <Button 
+                        {!isPatientClosed && <Button 
                           className="w-full" 
                           size="sm"
                           onClick={() => handlePaymentClick(pkg)}
                         >
                           Pay Now
-                        </Button>
+                        </Button>}
                       </div>
                     )}
                   </CardContent>

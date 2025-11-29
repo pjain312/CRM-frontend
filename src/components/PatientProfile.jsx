@@ -1,11 +1,14 @@
 import { ArrowLeft, Calendar, CreditCard, Mail, MapPin, MoreVertical, Package, Phone, User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { paymentColumns } from '../lib/patient-profile.columns';
+import { reopenPatient } from '../services/leads-service';
 import {
   getPatientDetails,
   getPatientTransactions
 } from '../services/patient-service';
+import AddLeadForm from './add-lead-form';
 import ClosePatientForm from './close-patient-form';
 import DailyInvoice from './daily-invoice';
 import { DataTable } from './data-table';
@@ -18,6 +21,13 @@ import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader } from './ui/card';
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader
+} from './ui/dialog';
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -27,8 +37,6 @@ import {
 } from './ui/dropdown-menu';
 import { Separator } from './ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import AddLeadForm from './add-lead-form';
-import { reopenPatient } from '../services/leads-service';
 
 const PatientProfile = () => {
   const { patientId } = useParams();
@@ -36,6 +44,7 @@ const PatientProfile = () => {
   const [patient, setPatient] = useState(null);
   const [activeTab, setActiveTab] = useState('appointments');
   const [loading, setLoading] = useState(true);
+  const [popupOpen, setPopupOpen] = useState(false);
   
   // Invoice state management
   const [packageInvoiceOpen, setPackageInvoiceOpen] = useState(false);
@@ -46,13 +55,19 @@ const PatientProfile = () => {
     fetchPatientDetails();
   }, [patientId]);
 
+  useEffect(()=>{
+    setPopupOpen(!!patient?.IsPatientClosed)
+  }, [patient?.IsPatientClosed])
+
   const reOpenPatient = async () => {
     try {
       setLoading(true);
       await reopenPatient({patientId});
-      fetchPatientDetails();
+      await fetchPatientDetails();
+      toast.success('Patient reopened successfully');
     } catch (error) {
-      console.error('Error fetching patient details:', error);
+      console.error('Error reopening patient:', error);
+      toast.error('Failed to reopen patient');
     } finally {
       setLoading(false);
     }
@@ -110,6 +125,26 @@ const PatientProfile = () => {
 
   return (
     <div className="container mx-auto p-3 md:p-6 space-y-4 md:space-y-6">
+      {/* Closed Patient Dialog */}
+      <Dialog open={popupOpen} onOpenChange={setPopupOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogDescription>
+              The Patient is closed!
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              onClick={reOpenPatient}
+              disabled={loading}
+              className="w-full sm:w-auto cursor-pointer"
+            >
+              {loading ? 'Reopening...' : 'Reopen now'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Header */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center space-x-2 md:space-x-4 min-w-0">
@@ -133,20 +168,17 @@ const PatientProfile = () => {
           <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
+            {!patient?.IsPatientClosed && <DropdownMenuItem asChild>
               <AddLeadForm type="edit" patient={patient} />
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
+            </DropdownMenuItem>}
+            {!patient?.IsPatientClosed && <DropdownMenuItem asChild>
               <PrescriptionDialog patient={patient} />
-            </DropdownMenuItem>
-            {!patient?.IsPatientClosed && (
-              <>
-                <DropdownMenuSeparator />
+            </DropdownMenuItem>}
+            {!patient?.IsPatientClosed &&
                 <DropdownMenuItem asChild>
                   <ClosePatientForm leadData={patient} onPatientUpdate={fetchPatientDetails} />
                 </DropdownMenuItem>
-              </>
-            )}
+            }
             {!!patient?.IsPatientClosed && (
               <>
                 <DropdownMenuSeparator />
@@ -196,9 +228,9 @@ const PatientProfile = () => {
               </div>
             </div>
             <div className="text-left sm:text-right space-y-2 flex-shrink-0">
-              <div className="text-lg md:text-xl font-bold text-green-600">
+             {!patient?.IsPatientClosed && <div className="text-lg md:text-xl font-bold text-green-600">
                 {patient.InPackage ? "In Package" : "Daily"}
-              </div>
+              </div>}
             </div>
           </div>
         </CardHeader>
@@ -292,7 +324,7 @@ const PatientProfile = () => {
             </TabsList>
 
             <TabsContent value="appointments" className="p-3 md:p-6">
-              <PatientAppointmentTab patientId={patientId} />
+              <PatientAppointmentTab patientId={patientId} isPatientClosed = {patient?.IsPatientClosed} />
             </TabsContent>
 
             <TabsContent value="payments" className="p-3 md:p-6">
@@ -300,7 +332,7 @@ const PatientProfile = () => {
             </TabsContent>
 
             {!!patient?.InPackage && <TabsContent value="packages" className="p-3 md:p-6">
-              <PatientPackagesTab patientId={patientId} />
+              <PatientPackagesTab patientId={patientId} isPatientClosed = {patient?.IsPatientClosed}/>
             </TabsContent>}
           </Tabs>
         </CardContent>

@@ -63,6 +63,7 @@ const RescheduleConfirmAppointmentForm = ({ appointment, openIcon, onOpenIconCha
       appointmentDate: appointmentDate,
       appointmentTime: appointment?.AppointmentTime || "",
       status: appointment?.StatusId?.toString(),
+      physio: appointment?.PhysioId?.toString(),
       comments: "",
     };
   }, [appointment]);
@@ -71,6 +72,7 @@ const RescheduleConfirmAppointmentForm = ({ appointment, openIcon, onOpenIconCha
     resolver: zodResolver(recheduleConfirmAppointmentFormSchema),
     defaultValues: defaultAppointmentValues
   });
+
 
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
@@ -186,6 +188,32 @@ const RescheduleConfirmAppointmentForm = ({ appointment, openIcon, onOpenIconCha
                     <SelectContent>
                       {appointmentDefaultOptions?.appointmentStatusList?.map(a=>{
                         return <SelectItem key={a.Id} value={a.Id?.toString()}>{a.Name}</SelectItem>
+                      })}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="physio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Select Physio</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Physio" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {appointmentDefaultOptions?.physioList?.map((a) => {
+                        return (
+                          <SelectItem key={a.Id} value={a.Id?.toString()}>
+                            Dr. {a.Name} PT
+                          </SelectItem>
+                        );
                       })}
                     </SelectContent>
                   </Select>

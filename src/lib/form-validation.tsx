@@ -42,7 +42,8 @@ export const recheduleConfirmAppointmentFormSchema = z.object({
   appointmentDate: optionalString,
   appointmentTime: requiredString,
   status: requiredString,
-  comments: optionalString,
+  physio: optionalString,
+  comments: requiredString,
 });
 
 export const cancelAppointmentFormSchema = z.object({
