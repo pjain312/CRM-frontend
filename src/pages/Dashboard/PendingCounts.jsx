@@ -88,14 +88,15 @@ const PendingCounts = () => {
   };
 
   const handleComponentClick = async (key) => {
-    if (key === 'TodayFollowups') {
-      const today = new Date().toISOString();
+    let params ;
+    const today = new Date().toISOString();
+    if (key === 'TodayFollowups') params = { date: today, isFollowUpPending: 1 }
+    if (key === "TodayLeads") params = { date: today }  
       navigate('/leads', { 
         state: { 
-          params: { date: today },
+          params: params,
         } 
       });
-    }
   }
 
   return (
@@ -124,7 +125,7 @@ const PendingCounts = () => {
                     <p className="text-sm text-gray-600">{displayInfo.description}</p>
                   </div>
                 </div>
-                {key === "TodayFollowups" && <EyeIcon className="h-4 w-4 text-gray-500 cursor-pointer"  onClick={()=>handleComponentClick(key)}/>}
+                {(key === "TodayFollowups" || key === "TodayLeads")  && <EyeIcon className="h-4 w-4 text-gray-500 cursor-pointer"  onClick={()=>handleComponentClick(key)}/>}
                 <Badge variant="secondary" className={`text-xs ${displayInfo.color}`}>
                   {pendingCounts[key] || 0}
                 </Badge>

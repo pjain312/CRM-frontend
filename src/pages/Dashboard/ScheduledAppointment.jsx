@@ -25,9 +25,9 @@ const ScheduledAppointment = ({appointmentDetails}) => {
       <CardContent>
         <Tabs defaultValue="all">
           <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="confirmed">Confirmed</TabsTrigger>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
+            <TabsTrigger value="all">All ({appointmentDetails?.length})</TabsTrigger>
+            <TabsTrigger value="confirmed">Confirmed ({appointmentDetails?.filter(a => a.StatusId == 1)?.length})</TabsTrigger>
+            <TabsTrigger value="pending">Pending ({appointmentDetails?.filter(a => a.StatusId == 2)?.length})</TabsTrigger>
           </TabsList>
           <TabsContent value="all">
             <AppointmentCard appointmentData={appointmentDetails} />
