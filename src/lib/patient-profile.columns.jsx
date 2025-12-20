@@ -93,7 +93,7 @@ export const appointmentColumns = [
 ];
 
 // Payments Columns
-export const paymentColumns = (onInvoiceOpen) => [
+export const paymentColumns = (onInvoiceOpen, showPatientName = false) => [
   {
     accessorKey: "CreatedOn",
     header: "Date",
@@ -102,6 +102,14 @@ export const paymentColumns = (onInvoiceOpen) => [
       return <div>{date.toLocaleDateString()}</div>;
     },
   },
+  ...(showPatientName ? [{
+    accessorKey: "PatientName",
+    header: "Patient Name",
+    cell: ({ row }) => {
+      const patientName = row.getValue("PatientName");
+      return <div className="font-medium">{patientName || "-"}</div>;
+    },
+  }] : []),
   {
     accessorKey: "Amount",
     header: "Amount",
@@ -111,11 +119,11 @@ export const paymentColumns = (onInvoiceOpen) => [
     },
   },
   {
-    accessorKey: "PackageName",
-    header: "Package Name",
+    accessorKey: showPatientName? "PatientPackageId": "PackageName",
+    header: showPatientName? "Package/Daily" : "Package Name",
     cell: ({ row }) => {
-      const packageName = row.getValue("PackageName");
-      return <div>{packageName}</div>;
+      const packageName = row.getValue(showPatientName? "PatientPackageId": "PackageName");
+      return <div>{showPatientName ? (packageName ? "Package" : "Daily") : packageName || "-"}</div>;
     },
   },
   {
@@ -130,7 +138,7 @@ export const paymentColumns = (onInvoiceOpen) => [
       return <div className="font-medium">#{transactionId}</div>;
     },
   },
-  {
+  ...(!showPatientName ? [{
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
@@ -151,7 +159,7 @@ export const paymentColumns = (onInvoiceOpen) => [
         </DropdownMenu>
       );
     },
-  },
+  }] : []),
 ];
 
 // Packages Columns

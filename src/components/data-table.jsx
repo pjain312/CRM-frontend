@@ -86,9 +86,9 @@ export function DataTable({ data, columns, showAddButton = false, actions }) {
       <div className="flex items-center gap-2 py-4">
         <Input
           placeholder="Filter name..."
-          value={table.getColumn("Name")?.getFilterValue() ?? ""}
+          value={table.getColumn("Name")?.getFilterValue() || table.getColumn("PatientName")?.getFilterValue() || ""}
           onChange={(event) =>
-            table.getColumn("Name")?.setFilterValue(event.target.value)
+            table.getColumn("Name")?.setFilterValue(event.target.value) || table.getColumn("PatientName")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

@@ -2,9 +2,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 import config from "../config/environment";
 import { getNavData } from "../lib/nav-data";
 import { clearTokens, getRefreshToken } from "../utils/auth";
+import { getTotalMonthlyCollection } from "../services/payments-service";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { SidebarTrigger } from "./ui/sidebar";
@@ -13,6 +15,13 @@ export function SiteHeader() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const page = getNavData()?.find((item) => item.url === pathname);
+  
+  // Fetch pendingCounts to get TotalRevenue
+  const { data: totalMonthlyCollection } = useQuery({
+    queryKey: ["total-monthly-collection"],
+    queryFn: getTotalMonthlyCollection,
+  });
+
   const logout = async () => {
     const refreshToken = getRefreshToken();
     await axios.post(`${config.api.baseURL}/auth/logout`, { refreshToken });
@@ -20,7 +29,11 @@ export function SiteHeader() {
     navigate("/login");
     toast.success("Logout successful!");
   };
-  const { Name, TotalRevenue , RoleId} = JSON.parse(localStorage.getItem("userDetails"));
+  
+  const userDetails = JSON.parse(localStorage.getItem("userDetails") || "{}");
+  const { Name, RoleId } = userDetails;
+  
+  const TotalCollection = totalMonthlyCollection?.totalCollection ;
   return (
     <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
       <div className="flex w-full items-center gap-1 px-2 sm:px-4 lg:gap-2 lg:px-6">
@@ -34,11 +47,19 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-2 sm:gap-4">
           {RoleId == 1 && (
             <>
-              <div className="hidden md:block text-green-600 font-semibold text-base lg:text-lg">
-                Total Collection: ₹{parseFloat(TotalRevenue).toFixed(2)}
+              <div 
+                className="hidden md:block text-green-600 font-semibold text-base lg:text-lg cursor-pointer hover:text-green-700 hover:underline transition-colors"
+                onClick={() => navigate("/payments")}
+                title="View All Payments"
+              >
+                Total Collection: ₹{parseFloat(TotalCollection).toFixed(2)}
               </div>
-              <div className="md:hidden text-green-600 font-semibold text-sm">
-                ₹{parseFloat(TotalRevenue).toFixed(2)}
+              <div 
+                className="md:hidden text-green-600 font-semibold text-sm cursor-pointer hover:text-green-700 transition-colors"
+                onClick={() => navigate("/payments")}
+                title="View All Payments"
+              >
+                ₹{parseFloat(TotalCollection).toFixed(2)}
               </div>
             </>
           )}

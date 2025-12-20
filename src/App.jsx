@@ -9,6 +9,7 @@ import Packages from "./pages/Packages/Packages";
 import SessionTypes from "./pages/SessionTypes/SessionTypes";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Login from "./pages/Login/Login";
+import Payments from "./pages/Payments/Payments";
 import ProtectedRoute from "./Routes/ProtectedRoutes";
 import PublicRoute from "./Routes/PublicRoutes";
 import RoleBasedRoute from "./Routes/RoleBasedRoute";
@@ -42,6 +43,11 @@ function App() {
            <Route path="/sessionTypes" element={
             <RoleBasedRoute unauthorizedRole={3}>
               <SessionTypes />
+            </RoleBasedRoute>
+          } />
+          <Route path="/payments" element={
+            <RoleBasedRoute unauthorizedRole={3}>
+              <Payments />
             </RoleBasedRoute>
           } />
         </Route>
