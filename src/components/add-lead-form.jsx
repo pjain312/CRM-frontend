@@ -1,13 +1,20 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { IconPlus } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { leadFormSchema } from "../lib/form-validation";
+import { addPatientLead, updatePatientLeads } from "../services/leads-service";
+import { Button } from "./ui/button";
 import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from "./ui/dialog";
 import {
   Form,
@@ -17,12 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
-import { Button } from "./ui/button";
-import { IconPlus } from "@tabler/icons-react";
 import { Input } from "./ui/input";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { leadFormSchema } from "../lib/form-validation";
 import {
   Select,
   SelectContent,
@@ -31,12 +33,29 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import { addPatientLead, updatePatientLeads } from "../services/leads-service";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 
 const AddLeadForm = ({ type, patient, disabled = false }) => {
   const [open, setOpen] = useState(false);
+
+  const emptyFormValues = {
+    name: "",
+    age: "",
+    gender: "",
+    email: "",
+    phoneNumber: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+    country: "",
+    leadType: "",
+    physioPreference: "",
+    leadSource: "",
+    leadStatus: "",
+    condition: "",
+    treatment: "",
+    assignedTo: "",
+  };
 
   const defaultValues = useMemo(() => {
     return {
@@ -71,6 +90,7 @@ const AddLeadForm = ({ type, patient, disabled = false }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-leads"] });
       toast.success("Lead Added Successfully");
+      form.reset(emptyFormValues);
       setOpen(false);
     },
     onError: () => {
@@ -87,7 +107,7 @@ const AddLeadForm = ({ type, patient, disabled = false }) => {
       } else {
         toast.success("Lead Edited Successfully");
       }
-      form.reset(); // Reset form to show updated values
+      form.reset(emptyFormValues);
       setOpen(false);
     },
     onError: (error) => {

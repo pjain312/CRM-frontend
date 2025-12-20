@@ -215,7 +215,6 @@ const PatientAppointmentTab = ({ patientId, isPatientClosed }) => {
                     
                     {/* Amount Row */}
                     {appointment.IsInvoiceGenerated && <div className="flex items-center gap-2 mt-2 p-2 bg-blue-50 rounded-md border border-blue-200">
-                      <DollarSign className="h-4 w-4 text-blue-600 flex-shrink-0" />
                       <span className="text-sm font-semibold text-blue-700">
                         {appointment?.Amount != null ? `Rs. ${parseFloat(appointment.Amount).toFixed(2)}` : "Covered In Package"}
                       </span>
@@ -306,7 +305,6 @@ const PatientAppointmentTab = ({ patientId, isPatientClosed }) => {
                       
                       {/* Amount Row */}
                       {appointment.IsInvoiceGenerated && <div className="flex items-center gap-2 p-2.5 bg-blue-50 rounded-md border border-blue-200">
-                        <DollarSign className="h-4 w-4 text-blue-600 flex-shrink-0" />
                         <span className="text-sm font-semibold text-blue-700">
                           {appointment?.Amount != null ? `Rs. ${parseFloat(appointment.Amount).toFixed(2)}` : "Covered In Package"}
                         </span>
