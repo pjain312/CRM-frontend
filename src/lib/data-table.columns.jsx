@@ -113,6 +113,15 @@ export const leadsColumns = [
     cell: ({ row }) => <div>{row.getValue("City")}</div>,
   },
   {
+    accessorKey: "CreatedOn",
+    header: () => "Lead Date",
+    cell: ({ row }) => {
+      const date = row.getValue("CreatedOn");
+      if (!date) return <div>-</div>;
+      return <div>{new Date(date).toLocaleDateString()}</div>;
+    },
+  },
+  {
     accessorKey: "LeadStatusName",
     header: () => "Status",
     cell: ({ row }) => (

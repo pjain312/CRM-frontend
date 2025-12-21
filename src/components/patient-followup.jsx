@@ -159,9 +159,23 @@ function PatientFollowup({ patient }) {
             <CardContent>
               {followUpData?.LastFollowUpComment ? (
                 <div className="p-4 rounded-lg bg-muted/50 border">
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Previous Comment:
-                  </p>
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm text-muted-foreground font-medium">
+                      Previous Comment:
+                    </p>
+                    {followUpData?.LastFollowUpDate && (
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <ClockIcon className="h-3.5 w-3.5" />
+                        <span>
+                          {new Date(followUpData.LastFollowUpDate).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                   <p className="text-base leading-relaxed">
                     {followUpData?.LastFollowUpComment}
                   </p>
