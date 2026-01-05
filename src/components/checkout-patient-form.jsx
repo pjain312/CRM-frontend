@@ -79,12 +79,12 @@ const CheckoutPatientForm = ({ session, open, onOpenChange, notDialogTrigger, se
   const { mutate } = useMutation({
     mutationFn: checkoutPatient,
     onSuccess: async () => {
-        // await Promise.all([
-        //     queryClient.invalidateQueries({ queryKey: ["patient-checkout-details"]}),
-        //     queryClient.invalidateQueries({ queryKey: ["all-appointments"]}),
-        //     queryClient.invalidateQueries({ queryKey: ["appointment-today"]}),
-        //   ]);
-    //   toast.success("Patient CheckedOut Successfully");
+        await Promise.all([
+            queryClient.invalidateQueries({ queryKey: ["patient-checkout-details"]}),
+            queryClient.invalidateQueries({ queryKey: ["all-appointments"]}),
+            queryClient.invalidateQueries({ queryKey: ["appointment-today"]}),
+          ]);
+      toast.success("Patient CheckedOut Successfully");
     if(!patientCheckoutDetails?.PackageId && form.watch("packageId")) setShowPackageInvoice(true)
     if(form.watch("sessionTypes")?.length) setShowDailyInvoice(true)
     onOpenChange(false);

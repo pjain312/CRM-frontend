@@ -98,9 +98,9 @@ export const leadsColumns = [
     cell: ({ row }) => <div>{row.getValue("Gender")}</div>,
   },
   {
-    accessorKey: "Email",
-    header: () => "Email",
-    cell: ({ row }) => <div>{row.getValue("Email")}</div>,
+    accessorKey: "SourceName",
+    header: () => "Source",
+    cell: ({ row }) => <div>{row.getValue("SourceName")}</div>,
   },
   {
     accessorKey: "PhoneNumber",
@@ -227,9 +227,9 @@ export const patientListsColumns = [
     cell: ({ row }) => <div>{row.getValue("Gender")}</div>,
   },
   {
-    accessorKey: "Email",
-    header: () => "Email",
-    cell: ({ row }) => <div>{row.getValue("Email")}</div>,
+    accessorKey: "SourceName",
+    header: () => "Source",
+    cell: ({ row }) => <div>{row.getValue("SourceName")}</div>,
   },
   {
     accessorKey: "PhoneNumber",

@@ -108,6 +108,8 @@ const AppointmentCard = ({appointmentData, value}) =>{
       const { mutate: endSessionMutation } = useMutation({
         mutationFn: endSession,
         onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["appointment-today"] });
+          queryClient.invalidateQueries({ queryKey: ["all-appointments"] });
           toast.success("Session ended successfully");
           setCheckoutOpen(true);
         },

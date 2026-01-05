@@ -34,7 +34,7 @@ import {
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
 
-const AddLeadForm = ({ type, patient, disabled = false }) => {
+const AddLeadForm = ({ type, patient, disabled = false, onSuccess }) => {
   const [open, setOpen] = useState(false);
 
   const emptyFormValues = {
@@ -109,6 +109,10 @@ const AddLeadForm = ({ type, patient, disabled = false }) => {
       }
       form.reset(emptyFormValues);
       setOpen(false);
+      // Call onSuccess callback if provided (e.g., to refresh patient data)
+      if (onSuccess && typeof onSuccess === 'function') {
+        onSuccess();
+      }
     },
     onError: (error) => {
       console.error("Update error:", error);

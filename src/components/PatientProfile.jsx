@@ -193,7 +193,7 @@ const PatientProfile = () => {
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {!patient?.IsPatientClosed && <DropdownMenuItem asChild>
-              <AddLeadForm type="edit" patient={patient} />
+              <AddLeadForm type="edit" patient={{...patient, Source: patient.LeadSource}} onSuccess={fetchPatientDetails} />
             </DropdownMenuItem>}
             {!patient?.IsPatientClosed && <DropdownMenuItem asChild>
               <PrescriptionDialog patient={patient} />
@@ -296,7 +296,7 @@ const PatientProfile = () => {
                   <span className="font-medium">Treatment:</span> {patient.Treatment}
                 </div>
                 <div>
-                  <span className="font-medium">Assigned To:</span> Dr. {patient.AssignedTo} PT
+                  <span className="font-medium">Assigned To:</span> Dr. {patient.AssignedPhysio} PT
                 </div>
               </div>
             </div>
