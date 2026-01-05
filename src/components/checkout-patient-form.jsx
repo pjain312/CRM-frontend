@@ -147,7 +147,7 @@ const CheckoutPatientForm = ({ session, open, onOpenChange, notDialogTrigger, se
             { !notDialogTrigger && <DialogTrigger className="flex px-2 hover:bg-accent font-normal py-1.5 text-sm rounded-sm">
                 Checkout Patient
             </DialogTrigger>}
-        <DialogContent className="max-w-[95vw] sm:max-w-[425px] md:max-w-[525px] lg:max-w-[625px]">
+        <DialogContent className="max-w-[95vw] sm:max-w-[425px] md:max-w-[525px] lg:max-w-[625px] max-h-[90vh] overflow-y-auto pb-20 sm:pb-6">
             <DialogHeader>
             <DialogTitle>Checkout Patient</DialogTitle>
             <DialogDescription>
@@ -557,7 +557,7 @@ const CheckoutPatientForm = ({ session, open, onOpenChange, notDialogTrigger, se
                 )
             }
             
-                <DialogFooter className="col-span-1 md:col-span-2 flex-col sm:flex-row gap-2 sm:gap-0">
+                <DialogFooter className="col-span-1 md:col-span-2 flex-col sm:flex-row gap-2 sm:gap-0 pb-6 sm:pb-0 mb-safe sm:mb-0">
                 <DialogClose asChild>
                     <Button
                     className="cursor-pointer w-full sm:w-auto"

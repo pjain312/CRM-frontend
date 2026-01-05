@@ -1,4 +1,4 @@
-import { ArrowLeft, Calendar, CreditCard, Mail, MapPin, MoreVertical, Package, Phone, User } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Calendar, CreditCard, Mail, MapPin, MoreVertical, Package, Phone, User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -25,7 +25,8 @@ import {
   DialogContent,
   DialogDescription,
   DialogFooter,
-  DialogHeader
+  DialogHeader,
+  DialogTitle
 } from './ui/dialog';
 import {
   DropdownMenu,
@@ -127,19 +128,42 @@ const PatientProfile = () => {
     <div className="container mx-auto p-3 md:p-6 space-y-4 md:space-y-6">
       {/* Closed Patient Dialog */}
       <Dialog open={popupOpen} onOpenChange={setPopupOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogDescription>
-              The Patient is closed!
+            <div className="flex items-center gap-3 mb-2">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                <AlertCircle className="h-5 w-5 text-orange-600" />
+              </div>
+              <DialogTitle className="text-xl font-semibold text-gray-900">
+                Patient Closed
+              </DialogTitle>
+            </div>
+            <DialogDescription className="text-base text-gray-600 mt-2">
+              This patient account has been closed.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          {patient.PatientCloseReason && (
+            <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 mt-0.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-400 mt-2" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-700 mb-1">Reason:</p>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    {patient.PatientCloseReason}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex-col sm:flex-row gap-2 mt-6">
             <Button
               onClick={reOpenPatient}
               disabled={loading}
               className="w-full sm:w-auto cursor-pointer"
             >
-              {loading ? 'Reopening...' : 'Reopen now'}
+              {loading ? 'Reopening...' : 'Reopen Patient'}
             </Button>
           </DialogFooter>
         </DialogContent>
