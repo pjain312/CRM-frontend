@@ -1,12 +1,15 @@
+import { addHours, format, parse } from "date-fns";
+import { Calendar, Clock, Edit, MessageSquare, User, UserCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getPatientAppointments } from "../services/patient-service";
-import { addHours, format, parse } from "date-fns";
+import CheckoutPatientForm from "./checkout-patient-form";
+import DailyInvoice from "./daily-invoice";
+import PackageInvoice from "./package-invoice";
+import RescheduleConfirmAppointmentForm from "./reschedule-confirm-appointment-form";
+import ScheduleAppointmentForm from "./schedule-appointment-form";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Clock, User, Edit, MessageSquare, DollarSign, Calendar } from "lucide-react";
-import ScheduleAppointmentForm from "./schedule-appointment-form";
-import RescheduleConfirmAppointmentForm from "./reschedule-confirm-appointment-form";
 
 const PatientAppointmentTab = ({ patientId, isPatientClosed }) => {
     const [appointments, setAppointments] = useState([]);
@@ -14,6 +17,10 @@ const PatientAppointmentTab = ({ patientId, isPatientClosed }) => {
     const [scheduleFormOpen, setScheduleFormOpen] = useState(false);
     const [editFormOpen, setEditFormOpen] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
+    const [checkoutOpen, setCheckoutOpen] = useState(false);
+    const [selectedCheckoutAppointment, setSelectedCheckoutAppointment] = useState(null);
+    const [showPackageInvoice, setShowPackageInvoice] = useState(false);
+    const [showDailyInvoice, setShowDailyInvoice] = useState(false);
   
     useEffect(() => {
       fetchAppointments();
@@ -32,6 +39,17 @@ const PatientAppointmentTab = ({ patientId, isPatientClosed }) => {
     const handleEditSuccess = () => {
       setEditFormOpen(false);
       setSelectedAppointment(null);
+      fetchAppointments(); // Refresh the appointments list
+    };
+
+    const handleCheckoutClick = (appointment) => {
+      setSelectedCheckoutAppointment(appointment);
+      setCheckoutOpen(true);
+    };
+
+    const handleCheckoutSuccess = () => {
+      setCheckoutOpen(false);
+      setSelectedCheckoutAppointment(null);
       fetchAppointments(); // Refresh the appointments list
     };
   
@@ -219,6 +237,21 @@ const PatientAppointmentTab = ({ patientId, isPatientClosed }) => {
                         {appointment?.Amount != null ? `Rs. ${parseFloat(appointment.Amount).toFixed(2)}` : "Covered In Package"}
                       </span>
                     </div>}
+                    
+                    {/* Checkout Button */}
+                    {appointment.EndTime && !appointment.IsInvoiceGenerated && (
+                      <div className="mt-3">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleCheckoutClick(appointment)}
+                          className="w-full sm:w-auto"
+                        >
+                          <UserCheck className="h-3.5 w-3.5 mr-1.5" />
+                          Checkout Patient
+                        </Button>
+                      </div>
+                    )}
                   </div>
   
                   {/* Desktop Layout */}
@@ -309,6 +342,21 @@ const PatientAppointmentTab = ({ patientId, isPatientClosed }) => {
                           {appointment?.Amount != null ? `Rs. ${parseFloat(appointment.Amount).toFixed(2)}` : "Covered In Package"}
                         </span>
                       </div>}
+                      
+                      {/* Checkout Button */}
+                      {appointment.EndTime && !appointment.IsInvoiceGenerated && (
+                        <div className="mt-3">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleCheckoutClick(appointment)}
+                            className="w-full sm:w-auto"
+                          >
+                            <UserCheck className="h-3.5 w-3.5 mr-1.5" />
+                            Checkout Patient
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -339,6 +387,38 @@ const PatientAppointmentTab = ({ patientId, isPatientClosed }) => {
               }
             }}
             notDialogTrigger={true}
+          />
+        )}
+
+        {/* Checkout Patient Dialog */}
+        {checkoutOpen && selectedCheckoutAppointment && (
+          <CheckoutPatientForm
+            session={selectedCheckoutAppointment}
+            open={checkoutOpen}
+            onOpenChange={(open) => {
+              setCheckoutOpen(open);
+              if (!open) {
+                handleCheckoutSuccess();
+              }
+            }}
+            setShowPackageInvoice={setShowPackageInvoice}
+            setShowDailyInvoice={setShowDailyInvoice}
+          />
+        )}
+
+        {/* Invoice Dialogs */}
+        {showPackageInvoice && selectedCheckoutAppointment && (
+          <PackageInvoice
+            appointment={selectedCheckoutAppointment}
+            open={showPackageInvoice}
+            onOpenChange={setShowPackageInvoice}
+          />
+        )}
+        {showDailyInvoice && selectedCheckoutAppointment && (
+          <DailyInvoice
+            appointment={selectedCheckoutAppointment}
+            open={showDailyInvoice}
+            onOpenChange={setShowDailyInvoice}
           />
         )}
       </div>

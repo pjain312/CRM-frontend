@@ -3,6 +3,7 @@ import { CalendarCheck2, CalendarSync, CalendarX, CheckCircle, Clock, Hourglass,
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { parse } from "date-fns";
 import CancelAppointmentForm from "../../components/cancel-appointment-form";
 import CheckoutPatientForm from "../../components/checkout-patient-form";
 import RescheduleConfirmAppointmentForm from "../../components/reschedule-confirm-appointment-form";
@@ -71,6 +72,89 @@ const AppointmentCard = ({appointmentData, value}) =>{
             Object.values(intervalRefs.current).forEach(interval => clearInterval(interval));
         };
     }, []);
+
+    // Restore timers for active sessions on mount or when appointmentData changes
+    useEffect(() => {
+        if (!appointmentData || appointmentData.length === 0) return;
+
+        // Get all current appointment IDs
+        const currentAppointmentIds = new Set(appointmentData.map(apt => apt.AppointmentId));
+
+        appointmentData.forEach((appointment) => {
+            // If session is active (checked in, started, but not ended) and timer not already running
+            if (
+                appointment.IsPatientCheckedIn &&
+                appointment.StartTime &&
+                !appointment.EndTime &&
+                !intervalRefs.current[appointment.AppointmentId]
+            ) {
+                try {
+                    // Parse StartTime from backend format 'yyyy-MM-dd HH:mm:ss'
+                    const startTimeDate = parse(appointment.StartTime, 'yyyy-MM-dd HH:mm:ss', new Date());
+                    const startTimeMs = startTimeDate.getTime();
+                    const now = Date.now();
+                    const elapsedSeconds = Math.floor((now - startTimeMs) / 1000);
+
+                    // Only restore if elapsed time is positive (session started in the past)
+                    if (elapsedSeconds >= 0) {
+                        setSessionTimers(prev => ({
+                            ...prev,
+                            [appointment.AppointmentId]: { startTime: startTimeMs, elapsed: elapsedSeconds }
+                        }));
+
+                        // Start the interval to continue counting
+                        const interval = setInterval(() => {
+                            setSessionTimers(prev => {
+                                if (!prev[appointment.AppointmentId]) return prev;
+                                return {
+                                    ...prev,
+                                    [appointment.AppointmentId]: {
+                                        ...prev[appointment.AppointmentId],
+                                        elapsed: Math.floor((Date.now() - startTimeMs) / 1000)
+                                    }
+                                };
+                            });
+                        }, 1000);
+
+                        intervalRefs.current[appointment.AppointmentId] = interval;
+                    }
+                } catch (error) {
+                    console.error('Error parsing StartTime for appointment:', appointment.AppointmentId, error);
+                }
+            }
+        });
+
+        // Clean up timers for appointments that are no longer active or have ended
+        Object.keys(intervalRefs.current).forEach(appointmentId => {
+            const appointmentIdNum = parseInt(appointmentId);
+            if (!currentAppointmentIds.has(appointmentIdNum)) {
+                // Appointment no longer in the list, clean up
+                if (intervalRefs.current[appointmentId]) {
+                    clearInterval(intervalRefs.current[appointmentId]);
+                    delete intervalRefs.current[appointmentId];
+                }
+                setSessionTimers(prev => {
+                    const newTimers = { ...prev };
+                    delete newTimers[appointmentIdNum];
+                    return newTimers;
+                });
+            } else {
+                const appointment = appointmentData.find(apt => apt.AppointmentId === appointmentIdNum);
+                if (appointment && (appointment.EndTime || !appointment.IsPatientCheckedIn || !appointment.StartTime)) {
+                    // Session has ended or is no longer active, clean up
+                    if (intervalRefs.current[appointmentId]) {
+                        clearInterval(intervalRefs.current[appointmentId]);
+                        delete intervalRefs.current[appointmentId];
+                    }
+                    setSessionTimers(prev => {
+                        const newTimers = { ...prev };
+                        delete newTimers[appointmentIdNum];
+                        return newTimers;
+                    });
+                }
+            }
+        });
+    }, [appointmentData]);
 
     const { mutate: checkinPatientMutation } = useMutation({
         mutationFn: checkinPatient,

@@ -31,7 +31,7 @@ const Payments = () => {
 
   // Generate year options (current year and 2 years back)
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 3 }, (_, i) => currentYear + i);
+  const years = Array.from({ length: 3 }, (_, i) => currentYear - i);
 
   useEffect(() => {
     fetchPayments();
