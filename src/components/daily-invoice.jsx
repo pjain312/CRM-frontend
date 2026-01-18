@@ -127,6 +127,16 @@ const InvoiceContent = ({ invoiceData, contentRef, containerRef }) => {
               Rs. {parseFloat(invoiceData?.details?.TotalCost).toFixed(2)}
             </span>
           </div>
+          {invoiceData?.details?.PaymentMode && (
+            <div className="flex justify-end">
+              <span className="text-sm font-medium text-gray-600">
+                Payment Mode:
+              </span>
+              <span className="text-sm text-gray-900 ml-2">
+                {invoiceData.details.PaymentMode}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 

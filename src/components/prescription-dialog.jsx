@@ -50,31 +50,37 @@ const PrescriptionForm = ({
 
           {/* Patient Info */}
           <div className="flex-1">
-            <div className="grid grid-cols-3 gap-6 text-sm">
+            <div className="grid grid-cols-3 gap-2 text-sm">
               <div className="flex py-2">
-                <span className="font-bold text-gray-600 mr-2">Name:</span>
+                <span className="font-bold text-gray-600 mr-1">Name:</span>
                 <span className="text-gray-800">{patient?.Gender === "Male" ? "Mr." : "Ms."} {patient?.Name || "N/A"}</span>
               </div>
               <div className="flex py-2">
-                <span className="font-bold text-gray-600 mr-2">Gender:</span>
+                <span className="font-bold text-gray-600 mr-1">Gender:</span>
                 <span className="text-gray-800">
                   {patient?.Gender || "N/A"}
                 </span>
               </div>
               <div className="flex py-2">
-                <span className="font-bold text-gray-600 mr-2">Age:</span>
+                <span className="font-bold text-gray-600 mr-1">Age:</span>
                 <span className="text-gray-800">
                   {patient?.Age ? `${patient.Age} years` : "N/A"}
                 </span>
               </div>
               <div className="flex py-2">
-                <span className="font-bold text-gray-600 mr-2">Phone:</span>
+                <span className="font-bold text-gray-600 mr-1">Phone:</span>
                 <span className="text-gray-800">
                   {patient?.PhoneNumber || "N/A"}
                 </span>
               </div>
-              <div className="flex py-2 col-span-2">
-                <span className="font-bold text-gray-600 mr-2">Address:</span>
+              <div className="flex py-2">
+                <span className="font-bold text-gray-600 mr-1">Date:</span>
+                <span className="text-gray-800">
+                  {new Date().toLocaleDateString()}
+                </span>
+              </div>
+              <div className="flex py-2">
+                <span className="font-bold text-gray-600 mr-1">Address:</span>
                 <span className="text-gray-800">
                   {patient?.Address || "N/A"}
                 </span>

@@ -361,6 +361,12 @@ const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
                             <span className="text-sm font-medium text-gray-600">Amount Received:</span>
                             <span className="text-sm text-gray-900">Rs. {parseFloat(invoiceData.PackageAdvanceAmount).toFixed(2)}</span>
                         </div>
+                        {invoiceData?.PaymentMode && (
+                            <div className="flex justify-between">
+                                <span className="text-sm font-medium text-gray-600">Payment Mode:</span>
+                                <span className="text-sm text-gray-900">{invoiceData.PaymentMode}</span>
+                            </div>
+                        )}
                     </div>
                     <div className="space-y-2">
                         <div className="flex justify-between">
