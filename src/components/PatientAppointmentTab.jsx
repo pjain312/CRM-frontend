@@ -173,7 +173,7 @@ const PatientAppointmentTab = ({ patientId, isPatientClosed }) => {
                               </span>
                             )}
                           </div>
-                          {!isPatientClosed && appointment?.Status !== "Cancelled" && !appointment?.IsPatientCheckedIn && (
+                          {(!isPatientClosed && appointment?.Status !== "Cancelled" && !appointment?.CheckInTime) && (
                             <Button
                               variant="ghost"
                               size="sm"
@@ -295,7 +295,7 @@ const PatientAppointmentTab = ({ patientId, isPatientClosed }) => {
                             <User className="h-4 w-4 text-blue-600" />
                             <span className="font-medium text-gray-800">Dr. {appointment.Physio} PT</span>
                           </div>
-                          {!isPatientClosed && appointment?.Status !== "Cancelled" && !appointment?.IsPatientCheckedIn && (
+                          {!isPatientClosed && appointment?.Status !== "Cancelled" && !appointment?.CheckInTime && (
                             <Button
                               variant="ghost"
                               size="sm"

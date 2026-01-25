@@ -3,11 +3,12 @@ import { getAllAppointments } from "../../services/appointment-service";
 import CompletedAppointment from "./CompletedAppointment";
 import ScheduledAppointment from "./ScheduledAppointment";
 import PendingCounts from "./PendingCounts";
+import { format } from "date-fns";
 
 export function Dashboard() {
     const { data: appointmentDetails } = useQuery({
         queryKey: ["appointment-today"],
-        queryFn: () => getAllAppointments({appointmentDate: new Date()}),
+        queryFn: () => getAllAppointments({appointmentDate: format(new Date(), "yyyy-MM-dd")}),
       });
   return (
     <div className="p-3 md:p-6 space-y-4 md:space-y-6">

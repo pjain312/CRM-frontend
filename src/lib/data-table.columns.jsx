@@ -244,7 +244,8 @@ export const patientListsColumns = [
   {
     accessorKey: "Condition",
     header: () => "Condition",
-    cell: ({ row }) => <div>{row.getValue("Condition")}</div>,
+    cell: ({ row }) => <div className="max-w-[150px] truncate" title={row.getValue("Condition")}>{row.getValue("Condition")}</div>,
+    size: 150,
   },
   {
     accessorKey: "Treatment",
@@ -270,6 +271,11 @@ export const patientListsColumns = [
     accessorKey: "AssignedToName",
     header: () => "Assigned To",
     cell: ({ row }) => <div>{row.getValue("AssignedToName")}</div>,
+  },
+  {
+    accessorKey: "LeadTypeName",
+    header: () => "Type",
+    cell: ({ row }) => <div>{row.getValue("LeadTypeName")}</div>,
   },
   {
     id: "actions",
