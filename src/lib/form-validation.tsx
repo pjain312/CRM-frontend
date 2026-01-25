@@ -101,6 +101,21 @@ export const packageFormSchema = z.object({
           message: "Must be a valid positive number",
         })
     ),
+  freeSessions: z
+    .union([z.string(), z.number()])
+    .transform((val) => {
+      if (val === "" || val === undefined || val === null) return "0";
+      return String(val);
+    })
+    .pipe(
+      z
+        .string()
+        .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+          message: "Must be a valid non-negative number",
+        })
+    )
+    .optional()
+    .default("0"),
 });
 
 export const sessionTypeFormSchema = z.object({

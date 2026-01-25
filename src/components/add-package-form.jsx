@@ -38,6 +38,7 @@ const AddPackageForm = ({ type, packageData }) => {
       totalSession: packageData?.TotalSessions || "",
       totalCost: packageData?.TotalCost || "",
       chargePerSessionForPackage: packageData?.ChargePerSessionForPackage || "",
+      freeSessions: packageData?.FreeSessions || "0",
     },
   });
 
@@ -163,6 +164,25 @@ const AddPackageForm = ({ type, packageData }) => {
                     <Input 
                       type="number" 
                       placeholder="Enter total sessions" 
+                      min = {0}
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="freeSessions"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Free Sessions</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      placeholder="Enter number of free sessions (optional)" 
+                      min = {0}
                       {...field} 
                     />
                   </FormControl>
@@ -187,6 +207,7 @@ const AddPackageForm = ({ type, packageData }) => {
                 </FormItem>
               )}
             />
+           
             <DialogFooter className="col-span-2">
               <DialogClose asChild>
                 <Button type="button" variant="outline">

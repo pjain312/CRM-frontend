@@ -38,6 +38,7 @@ import {
 } from './ui/dropdown-menu';
 import { Separator } from './ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+// import ProductInvoice from './product-invoice';
 
 const PatientProfile = () => {
   const { patientId } = useParams();
@@ -50,6 +51,7 @@ const PatientProfile = () => {
   // Invoice state management
   const [packageInvoiceOpen, setPackageInvoiceOpen] = useState(false);
   const [dailyInvoiceOpen, setDailyInvoiceOpen] = useState(false);
+  const [productInvoiceOpen, setProductInvoiceOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
 
   useEffect(() => {
@@ -59,6 +61,7 @@ const PatientProfile = () => {
   useEffect(()=>{
     setPopupOpen(!!patient?.IsPatientClosed)
   }, [patient?.IsPatientClosed])
+
 
   const reOpenPatient = async () => {
     try {
@@ -100,7 +103,11 @@ const PatientProfile = () => {
     setSelectedPayment(payment);
     if (payment.PackageId) {
       setPackageInvoiceOpen(true);
-    } else {
+    } 
+    // else if (payment.ProductId) {
+    //   setProductInvoiceOpen(true);
+    // }
+     else {
       setDailyInvoiceOpen(true);
     }
   };
@@ -247,6 +254,17 @@ const PatientProfile = () => {
                         {patient.Source}
                       </Badge>
                     </div>
+                    {patient.LeadTypeName && (
+                      <>
+                        <span className="text-gray-400 hidden sm:inline">•</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-gray-500">Type:</span>
+                          <Badge variant="outline" className="text-xs font-normal px-2 py-0.5">
+                            {patient.LeadTypeName}
+                          </Badge>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -301,26 +319,6 @@ const PatientProfile = () => {
               </div>
             </div>
 
-            {/* Session Summary */}
-            {!!patient.InPackage && 
-            <div className="space-y-4">
-              <h3 className="font-semibold text-gray-900">Session Summary</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>Total Sessions:</span>
-                  <span className="font-medium">{patient.TotalSessions}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Completed:</span>
-                  <span className="font-medium text-green-600">{patient.CompletedSessions}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Remaining:</span>
-                  <span className="font-medium text-orange-600">{patient.TotalSessions - patient.CompletedSessions}</span>
-                </div>
-              </div>
-            </div>
-          }
           </div>
         </CardContent>
       </Card>

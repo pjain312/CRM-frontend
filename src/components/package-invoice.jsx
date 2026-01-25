@@ -218,11 +218,12 @@ const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
         const printContent = document.getElementById('invoice-content');
         
         if (printWindow && printContent) {
+            const details = invoiceData?.details || {};
             printWindow.document.write(`
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <title>Invoice - ${invoiceData.PatientName}</title>
+                    <title>Invoice - ${details.PatientName || 'Invoice'}</title>
                     <style>
                         ${getPrintStyles()}
                     </style>
@@ -248,11 +249,12 @@ const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
         const printContent = document.getElementById('invoice-content');
         
         if (printWindow && printContent) {
+            const details = invoiceData?.details || {};
             printWindow.document.write(`
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <title>Invoice - ${invoiceData.PatientName}</title>
+                    <title>Invoice - ${details.PatientName || 'Invoice'}</title>
                     <style>
                         ${getPrintStyles()}
                     </style>
@@ -274,6 +276,19 @@ const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
             }, 250);
         }
     };
+
+    // Extract details and services from invoiceData
+    const details = invoiceData?.details || {};
+    const services = invoiceData?.services || [];
+
+    // Calculate TotalPrice and DiscountedCost by summing from all services
+    const calculatedTotalPrice = services.reduce((sum, service) => {
+        return sum + parseFloat(service.TotalPrice || 0);
+    }, 0);
+
+    const calculatedDiscountedCost = services.reduce((sum, service) => {
+        return sum + parseFloat(service.DiscountedCost || 0);
+    }, 0);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -315,14 +330,14 @@ const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
                 <div className="border-b border-gray-200 mb-4"></div>
                 <div className="flex justify-between">
                     <div className="space-y-2 text-sm font-medium">
-                    <p>Patient Name: {invoiceData?.Gender == 1 ? "Mr." : "Ms."} {invoiceData.PatientName}</p>
-                        <p>Address: {invoiceData.Address}</p>
-                        <p>Phone: {invoiceData.PhoneNumber}</p>
+                    <p>Patient Name: {details?.Gender == 1 ? "Mr." : "Ms."} {details.PatientName}</p>
+                        <p>Address: {details.Address}</p>
+                        <p>Phone: {details.PhoneNumber}</p>
                     </div>
                     <div className="space-y-2 text-sm font-medium">
-                        <p>Invoice id: #{invoiceData?.TransactionId}</p>
-                        <p>Date: {new Date().toLocaleDateString()}</p>
-                        <p>Doctor: Dr. {invoiceData.PhysioName} PT</p>
+                        <p>Invoice id: #{details?.TransactionId}</p>
+                        <p>Date: {details?.CreatedOn ? new Date(details.CreatedOn).toLocaleDateString() : ''}</p>
+                        <p>Doctor: Dr. {details.PhysioName} PT</p>
                     </div>
                 </div>
             </div>
@@ -335,17 +350,21 @@ const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
                             <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-900">Description</th>
                             <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-900">Unit Price</th>
                             <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-900">Qty</th>
+                            {services.some(service => service.FreeSessions) && <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-900">Free Sessions</th>}
                             <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-900">Amount</th>
                         </tr>
                     </thead>
                     <tbody>
-                            <tr>
-                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">{1}</td>
-                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">{invoiceData.PackageName}</td>
-                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">Rs. {parseFloat(invoiceData.ChargePerSession).toFixed(2)}</td>
-                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">{invoiceData.TotalSessions}</td>
-                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">Rs. {parseFloat(invoiceData.TotalPrice).toFixed(2)}</td>
+                        {services.map((service, index) => (
+                            <tr key={index}>
+                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">{index + 1}</td>
+                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">{service.PackageName || service.Description || '-'}</td>
+                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">Rs. {parseFloat(service.ChargePerSession || service.UnitPrice || 0).toFixed(2)}</td>
+                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">{service.TotalSessions || service.Qty || '-'}</td>
+                                {services.some(s => s.FreeSessions) && <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">{service.FreeSessions || '-'}</td>}
+                                <td className="border border-gray-300 px-4 py-3 text-sm text-gray-900">Rs. {parseFloat(service.TotalPrice || service.Amount || 0).toFixed(2)}</td>
                             </tr>
+                        ))}
                     </tbody>
                 </table>
             </div>
@@ -355,16 +374,16 @@ const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
                     <div className="space-y-2">
                         <div className="flex justify-between">
                             <span className="text-sm font-medium text-gray-600">Sub Total:</span>
-                            <span className="text-sm text-gray-900">Rs. {parseFloat(invoiceData.TotalPrice).toFixed(2)}</span>
+                            <span className="text-sm text-gray-900">Rs. {calculatedTotalPrice.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-sm font-medium text-gray-600">Amount Received:</span>
-                            <span className="text-sm text-gray-900">Rs. {parseFloat(invoiceData.PackageAdvanceAmount).toFixed(2)}</span>
+                            <span className="text-sm text-gray-900">Rs. {parseFloat(details.PackageAdvanceAmount || 0).toFixed(2)}</span>
                         </div>
-                        {invoiceData?.PaymentMode && (
+                        {details?.PaymentMode && (
                             <div className="flex justify-between">
                                 <span className="text-sm font-medium text-gray-600">Payment Mode:</span>
-                                <span className="text-sm text-gray-900">{invoiceData.PaymentMode}</span>
+                                <span className="text-sm text-gray-900">{details.PaymentMode}</span>
                             </div>
                         )}
                     </div>
@@ -372,16 +391,16 @@ const PackageInvoice = ({ open ,onOpenChange, appointment }) => {
                         <div className="flex justify-between">
                             <span className="text-sm font-medium text-gray-600">Discount:</span>
                             <span className="text-sm text-gray-900">
-                                {Math.round(((invoiceData.TotalPrice - invoiceData.DiscountedCost) / invoiceData.TotalPrice) * 100)}%
+                                {calculatedTotalPrice > 0 ? Math.round(((calculatedTotalPrice - calculatedDiscountedCost) / calculatedTotalPrice) * 100) : 0}%
                             </span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-sm font-medium text-gray-600">Grand Total:</span>
-                            <span className="text-sm text-gray-900">Rs. {parseFloat(invoiceData.DiscountedCost).toFixed(2)}</span>
+                            <span className="text-sm text-gray-900">Rs. {calculatedDiscountedCost.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-sm font-medium text-gray-600">Amount To Be Paid:</span>
-                            <span className="text-sm text-gray-900">Rs. {(parseFloat(invoiceData.DiscountedCost) - parseFloat(invoiceData.PackageAdvanceAmount)).toFixed(2)}</span>
+                            <span className="text-sm text-gray-900">Rs. {(calculatedDiscountedCost - parseFloat(details.PackageAdvanceAmount || 0)).toFixed(2)}</span>
                         </div>
                     </div>
                 </div>
