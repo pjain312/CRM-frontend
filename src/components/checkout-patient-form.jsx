@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSubmitMutation } from "../hooks/use-submit-mutation";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { checkoutPatientFormSchema } from "../lib/form-validation";
 import { Button } from "./ui/button";
@@ -33,11 +34,21 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
 
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { checkoutPatient, getAllPackagesAndSessionTypes, getPatientDetailsForCheckout } from "../services/session-service";
+import { getPackageCheckoutWhatsAppPrompt, openWhatsAppUrl } from "../lib/whatsapp-utils";
 import { toast } from "sonner";
 
 const CheckoutPatientForm = ({ session, open, onOpenChange, notDialogTrigger, setShowPackageInvoice, setShowDailyInvoice }) => {
   const [isFullAmountSelected, setIsFullAmountSelected] = useState(false);
   const [checkoutOption, setCheckoutOption] = useState("package"); // "package" or "sessionTypes"
+  const [whatsAppPrompt, setWhatsAppPrompt] = useState(null);
+  const [whatsAppStep, setWhatsAppStep] = useState("review");
+  const packageWhatsAppRef = useRef(null);
+
+  const closeWhatsAppFlow = () => {
+    setWhatsAppPrompt(null);
+    setWhatsAppStep("review");
+    onOpenChange(false);
+  };
 
   const { data: patientCheckoutDetails } = useQuery({
     queryKey: ["patient-checkout-details"],
@@ -76,7 +87,7 @@ const CheckoutPatientForm = ({ session, open, onOpenChange, notDialogTrigger, se
   }, [open, patientCheckoutDetails?.PackageId, form]);
 
   const queryClient = useQueryClient();
-  const { mutate } = useMutation({
+  const { submit, isSubmitting } = useSubmitMutation({
     mutationFn: checkoutPatient,
     onSuccess: async () => {
         await Promise.all([
@@ -87,6 +98,20 @@ const CheckoutPatientForm = ({ session, open, onOpenChange, notDialogTrigger, se
       toast.success("Patient CheckedOut Successfully");
     if(!patientCheckoutDetails?.PackageId && form.watch("packageId")) setShowPackageInvoice(true)
     if(form.watch("sessionTypes")?.length) setShowDailyInvoice(true)
+
+    const whatsAppDetails = packageWhatsAppRef.current;
+    packageWhatsAppRef.current = null;
+
+    if (whatsAppDetails) {
+      const prompt = getPackageCheckoutWhatsAppPrompt(whatsAppDetails);
+      if (prompt) {
+        setWhatsAppStep("review");
+        setWhatsAppPrompt(prompt);
+        return;
+      }
+      toast.warning("Checkout complete. No valid phone number for WhatsApp.");
+    }
+
     onOpenChange(false);
     },
     onError: () => {
@@ -138,12 +163,21 @@ const CheckoutPatientForm = ({ session, open, onOpenChange, notDialogTrigger, se
         selectedSessionTypes: values.sessionTypes?.toString(),
       };
     }
-    mutate(checkoutData);
+
+    packageWhatsAppRef.current =
+      patientCheckoutDetails?.PackageId && checkoutOption === "package"
+        ? {
+            ...patientCheckoutDetails,
+            PhoneNumber: patientCheckoutDetails.PhoneNumber || session.PhoneNumber,
+          }
+        : null;
+
+    submit(checkoutData);
   }
 
   return (
     <>
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open && !whatsAppPrompt} onOpenChange={onOpenChange}>
             { !notDialogTrigger && <DialogTrigger className="flex px-2 hover:bg-accent font-normal py-1.5 text-sm rounded-sm">
                 Checkout Patient
             </DialogTrigger>}
@@ -567,13 +601,79 @@ const CheckoutPatientForm = ({ session, open, onOpenChange, notDialogTrigger, se
                     Cancel
                     </Button>
                 </DialogClose>
-                <Button className="cursor-pointer w-full sm:w-auto" type="submit">
-                    Checkout Patient
+                <Button className="cursor-pointer w-full sm:w-auto" type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? "Checking out..." : "Checkout Patient"}
                 </Button>
                 </DialogFooter>
             </form>
             </Form>
         </DialogContent>
+        </Dialog>
+
+        <Dialog
+          open={!!whatsAppPrompt}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) closeWhatsAppFlow();
+          }}
+        >
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>
+                {whatsAppStep === "review" ? "Send WhatsApp update" : "Open WhatsApp?"}
+              </DialogTitle>
+              <DialogDescription>
+                {whatsAppStep === "review"
+                  ? `Review the session update message for ${whatsAppPrompt?.patientName}.`
+                  : `You will be redirected to WhatsApp to send this message to ${whatsAppPrompt?.patientName} (${whatsAppPrompt?.phoneNumber}).`}
+              </DialogDescription>
+            </DialogHeader>
+
+            {whatsAppStep === "review" ? (
+              <>
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    To: {whatsAppPrompt?.phoneNumber}
+                  </p>
+                  <div className="rounded-lg border bg-muted/50 p-3 text-sm whitespace-pre-wrap">
+                    {whatsAppPrompt?.message}
+                  </div>
+                </div>
+                <DialogFooter className="gap-2 sm:gap-0">
+                  <Button type="button" variant="outline" onClick={closeWhatsAppFlow}>
+                    Skip
+                  </Button>
+                  <Button
+                    type="button"
+                    className="bg-[#25D366] hover:bg-[#20BD5A] text-white"
+                    onClick={() => setWhatsAppStep("confirm")}
+                  >
+                    Continue to WhatsApp
+                  </Button>
+                </DialogFooter>
+              </>
+            ) : (
+              <>
+                <div className="rounded-lg border bg-muted/50 p-3 text-sm whitespace-pre-wrap max-h-40 overflow-y-auto">
+                  {whatsAppPrompt?.message}
+                </div>
+                <DialogFooter className="gap-2 sm:gap-0">
+                  <Button type="button" variant="outline" onClick={() => setWhatsAppStep("review")}>
+                    Go back
+                  </Button>
+                  <Button
+                    type="button"
+                    className="bg-[#25D366] hover:bg-[#20BD5A] text-white"
+                    onClick={() => {
+                      if (!whatsAppPrompt?.url) return;
+                      openWhatsAppUrl(whatsAppPrompt.url);
+                    }}
+                  >
+                    Yes, open WhatsApp
+                  </Button>
+                </DialogFooter>
+              </>
+            )}
+          </DialogContent>
         </Dialog>
     </>
   );

@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSubmitMutation } from "../hooks/use-submit-mutation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -36,7 +37,7 @@ const ClosePatientForm = ({ leadData, onPatientUpdate }) => {
   });
 
   const queryClient = useQueryClient();
-  const { mutate: closePatientMutation } = useMutation({
+  const { submit: submitClosePatient, isSubmitting } = useSubmitMutation({
     mutationFn: closePatient,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-leads"] });
@@ -54,7 +55,7 @@ const ClosePatientForm = ({ leadData, onPatientUpdate }) => {
   });
 
   function onSubmit(values) {
-    closePatientMutation({...values, patientId: leadData.Id})
+    submitClosePatient({...values, patientId: leadData.Id})
   }
 
   return (
@@ -93,8 +94,8 @@ const ClosePatientForm = ({ leadData, onPatientUpdate }) => {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit">
-                Close Patient
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Closing..." : "Close Patient"}
               </Button>
             </DialogFooter>
           </form>

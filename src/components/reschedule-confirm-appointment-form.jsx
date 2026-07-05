@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSubmitMutation } from "../hooks/use-submit-mutation";
 import React, { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { recheduleConfirmAppointmentFormSchema } from "../lib/form-validation";
@@ -75,7 +76,7 @@ const RescheduleConfirmAppointmentForm = ({ appointment, openIcon, onOpenIconCha
 
 
   const queryClient = useQueryClient();
-  const { mutate } = useMutation({
+  const { submit, isSubmitting } = useSubmitMutation({
     mutationFn: updateAppointment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["all-appointments"] });
@@ -93,7 +94,7 @@ const RescheduleConfirmAppointmentForm = ({ appointment, openIcon, onOpenIconCha
   });
 
   function onSubmit(values) {
-    mutate({ ...values, appointmentId: appointment.AppointmentId });
+    submit({ ...values, appointmentId: appointment.AppointmentId });
   }
   const onOpenChange = ()=>{
     setOpen(false);
@@ -247,8 +248,10 @@ const RescheduleConfirmAppointmentForm = ({ appointment, openIcon, onOpenIconCha
                   Cancel
                 </Button>
               </DialogClose>
-              <Button className="cursor-pointer w-full sm:w-auto" type="submit">
-                {appointment?.Status === "Pending" ? "Confirm Appointment" : "Reschedule Appointment"}
+              <Button className="cursor-pointer w-full sm:w-auto" type="submit" disabled={isSubmitting}>
+                {isSubmitting
+                  ? (appointment?.Status === "Pending" ? "Confirming..." : "Rescheduling...")
+                  : (appointment?.Status === "Pending" ? "Confirm Appointment" : "Reschedule Appointment")}
               </Button>
             </DialogFooter>
           </form>

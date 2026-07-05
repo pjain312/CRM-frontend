@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconPlus } from "@tabler/icons-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSubmitMutation } from "../hooks/use-submit-mutation";
 import React, { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -85,7 +86,7 @@ const AddLeadForm = ({ type, patient, disabled = false, onSuccess }) => {
   });
 
   const queryClient = useQueryClient();
-  const { mutate: addLead } = useMutation({
+  const { submit: addLead, isSubmitting: isAdding } = useSubmitMutation({
     mutationFn: addPatientLead,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-leads"] });
@@ -98,7 +99,7 @@ const AddLeadForm = ({ type, patient, disabled = false, onSuccess }) => {
     },
   });
 
-  const { mutate: editLead } = useMutation({
+  const { submit: editLead, isSubmitting: isEditing } = useSubmitMutation({
     mutationFn: updatePatientLeads,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-leads"] });
@@ -123,6 +124,8 @@ const AddLeadForm = ({ type, patient, disabled = false, onSuccess }) => {
       }
     },
   });
+
+  const isSubmitting = isAdding || isEditing;
 
   function onSubmit(values) {
     const sanitizedValues = {
@@ -492,8 +495,10 @@ const AddLeadForm = ({ type, patient, disabled = false, onSuccess }) => {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit">
-                {type === "edit" ? "Edit" : "Add"} Lead
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting
+                  ? (type === "edit" ? "Saving..." : "Adding...")
+                  : `${type === "edit" ? "Edit" : "Add"} Lead`}
               </Button>
             </DialogFooter>
           </form>

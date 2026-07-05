@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSubmitMutation } from "../hooks/use-submit-mutation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { cancelAppointmentFormSchema } from "../lib/form-validation";
@@ -37,7 +38,7 @@ const CancelAppointmentForm = ({ appointment, notDialogTrigger, openIcon, onOpen
   });
 
   const queryClient = useQueryClient();
-  const { mutate } = useMutation({
+  const { submit, isSubmitting } = useSubmitMutation({
     mutationFn: updateAppointment,
     onSuccess: async () => {
       await Promise.all([
@@ -54,7 +55,7 @@ const CancelAppointmentForm = ({ appointment, notDialogTrigger, openIcon, onOpen
   });
   
   function onSubmit(values) {
-    mutate({ ...values, appointmentId: appointment.AppointmentId, status: "3" });
+    submit({ ...values, appointmentId: appointment.AppointmentId, status: "3" });
   }
 
   const setDialogOpen = () => {
@@ -104,8 +105,8 @@ const CancelAppointmentForm = ({ appointment, notDialogTrigger, openIcon, onOpen
                   Cancel
                 </Button>
               </DialogClose>
-              <Button className="cursor-pointer" type="submit">
-                Cancel Appointment
+              <Button className="cursor-pointer" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Cancelling..." : "Cancel Appointment"}
               </Button>
             </DialogFooter>
           </form>

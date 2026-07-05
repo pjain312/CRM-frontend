@@ -21,9 +21,9 @@ import {
   getLeadDetailsForFollowUp,
   saveFollowUpData,
 } from "../services/leads-service";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSubmitMutation } from "../hooks/use-submit-mutation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -60,7 +60,7 @@ function PatientFollowup({ patient }) {
   });
 
   const queryClient = useQueryClient();
-  const { mutate } = useMutation({
+  const { submit, isSubmitting } = useSubmitMutation({
     mutationFn: saveFollowUpData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["add-follow-up"] });
@@ -84,7 +84,7 @@ function PatientFollowup({ patient }) {
       followUpComment: values.followupComment,
       nextFollowUpDate: values.nextFollowupDate,
     };
-    mutate(payload);
+    submit(payload);
   };
 
 
@@ -268,9 +268,10 @@ function PatientFollowup({ patient }) {
                     <Button
                       type="submit"
                       className="flex-1 h-12 text-base font-medium"
+                      disabled={isSubmitting}
                     >
                       <MessageSquareIcon className="h-4 w-4 mr-2" />
-                      Save Follow-up
+                      {isSubmitting ? "Saving..." : "Save Follow-up"}
                     </Button>
                   </div>
                 </form>

@@ -24,7 +24,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { sessionTypeFormSchema } from "../lib/form-validation";
 import { addSessionType, updateSessionType } from "../services/packages-service";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSubmitMutation } from "../hooks/use-submit-mutation";
 import { toast } from "sonner";
 
 const AddSessionTypeForm = ({ type, sessionTypeData }) => {
@@ -39,7 +40,7 @@ const AddSessionTypeForm = ({ type, sessionTypeData }) => {
   });
 
   const queryClient = useQueryClient();
-  const { mutate: addSessionTypeMutation } = useMutation({
+  const { submit: submitAddSessionType, isSubmitting: isAdding } = useSubmitMutation({
     mutationFn: addSessionType,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sessionTypes"] });
@@ -52,7 +53,7 @@ const AddSessionTypeForm = ({ type, sessionTypeData }) => {
     },
   });
 
-  const { mutate: editSessionTypeMutation } = useMutation({
+  const { submit: submitEditSessionType, isSubmitting: isEditing } = useSubmitMutation({
     mutationFn: ({ id, ...data }) => updateSessionType({ sessionId: id, ...data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sessionTypes"] });
@@ -64,11 +65,13 @@ const AddSessionTypeForm = ({ type, sessionTypeData }) => {
     },
   });
 
+  const isSubmitting = isAdding || isEditing;
+
   function onSubmit(values) {
     if (type === "edit") {
-      editSessionTypeMutation({ id: sessionTypeData.Id, ...values });
+      submitEditSessionType({ id: sessionTypeData.Id, ...values });
     } else {
-      addSessionTypeMutation(values);
+      submitAddSessionType(values);
     }
   }
 
@@ -139,8 +142,10 @@ const AddSessionTypeForm = ({ type, sessionTypeData }) => {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit">
-                {type === "edit" ? "Update" : "Add"} Session Type
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting
+                  ? (type === "edit" ? "Updating..." : "Adding...")
+                  : `${type === "edit" ? "Update" : "Add"} Session Type`}
               </Button>
             </DialogFooter>
           </form>

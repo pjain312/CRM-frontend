@@ -24,7 +24,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { packageFormSchema } from "../lib/form-validation";
 import { addPackage, updatePackage } from "../services/packages-service";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSubmitMutation } from "../hooks/use-submit-mutation";
 import { toast } from "sonner";
 
 const AddPackageForm = ({ type, packageData }) => {
@@ -43,7 +44,7 @@ const AddPackageForm = ({ type, packageData }) => {
   });
 
   const queryClient = useQueryClient();
-  const { mutate: addPackageMutation } = useMutation({
+  const { submit: submitAddPackage, isSubmitting: isAdding } = useSubmitMutation({
     mutationFn: addPackage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["packages"] });
@@ -56,7 +57,7 @@ const AddPackageForm = ({ type, packageData }) => {
     },
   });
 
-  const { mutate: editPackageMutation } = useMutation({
+  const { submit: submitEditPackage, isSubmitting: isEditing } = useSubmitMutation({
     mutationFn: ({ id, ...data }) => updatePackage({ packageId: id, ...data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["packages"] });
@@ -68,11 +69,13 @@ const AddPackageForm = ({ type, packageData }) => {
     },
   });
 
+  const isSubmitting = isAdding || isEditing;
+
   function onSubmit(values) {
     if (type === "edit") {
-      editPackageMutation({ id: packageData.Id, ...values });
+      submitEditPackage({ id: packageData.Id, ...values });
     } else {
-      addPackageMutation(values);
+      submitAddPackage(values);
     }
   }
 
@@ -214,8 +217,10 @@ const AddPackageForm = ({ type, packageData }) => {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit">
-                {type === "edit" ? "Update" : "Add"} Package
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting
+                  ? (type === "edit" ? "Updating..." : "Adding...")
+                  : `${type === "edit" ? "Update" : "Add"} Package`}
               </Button>
             </DialogFooter>
           </form>

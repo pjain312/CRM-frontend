@@ -28,7 +28,8 @@ import {
   SelectValue,
 } from "./ui/select";
 import { updatePatientLeads } from "../services/leads-service";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSubmitMutation } from "../hooks/use-submit-mutation";
 import { toast } from "sonner";
 
 // Simple schema for just the assignedTo field
@@ -48,7 +49,7 @@ const AssignToForm = ({ patient, disabled = false }) => {
 
   const queryClient = useQueryClient();
   
-  const { mutate: assignLead, isPending } = useMutation({
+  const { submit: assignLead, isSubmitting } = useSubmitMutation({
     mutationFn: updatePatientLeads,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-leads"] });
@@ -125,8 +126,8 @@ const AssignToForm = ({ patient, disabled = false }) => {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit" disabled={isPending}>
-                {isPending ? "Assigning..." : "Assign Lead"}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Assigning..." : "Assign Lead"}
               </Button>
             </DialogFooter>
           </form>

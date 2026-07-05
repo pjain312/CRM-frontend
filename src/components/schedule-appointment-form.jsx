@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSubmitMutation } from "../hooks/use-submit-mutation";
 import React, { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { appointmentFormSchema } from "../lib/form-validation";
@@ -77,7 +78,7 @@ const ScheduleAppointmentForm = ({
   });
 
   const queryClient = useQueryClient();
-  const { mutate } = useMutation({
+  const { submit, isSubmitting } = useSubmitMutation({
     mutationFn: addAppointment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["all-appointments"] });
@@ -99,7 +100,7 @@ const ScheduleAppointmentForm = ({
   };
 
   function onSubmit(values) {
-    mutate({ ...values, patientId: patient.Id,  appointmentTime: values.appointmentTime ? values.appointmentTime: null });
+    submit({ ...values, patientId: patient.Id,  appointmentTime: values.appointmentTime ? values.appointmentTime: null });
   }
 
   const handleCloseButton = () => {
@@ -290,9 +291,9 @@ const ScheduleAppointmentForm = ({
               <Button
                 className="cursor-pointer w-full sm:w-auto"
                 type="submit"
-                disabled={form.formState.isSubmitting}
+                disabled={isSubmitting}
               >
-                {form.formState.isSubmitting
+                {isSubmitting
                   ? "Scheduling..."
                   : "Schedule Appointment"}
               </Button>
